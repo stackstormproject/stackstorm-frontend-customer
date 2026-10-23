@@ -12,21 +12,34 @@ import {
   AlertCircle,
   Info,
   Maximize2,
+  Heart,
 } from 'lucide-react';
 import { ToastProvider, useToast } from './context/ToastContext';
+import { WishlistProvider, useWishlist } from './context/WishlistContext';
 import { ToastContainer } from './components/common/ToastContainer';
 import { Modal } from './components/common/Modal';
 import { Header, Breadcrumbs } from './components/navigation';
 import { ProductGrid } from './components/catalog';
 import { ProductDetailPage } from './pages/ProductDetailPage';
+import { WishlistPage } from './pages/WishlistPage';
 import { productApi, FALLBACK_PRODUCTS } from './api/product.api';
 import './styles/storefront.css';
 
 function StorefrontContent() {
   const { toast } = useToast();
-  const [wishlistCount, setWishlistCount] = useState(2);
+  const {
+    wishlistIds,
+    wishlistItems,
+    wishlistCount,
+    toggleWishlist,
+    removeFromWishlist,
+    clearWishlist,
+  } = useWishlist();
+
   const [cartCount, setCartCount] = useState(1);
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isWishlistView, setIsWishlistView] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState([
     { label: 'Home', href: '/' },
@@ -44,7 +57,6 @@ function StorefrontContent() {
     color: '',
     sort: 'featured',
   });
-  const [wishlistIds, setWishlistIds] = useState(['c0000000-0000-0000-0000-000000000002']);
 
   const [backendStatus, setBackendStatus] = useState({
     checked: false,
@@ -136,29 +148,30 @@ function StorefrontContent() {
     });
   };
 
-  const handleToggleWishlist = (product) => {
-    setWishlistIds((prev) => {
-      const isAlreadyWishlisted = prev.includes(product.id);
-      if (isAlreadyWishlisted) {
-        setWishlistCount((c) => Math.max(0, c - 1));
-        toast.info(`Removed ${product.title} from wishlist.`, { title: 'Wishlist' });
-        return prev.filter((id) => id !== product.id);
+  const handleToggleWishlist = async (product) => {
+    try {
+      const willBeSaved = !wishlistIds.includes(product.id);
+      await toggleWishlist(product);
+      if (willBeSaved) {
+        toast.success(`Saved "${product.title}" to your wishlist!`, { title: 'Wishlist Updated' });
       } else {
-        setWishlistCount((c) => c + 1);
-        toast.success(`Saved ${product.title} to your wishlist!`, { title: 'Wishlist' });
-        return [...prev, product.id];
+        toast.info(`Removed "${product.title}" from wishlist.`, { title: 'Wishlist Updated' });
       }
-    });
+    } catch {
+      toast.error('Could not update wishlist', { title: 'Wishlist Error' });
+    }
   };
 
   const handleViewDetails = (product) => {
     setSelectedProduct(product);
+    setIsWishlistView(false);
     toast.info(`Viewing product details for ${product.title}`, { title: 'Product Details' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToCatalog = () => {
     setSelectedProduct(null);
+    setIsWishlistView(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -230,14 +243,37 @@ function StorefrontContent() {
         wishlistCount={wishlistCount}
         cartCount={cartCount}
         onSearch={handleSearch}
-        onWishlistClick={() => toast.info('Wishlist drawer opening...', { title: 'Wishlist' })}
+        onWishlistClick={() => {
+          setIsWishlistView(true);
+          setSelectedProduct(null);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
         onCartClick={() => toast.info('Shopping cart drawer opening...', { title: 'Shopping Cart' })}
-        onAccountClick={() => toast.info('Customer authentication dialog opening...', { title: 'Account' })}
+        onAccountClick={() => setIsAuthModalOpen(true)}
         onCategorySelect={handleCategorySelect}
       />
 
-      {/* Main View: Either Full PDP (STORM-FE-007) or Catalog Storefront */}
-      {selectedProduct ? (
+      {/* Main View: Dedicated Wishlist, PDP, or Catalog Storefront */}
+      {isWishlistView ? (
+        <WishlistPage
+          items={wishlistItems}
+          onRemoveItem={(id) => {
+            removeFromWishlist(id);
+            toast.info('Item removed from wishlist.', { title: 'Wishlist' });
+          }}
+          onMoveToCart={(product) => {
+            handleAddToCart(product);
+            removeFromWishlist(product.id);
+            toast.success(`Moved ${product.title} to shopping cart!`, { title: 'Cart Updated' });
+          }}
+          onClearWishlist={() => {
+            clearWishlist();
+            toast.info('All wishlist items cleared.', { title: 'Wishlist' });
+          }}
+          onViewDetails={handleViewDetails}
+          onExploreCatalog={handleBackToCatalog}
+        />
+      ) : selectedProduct ? (
         <ProductDetailPage
           productSlug={selectedProduct.slug}
           initialProduct={selectedProduct}
@@ -483,6 +519,19 @@ function StorefrontContent() {
             <button
               type="button"
               className="action-pill-btn action-pill-btn--info"
+              onClick={() => {
+                setIsWishlistView(true);
+                setSelectedProduct(null);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              <Heart size={16} color="#E11D48" />
+              <span>Open Wishlist Page (STORM-FE-008)</span>
+            </button>
+
+            <button
+              type="button"
+              className="action-pill-btn action-pill-btn--info"
               onClick={() => handleViewDetails(products[0])}
             >
               <Sparkles size={16} />
@@ -608,6 +657,40 @@ function StorefrontContent() {
           </p>
         </div>
       </Modal>
+
+      {/* Friendly Customer Auth Modal (AC4) */}
+      <Modal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        title="Sign In to Dickwella Fashion Corner"
+        description="Sync your wishlist and cart items across all your devices"
+        size="sm"
+        footer={
+          <>
+            <button
+              type="button"
+              className="dk-modal-btn dk-modal-btn--secondary"
+              onClick={() => setIsAuthModalOpen(false)}
+            >
+              Continue as Guest
+            </button>
+            <button
+              type="button"
+              className="dk-modal-btn dk-modal-btn--primary"
+              onClick={() => {
+                setIsAuthModalOpen(false);
+                toast.success('Welcome back, customer! Your wishlist has been synchronized.', { title: 'Signed In' });
+              }}
+            >
+              Sign In
+            </button>
+          </>
+        }
+      >
+        <p style={{ margin: '0 0 var(--space-3) 0', fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
+          Create a customer account or sign in to access member-only Ceylon handloom sales, track your Southern Province courier deliveries, and save your favorite garments permanently.
+        </p>
+      </Modal>
     </div>
   );
 }
@@ -615,8 +698,10 @@ function StorefrontContent() {
 export default function App() {
   return (
     <ToastProvider>
-      <StorefrontContent />
-      <ToastContainer />
+      <WishlistProvider>
+        <StorefrontContent />
+        <ToastContainer />
+      </WishlistProvider>
     </ToastProvider>
   );
 }

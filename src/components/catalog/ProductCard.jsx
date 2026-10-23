@@ -1,6 +1,6 @@
-import React from 'react';
-import { Heart, Star, ShoppingBag } from 'lucide-react';
+import { Star, ShoppingBag } from 'lucide-react';
 import { formatLKR, formatRating } from '../../utils/formatters';
+import { WishlistButton } from './WishlistButton';
 import './ProductCard.css';
 
 export const ProductCard = ({
@@ -57,15 +57,14 @@ export const ProductCard = ({
       <div className="dk-card-media">
         {badge && <span className="dk-card-badge">{badge}</span>}
 
-        <button
-          type="button"
-          className={`dk-card-wishlist-btn ${isWishlisted ? 'active' : ''}`}
-          onClick={handleWishlistClick}
-          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-          data-testid="card-wishlist-btn"
-        >
-          <Heart size={16} fill={isWishlisted ? '#EF4444' : 'none'} />
-        </button>
+        <WishlistButton
+          product={product}
+          isWishlisted={isWishlisted}
+          onToggle={onToggleWishlist}
+          size={16}
+          className="dk-card-wishlist-btn"
+          dataTestId="card-wishlist-btn"
+        />
 
         <img
           src={primary_image}
