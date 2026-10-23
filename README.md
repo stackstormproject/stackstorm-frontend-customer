@@ -1,43 +1,16 @@
-# frontend
+# React + Vite
 
-[![CI Pipeline](https://github.com/stackstormproject/frontend/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/stackstormproject/frontend/actions)
-![Coverage](https://img.shields.io/badge/coverage-pending-lightgrey)
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-StackStorm frontend: React (Vite) single-page application for the Dickwella Fashion Corner e-commerce system.
+Currently, two official plugins are available:
 
-Broader project: https://github.com/stackstormproject
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Tech stack
-React 18+, Vite, Redux Toolkit, React Router, Axios, Vitest.
+## React Compiler
 
-## Prerequisites
-| Software | Version |
-|---|---|
-| Node.js | 20 LTS |
-| npm | 10 or newer |
-| Git | latest |
-| Backend API | running on http://localhost:5000 (see the backend repo) |
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Installation and run
-1. `git clone https://github.com/stackstormproject/frontend.git` and `cd frontend`
-2. `npm install`
-3. Copy `.env.example` to `.env`
-4. `npm run dev`
-5. Open http://localhost:5173
+## Expanding the Oxlint configuration
 
-## Scripts
-`npm run dev`, `npm run build`, `npm run lint`, `npm run format:check`, `npm test`, `npm run test:coverage`
-
-## Branches and pull requests
-- Branches: `main`, `develop`, `feature/<issue>-<slug>`, `fix/<issue>-<slug>`
-- Open PRs against `develop`. CI must pass and one teammate must approve
-- Never commit secrets. `.env` is git-ignored
-
-## CI/CD
-The pipeline is defined in the infra repo (`frontend-ci.yml`) and called from `.github/workflows/ci.yml`.
-
-## Deployed application
-Staging URL: to be added when hosting is configured.
-
-## Related repositories
-backend, infra (Docker and shared CI/CD), documents (SRS, SDS, ADRs).
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
