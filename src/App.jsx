@@ -36,6 +36,7 @@ import { CustomerProfilePage } from './pages/CustomerProfilePage';
 import { OrderHistoryPage } from './pages/OrderHistoryPage';
 import ChatWidget from './components/chat/ChatWidget';
 import './styles/storefront.css';
+import './styles/accessibility.css';
 
 function StorefrontContent() {
   const { toast } = useToast();
@@ -316,6 +317,11 @@ function StorefrontContent() {
 
   return (
     <div className="storefront-app">
+      {/* WCAG 2.1 AA Skip to Content Navigation (STORM-FE-023) */}
+      <a href="#main-content" className="skip-to-content" data-testid="skip-to-content-link">
+        Skip to main content
+      </a>
+
       {/* 1. Header with Announcement Bar & Mega-Menu (STORM-FE-005) */}
       <Header
         wishlistCount={wishlistCount}
@@ -354,6 +360,7 @@ function StorefrontContent() {
       )}
 
       {/* Main View: Order Success Receipt, Checkout, Profile Hub, Dedicated Wishlist, PDP, or Catalog */}
+      <main id="main-content" tabIndex="-1">
       {completedOrder ? (
         <OrderSuccessPage
           order={completedOrder}
@@ -502,7 +509,7 @@ function StorefrontContent() {
               <Truck size={22} />
             </div>
             <div>
-              <h4 className="prop-title">Islandwide Delivery</h4>
+              <h2 className="prop-title">Islandwide Delivery</h2>
               <p className="prop-desc">Express delivery across all 25 districts. Free over LKR 10,000.</p>
             </div>
           </div>
@@ -512,7 +519,7 @@ function StorefrontContent() {
               <Sparkles size={22} />
             </div>
             <div>
-              <h4 className="prop-title">100% Artisan Craft</h4>
+              <h2 className="prop-title">100% Artisan Craft</h2>
               <p className="prop-desc">Woven by traditional handloom masters in Dickwella, Matara.</p>
             </div>
           </div>
@@ -522,7 +529,7 @@ function StorefrontContent() {
               <ShieldCheck size={22} />
             </div>
             <div>
-              <h4 className="prop-title">30-Day Return Policy</h4>
+              <h2 className="prop-title">30-Day Return Policy</h2>
               <p className="prop-desc">Hassle-free returns or exchanges within 30 days of delivery.</p>
             </div>
           </div>
@@ -532,7 +539,7 @@ function StorefrontContent() {
               <Award size={22} />
             </div>
             <div>
-              <h4 className="prop-title">Loyalty Rewards</h4>
+              <h2 className="prop-title">Loyalty Rewards</h2>
               <p className="prop-desc">Earn 1–2 points per LKR 100 spent. Silver, Gold & Platinum perks.</p>
             </div>
           </div>
@@ -740,6 +747,7 @@ function StorefrontContent() {
       </section>
         </>
       )}
+      </main>
 
       {/* 7. Storefront Footer */}
       <footer className="storefront-footer">
