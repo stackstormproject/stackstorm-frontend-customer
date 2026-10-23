@@ -13,15 +13,18 @@ import {
   Info,
   Maximize2,
   Heart,
+  ShoppingBag,
 } from 'lucide-react';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { WishlistProvider, useWishlist } from './context/WishlistContext';
+import { CartProvider, useCart } from './context/CartContext';
 import { ToastContainer } from './components/common/ToastContainer';
 import { Modal } from './components/common/Modal';
 import { Header, Breadcrumbs } from './components/navigation';
 import { ProductGrid } from './components/catalog';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { WishlistPage } from './pages/WishlistPage';
+import { CartDrawer } from './components/cart';
 import { productApi, FALLBACK_PRODUCTS } from './api/product.api';
 import './styles/storefront.css';
 
@@ -36,7 +39,7 @@ function StorefrontContent() {
     clearWishlist,
   } = useWishlist();
 
-  const [cartCount, setCartCount] = useState(1);
+  const { totalItems: cartCount, openCart, addItem: addCartItem } = useCart();
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isWishlistView, setIsWishlistView] = useState(false);
@@ -140,8 +143,8 @@ function StorefrontContent() {
     toast.info('All catalog filters have been reset.', { title: 'Filters Cleared' });
   };
 
-  const handleAddToCart = (product) => {
-    setCartCount((prev) => prev + 1);
+  const handleAddToCart = (product, variant = null, qty = 1) => {
+    addCartItem(product, variant, qty);
     toast.success(`${product.title} added to your shopping cart!`, {
       title: 'Cart Updated',
       duration: 4000,
@@ -176,7 +179,7 @@ function StorefrontContent() {
   };
 
   const handlePdpAddToCart = (product, variant, qty = 1) => {
-    setCartCount((prev) => prev + qty);
+    addCartItem(product, variant, qty);
     toast.success(
       `Added ${qty}x ${product.title} (${variant?.size || ''} / ${variant?.color || ''}) to your cart!`,
       { title: 'Cart Updated', duration: 4000 }
@@ -248,7 +251,7 @@ function StorefrontContent() {
           setSelectedProduct(null);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
-        onCartClick={() => toast.info('Shopping cart drawer opening...', { title: 'Shopping Cart' })}
+        onCartClick={openCart}
         onAccountClick={() => setIsAuthModalOpen(true)}
         onCategorySelect={handleCategorySelect}
       />
@@ -519,6 +522,15 @@ function StorefrontContent() {
             <button
               type="button"
               className="action-pill-btn action-pill-btn--info"
+              onClick={openCart}
+            >
+              <ShoppingBag size={16} />
+              <span>Open Cart Drawer (STORM-FE-009)</span>
+            </button>
+
+            <button
+              type="button"
+              className="action-pill-btn action-pill-btn--info"
               onClick={() => {
                 setIsWishlistView(true);
                 setSelectedProduct(null);
@@ -691,6 +703,9 @@ function StorefrontContent() {
           Create a customer account or sign in to access member-only Ceylon handloom sales, track your Southern Province courier deliveries, and save your favorite garments permanently.
         </p>
       </Modal>
+
+      {/* Slide-Over Shopping Cart Drawer (STORM-FE-009) */}
+      <CartDrawer onCheckout={() => setIsReservationModalOpen(true)} />
     </div>
   );
 }
@@ -699,8 +714,10 @@ export default function App() {
   return (
     <ToastProvider>
       <WishlistProvider>
-        <StorefrontContent />
-        <ToastContainer />
+        <CartProvider>
+          <StorefrontContent />
+          <ToastContainer />
+        </CartProvider>
       </WishlistProvider>
     </ToastProvider>
   );
