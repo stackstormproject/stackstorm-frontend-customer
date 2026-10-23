@@ -32,6 +32,7 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { inventoryApi } from './api/inventory.api';
 import { AuthModal } from './components/auth/AuthModal';
+import { CustomerProfilePage } from './pages/CustomerProfilePage';
 import './styles/storefront.css';
 
 function StorefrontContent() {
@@ -65,6 +66,8 @@ function StorefrontContent() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isWishlistView, setIsWishlistView] = useState(false);
   const [isCheckoutView, setIsCheckoutView] = useState(false);
+  const [isProfileView, setIsProfileView] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [completedOrder, setCompletedOrder] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState([
@@ -314,14 +317,26 @@ function StorefrontContent() {
       <Header
         wishlistCount={wishlistCount}
         cartCount={cartCount}
+        currentUser={currentUser}
         onSearch={handleSearch}
         onWishlistClick={() => {
           setIsWishlistView(true);
+          setIsProfileView(false);
           setSelectedProduct(null);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onCartClick={openCart}
-        onAccountClick={() => setIsAuthModalOpen(true)}
+        onAccountClick={() => {
+          if (currentUser) {
+            setIsProfileView(true);
+            setIsWishlistView(false);
+            setIsCheckoutView(false);
+            setSelectedProduct(null);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            setIsAuthModalOpen(true);
+          }
+        }}
         onCategorySelect={handleCategorySelect}
       />
 
@@ -335,13 +350,14 @@ function StorefrontContent() {
         </div>
       )}
 
-      {/* Main View: Order Success Receipt, Checkout, Dedicated Wishlist, PDP, or Catalog */}
+      {/* Main View: Order Success Receipt, Checkout, Profile Hub, Dedicated Wishlist, PDP, or Catalog */}
       {completedOrder ? (
         <OrderSuccessPage
           order={completedOrder}
           onContinueShopping={() => {
             setCompletedOrder(null);
             setIsCheckoutView(false);
+            setIsProfileView(false);
             setSelectedProduct(null);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
@@ -355,10 +371,22 @@ function StorefrontContent() {
           onOrderCompleted={(order) => {
             setCompletedOrder(order);
             setIsCheckoutView(false);
+            setIsProfileView(false);
             setSelectedProduct(null);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           initialReservation={activeReservation}
+        />
+      ) : isProfileView ? (
+        <CustomerProfilePage
+          initialProfile={currentUser}
+          onBackToCatalog={() => {
+            setIsProfileView(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onProfileUpdated={(updated) => {
+            setCurrentUser(updated);
+          }}
         />
       ) : isWishlistView ? (
         <WishlistPage
@@ -655,6 +683,21 @@ function StorefrontContent() {
 
             <button
               type="button"
+              className="action-pill-btn action-pill-btn--info"
+              onClick={() => {
+                setIsProfileView(true);
+                setIsWishlistView(false);
+                setIsCheckoutView(false);
+                setSelectedProduct(null);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              <Award size={16} color="#D4AF37" />
+              <span>Customer Profile & Loyalty Hub (STORM-FE-014)</span>
+            </button>
+
+            <button
+              type="button"
               className="action-pill-btn action-pill-btn--modal"
               onClick={() => setIsReservationModalOpen(true)}
             >
@@ -779,7 +822,9 @@ function StorefrontContent() {
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={(userData) => {
           setIsAuthModalOpen(false);
-          const name = userData?.customer?.first_name || userData?.customer?.email || 'Valued Customer';
+          const user = userData?.customer || userData?.user || userData;
+          setCurrentUser(user);
+          const name = user?.first_name || user?.name || user?.email || 'Valued Customer';
           toast.success(`Welcome, ${name}! Your profile and cart are synchronized.`, {
             title: 'Authentication Successful',
             duration: 5000,
