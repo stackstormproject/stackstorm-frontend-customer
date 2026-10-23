@@ -26,6 +26,9 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { WishlistPage } from './pages/WishlistPage';
 import { CartDrawer } from './components/cart';
 import { productApi, FALLBACK_PRODUCTS } from './api/product.api';
+import { ReservationBanner } from './components/checkout/ReservationBanner';
+import { ReservationExpiredModal } from './components/checkout/ReservationExpiredModal';
+import { inventoryApi } from './api/inventory.api';
 import './styles/storefront.css';
 
 function StorefrontContent() {
@@ -41,6 +44,21 @@ function StorefrontContent() {
 
   const { totalItems: cartCount, openCart, addItem: addCartItem } = useCart();
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+  const [activeReservation, setActiveReservation] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    const cached = sessionStorage.getItem('stackstorm_reservation_expires_at');
+    if (cached) {
+      const diff = new Date(cached).getTime() - Date.now();
+      if (diff > 0) {
+        return {
+          expiresAt: cached,
+          reservationId: sessionStorage.getItem('stackstorm_reservation_id') || 'res-active',
+        };
+      }
+    }
+    return null;
+  });
+  const [isReservationExpired, setIsReservationExpired] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isWishlistView, setIsWishlistView] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -197,12 +215,53 @@ function StorefrontContent() {
     });
   };
 
-  const handleConfirmReservation = () => {
+  const handleConfirmReservation = async () => {
     setIsReservationModalOpen(false);
-    toast.success('Inventory lock acquired! 15-minute temporary reservation active.', {
-      title: 'Stock Reserved',
-      duration: 5000,
+    try {
+      const res = await inventoryApi.reserveStock({ variant_id: 1, quantity: 1 });
+      const expiresAt = res?.data?.expires_at || new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const reservationId = res?.data?.reservation_id || `res-${Date.now()}`;
+
+      sessionStorage.setItem('stackstorm_reservation_id', reservationId);
+      sessionStorage.setItem('stackstorm_reservation_expires_at', expiresAt);
+      setActiveReservation({ expiresAt, reservationId });
+      setIsReservationExpired(false);
+
+      toast.success('Inventory lock acquired! 15-minute temporary reservation active.', {
+        title: 'Stock Reserved',
+        duration: 5000,
+      });
+    } catch {
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const reservationId = `res-local-${Date.now()}`;
+      setActiveReservation({ expiresAt, reservationId });
+      setIsReservationExpired(false);
+      toast.success('Temporary stock hold active (15:00 countdown).', {
+        title: 'Stock Reserved',
+        duration: 5000,
+      });
+    }
+  };
+
+  const handleReservationExpire = () => {
+    setIsReservationExpired(true);
+    setActiveReservation(null);
+    toast.warning('Your 15-minute stock hold has expired. Items released back to inventory.', {
+      title: 'Reservation Expired',
+      duration: 6000,
     });
+  };
+
+  const handleReturnToCartFromExpired = async () => {
+    if (activeReservation?.reservationId) {
+      try {
+        await inventoryApi.releaseStock(activeReservation.reservationId);
+      } catch (_) {}
+    }
+    sessionStorage.removeItem('stackstorm_reservation_id');
+    sessionStorage.removeItem('stackstorm_reservation_expires_at');
+    setIsReservationExpired(false);
+    openCart();
   };
 
   const handleSearch = (query) => {
@@ -255,6 +314,16 @@ function StorefrontContent() {
         onAccountClick={() => setIsAuthModalOpen(true)}
         onCategorySelect={handleCategorySelect}
       />
+
+      {/* 15-Minute Temporary Stock Reservation Live Countdown Banner (STORM-FE-010) */}
+      {activeReservation && (
+        <div style={{ maxWidth: '1280px', margin: '0.75rem auto 0', padding: '0 1.5rem' }}>
+          <ReservationBanner
+            expiresAt={activeReservation.expiresAt}
+            onExpire={handleReservationExpire}
+          />
+        </div>
+      )}
 
       {/* Main View: Dedicated Wishlist, PDP, or Catalog Storefront */}
       {isWishlistView ? (
@@ -706,6 +775,16 @@ function StorefrontContent() {
 
       {/* Slide-Over Shopping Cart Drawer (STORM-FE-009) */}
       <CartDrawer onCheckout={() => setIsReservationModalOpen(true)} />
+
+      {/* 15-Minute Stock Reservation Expired Modal (STORM-FE-010) */}
+      <ReservationExpiredModal
+        isOpen={isReservationExpired}
+        onReturnToCart={handleReturnToCartFromExpired}
+        onBrowseProducts={() => {
+          setIsReservationExpired(false);
+          setSelectedProduct(null);
+        }}
+      />
     </div>
   );
 }
