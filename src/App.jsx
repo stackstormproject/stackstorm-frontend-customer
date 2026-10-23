@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ShoppingBag,
-  Heart,
-  Search,
-  User,
-  MapPin,
   Truck,
   ShieldCheck,
   Award,
   Sparkles,
   ChevronRight,
-  Clock,
   ArrowRight,
   Layers,
   CheckCircle2,
@@ -22,6 +16,7 @@ import {
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ToastContainer } from './components/common/ToastContainer';
 import { Modal } from './components/common/Modal';
+import { Header, Breadcrumbs } from './components/navigation';
 import './styles/storefront.css';
 
 function StorefrontContent() {
@@ -29,6 +24,11 @@ function StorefrontContent() {
   const [wishlistCount] = useState(2);
   const [cartCount, setCartCount] = useState(1);
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+  const [breadcrumbTrail, setBreadcrumbTrail] = useState([
+    { label: 'Home', href: '/' },
+    { label: "Men's Collection", href: '#mens-batik' },
+    { label: 'Handloom & Batik Apparel', active: true },
+  ]);
   const [backendStatus, setBackendStatus] = useState({
     checked: false,
     healthy: false,
@@ -82,84 +82,51 @@ function StorefrontContent() {
     });
   };
 
+  const handleSearch = (query) => {
+    toast.info(`Searching clothing catalog for: "${query}"`, {
+      title: 'Catalog Search',
+      duration: 3500,
+    });
+  };
+
+  const handleCategorySelect = (category, subCategory) => {
+    if (subCategory) {
+      setBreadcrumbTrail([
+        { label: 'Home', href: '/' },
+        { label: category.name, href: `#catalog/${category.slug}` },
+        { label: subCategory.name, active: true },
+      ]);
+      toast.info(`Filtered: ${category.name} › ${subCategory.name}`, {
+        title: 'Category Selected',
+        duration: 3000,
+      });
+    } else {
+      setBreadcrumbTrail([
+        { label: 'Home', href: '/' },
+        { label: category.name, active: true },
+      ]);
+      toast.info(`Browsing ${category.name} collection`, {
+        title: 'Category Selected',
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <div className="storefront-app">
-      {/* 1. Top Announcement Bar */}
-      <div className="top-announcement-bar">
-        <div className="container announcement-content">
-          <div className="announcement-location">
-            <MapPin size={14} color="#D4AF37" />
-            <span>Main Street, Dickwella, Matara • Mon–Sun 9:00 AM – 8:00 PM</span>
-          </div>
-          <div>
-            <span>Islandwide Courier Delivery Across Sri Lanka • Free Shipping on Orders Over LKR 10,000</span>
-          </div>
-          <div className="announcement-location">
-            <Clock size={14} color="#10B981" />
-            <span>Dispatch: Next Business Day</span>
-          </div>
-        </div>
-      </div>
+      {/* 1. Header with Announcement Bar & Mega-Menu (STORM-FE-005) */}
+      <Header
+        wishlistCount={wishlistCount}
+        cartCount={cartCount}
+        onSearch={handleSearch}
+        onWishlistClick={() => toast.info('Wishlist drawer opening...', { title: 'Wishlist' })}
+        onCartClick={() => toast.info('Shopping cart drawer opening...', { title: 'Shopping Cart' })}
+        onAccountClick={() => toast.info('Customer authentication dialog opening...', { title: 'Account' })}
+        onCategorySelect={handleCategorySelect}
+      />
 
-      {/* 2. Storefront Main Header */}
-      <header className="storefront-header">
-        <div className="container header-inner">
-          {/* Brand Identity */}
-          <div className="brand-identity">
-            <a href="/" className="brand-title">
-              Dickwella Fashion Corner
-            </a>
-            <span className="brand-subtitle">Authentic Sri Lankan Apparel</span>
-          </div>
-
-          {/* Navigation Links */}
-          <nav className="header-nav" aria-label="Main Navigation">
-            <a href="#mens-batik" className="nav-link active">Men's Batik</a>
-            <a href="#womens-sarees" className="nav-link">Women's Sarees</a>
-            <a href="#handlooms" className="nav-link">Pure Handlooms</a>
-            <a href="#linen" className="nav-link">Linen Collection</a>
-            <a href="#offers" className="nav-link">New Arrivals</a>
-          </nav>
-
-          {/* Header Action Buttons */}
-          <div className="header-actions">
-            <button
-              className="action-btn"
-              aria-label="Search Catalog"
-              title="Search Catalog"
-              onClick={() => toast.info('Catalog search modal opening...', { title: 'Search' })}
-            >
-              <Search size={18} />
-            </button>
-            <button
-              className="action-btn"
-              aria-label="View Wishlist"
-              title="View Wishlist"
-              onClick={() => toast.info('Wishlist drawer opening...', { title: 'Wishlist' })}
-            >
-              <Heart size={18} />
-              {wishlistCount > 0 && <span className="badge-count">{wishlistCount}</span>}
-            </button>
-            <button
-              className="action-btn"
-              aria-label="View Shopping Cart"
-              title="View Shopping Cart"
-              onClick={() => toast.info('Shopping cart drawer opening...', { title: 'Shopping Cart' })}
-            >
-              <ShoppingBag size={18} />
-              {cartCount > 0 && <span className="badge-count">{cartCount}</span>}
-            </button>
-            <button
-              className="login-btn"
-              aria-label="Customer Account"
-              onClick={() => toast.info('Customer authentication dialog opening...', { title: 'Account' })}
-            >
-              <User size={16} />
-              <span>Sign In</span>
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* 2. Dynamic Breadcrumbs with Schema.org JSON-LD (STORM-FE-005) */}
+      <Breadcrumbs items={breadcrumbTrail} />
 
       {/* 3. Hero Section */}
       <section className="hero-section">
@@ -380,7 +347,7 @@ function StorefrontContent() {
             </div>
             <span className="telemetry-badge">
               <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-              STORM-FE-001 & FE-002 Verified
+              STORM-FE-001 through FE-005 Verified
             </span>
           </div>
 
@@ -410,23 +377,23 @@ function StorefrontContent() {
           </div>
         </div>
 
-        {/* Interactive Verification Panel (STORM-FE-004) */}
+        {/* Interactive Verification Panel (STORM-FE-004 & FE-005) */}
         <div className="verification-card">
           <div className="verification-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Sparkles size={18} color="#D4AF37" />
               <h3 style={{ fontSize: 'var(--text-base)', margin: 0, color: 'var(--color-primary)' }}>
-                Global UI State & Feedback Verification (STORM-FE-004)
+                Global UI State & Feedback Verification (STORM-FE-004 & FE-005)
               </h3>
             </div>
             <span className="telemetry-badge">
               <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-              Portal & Toast Active
+              Portal, MegaMenu & Breadcrumbs Active
             </span>
           </div>
 
           <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-4)' }}>
-            Test interactive toast notifications with auto-dismiss countdowns, pause-on-hover mechanics, and accessible React portal modal dialogs.
+            Hover over any category in the top navigation to trigger the glassmorphic mega-menu. You can also trigger toast notifications or open the stock reservation confirmation modal below.
           </p>
 
           <div className="verification-btn-group">
