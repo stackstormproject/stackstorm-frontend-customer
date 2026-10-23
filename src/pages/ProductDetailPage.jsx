@@ -14,6 +14,7 @@ import { ProductGallery, VariantSelector } from '../components/pdp';
 import { Breadcrumbs } from '../components/navigation/Breadcrumbs';
 import { productApi, FALLBACK_PRODUCTS } from '../api/product.api';
 import { formatRating } from '../utils/formatters';
+import { WriteReviewModal } from '../components/reviews/WriteReviewModal';
 import './ProductDetailPage.css';
 
 /**
@@ -38,6 +39,7 @@ export function ProductDetailPage({
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('specs'); // 'specs' | 'delivery' | 'reviews'
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   // Load product data dynamically by slug (AC1)
   useEffect(() => {
@@ -291,6 +293,19 @@ export function ProductDetailPage({
 
             {activeTab === 'reviews' && (
               <div className="pdp-reviews-list" data-testid="tab-content-reviews">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+                  <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>Customer Community Ratings</span>
+                  <button
+                    type="button"
+                    className="btn-secondary btn-sm"
+                    onClick={() => setIsReviewModalOpen(true)}
+                    data-testid="write-review-btn"
+                  >
+                    <Sparkles size={14} color="#D4AF37" />
+                    <span>Write a Review</span>
+                  </button>
+                </div>
+
                 {(product.reviews && product.reviews.length > 0) ? (
                   product.reviews.map((rev) => (
                     <div key={rev.id} className="pdp-review-card">
@@ -340,6 +355,20 @@ export function ProductDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Verified Customer Write Review Modal (STORM-FE-016) */}
+      <WriteReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        product={product}
+        onSuccess={(newRev) => {
+          setIsReviewModalOpen(false);
+          setProduct((prev) => ({
+            ...prev,
+            reviews: [newRev, ...(prev.reviews || [])],
+          }));
+        }}
+      />
     </div>
   );
 }

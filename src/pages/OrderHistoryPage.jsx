@@ -12,6 +12,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { OrderCard } from '../components/orders/OrderCard';
+import { ReturnExchangeModal } from '../components/orders/ReturnExchangeModal';
 import orderApi, { FALLBACK_ORDERS } from '../api/order.api';
 import './OrderHistoryPage.css';
 
@@ -32,6 +33,7 @@ export function OrderHistoryPage({
   const [isLoading, setIsLoading] = useState(!initialOrders);
   const [activeFilter, setActiveFilter] = useState('all'); // 'all' | 'active' | 'delivered'
   const [searchQuery, setSearchQuery] = useState('');
+  const [returnModalOrder, setReturnModalOrder] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -223,11 +225,23 @@ export function OrderHistoryPage({
                 key={order.id || order.order_number}
                 order={order}
                 onViewInvoice={onViewInvoice}
-                onReturnRequest={onReturnRequest}
+                onReturnRequest={onReturnRequest || ((ord) => setReturnModalOrder(ord))}
               />
             ))
           )}
         </div>
+
+        {/* 30-Day Return / Exchange Modal (STORM-FE-016) */}
+        {returnModalOrder && (
+          <ReturnExchangeModal
+            isOpen={!!returnModalOrder}
+            onClose={() => setReturnModalOrder(null)}
+            order={returnModalOrder}
+            onSuccess={() => {
+              setReturnModalOrder(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );

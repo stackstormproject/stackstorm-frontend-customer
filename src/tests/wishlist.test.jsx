@@ -49,6 +49,7 @@ describe('STORM-FE-008: Customer Wishlist UI, Real-Time Heart Toggle & Stock Ale
 
   // Test 2: WishlistContext synchronizes state, updates count, and handles optimistic mutations (AC1, AC2)
   it('AC2: should update wishlist count in context and toggle item presence', async () => {
+    localStorage.clear();
     const wrapper = ({ children }) => <WishlistProvider>{children}</WishlistProvider>;
     const { result } = renderHook(() => useWishlist(), { wrapper });
 
