@@ -34,6 +34,7 @@ import { inventoryApi } from './api/inventory.api';
 import { AuthModal } from './components/auth/AuthModal';
 import { CustomerProfilePage } from './pages/CustomerProfilePage';
 import { OrderHistoryPage } from './pages/OrderHistoryPage';
+import ChatWidget from './components/chat/ChatWidget';
 import './styles/storefront.css';
 
 function StorefrontContent() {
@@ -895,6 +896,9 @@ function StorefrontContent() {
           setSelectedProduct(null);
         }}
       />
+
+      {/* Floating Live Support Chat Widget & Bot Fallback (STORM-FE-021) */}
+      <ChatWidget />
     </div>
   );
 }
