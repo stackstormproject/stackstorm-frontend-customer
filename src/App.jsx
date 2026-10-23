@@ -18,6 +18,7 @@ import { ToastContainer } from './components/common/ToastContainer';
 import { Modal } from './components/common/Modal';
 import { Header, Breadcrumbs } from './components/navigation';
 import { ProductGrid } from './components/catalog';
+import { ProductDetailPage } from './pages/ProductDetailPage';
 import { productApi, FALLBACK_PRODUCTS } from './api/product.api';
 import './styles/storefront.css';
 
@@ -26,6 +27,7 @@ function StorefrontContent() {
   const [wishlistCount, setWishlistCount] = useState(2);
   const [cartCount, setCartCount] = useState(1);
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState([
     { label: 'Home', href: '/' },
     { label: "Men's Collection", href: '#mens-batik' },
@@ -150,7 +152,33 @@ function StorefrontContent() {
   };
 
   const handleViewDetails = (product) => {
-    toast.info(`Opening details for ${product.title}`, { title: 'Product Details' });
+    setSelectedProduct(product);
+    toast.info(`Viewing product details for ${product.title}`, { title: 'Product Details' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToCatalog = () => {
+    setSelectedProduct(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePdpAddToCart = (product, variant, qty = 1) => {
+    setCartCount((prev) => prev + qty);
+    toast.success(
+      `Added ${qty}x ${product.title} (${variant?.size || ''} / ${variant?.color || ''}) to your cart!`,
+      { title: 'Cart Updated', duration: 4000 }
+    );
+  };
+
+  const handlePdpReserveStock = (product, variant) => {
+    setIsReservationModalOpen(true);
+  };
+
+  const handlePdpNotifyMe = (product) => {
+    toast.info(`We'll notify you as soon as ${product.title} is back in stock!`, {
+      title: 'Restock Alert Active',
+      duration: 4000,
+    });
   };
 
   const handleConfirmReservation = () => {
@@ -208,11 +236,25 @@ function StorefrontContent() {
         onCategorySelect={handleCategorySelect}
       />
 
-      {/* 2. Dynamic Breadcrumbs with Schema.org JSON-LD (STORM-FE-005) */}
-      <Breadcrumbs items={breadcrumbTrail} />
+      {/* Main View: Either Full PDP (STORM-FE-007) or Catalog Storefront */}
+      {selectedProduct ? (
+        <ProductDetailPage
+          productSlug={selectedProduct.slug}
+          initialProduct={selectedProduct}
+          onBack={handleBackToCatalog}
+          onAddToCart={handlePdpAddToCart}
+          onReserveStock={handlePdpReserveStock}
+          onToggleWishlist={handleToggleWishlist}
+          isWishlisted={wishlistIds.includes(selectedProduct.id)}
+          onNotifyMe={handlePdpNotifyMe}
+        />
+      ) : (
+        <>
+          {/* 2. Dynamic Breadcrumbs with Schema.org JSON-LD (STORM-FE-005) */}
+          <Breadcrumbs items={breadcrumbTrail} />
 
-      {/* 3. Hero Section */}
-      <section className="hero-section">
+          {/* 3. Hero Section */}
+          <section className="hero-section">
         <div className="hero-bg-accent" />
         <div className="container hero-grid">
           <div className="hero-content">
@@ -440,6 +482,15 @@ function StorefrontContent() {
 
             <button
               type="button"
+              className="action-pill-btn action-pill-btn--info"
+              onClick={() => handleViewDetails(products[0])}
+            >
+              <Sparkles size={16} />
+              <span>Preview Sample PDP (STORM-FE-007)</span>
+            </button>
+
+            <button
+              type="button"
               className="action-pill-btn action-pill-btn--modal"
               onClick={() => setIsReservationModalOpen(true)}
             >
@@ -449,6 +500,8 @@ function StorefrontContent() {
           </div>
         </div>
       </section>
+        </>
+      )}
 
       {/* 7. Storefront Footer */}
       <footer className="storefront-footer">
