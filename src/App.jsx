@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ShoppingBag,
-  Heart,
-  Search,
-  User,
-  MapPin,
   Truck,
   ShieldCheck,
   Award,
   Sparkles,
   ChevronRight,
-  Clock,
   ArrowRight,
   Layers,
   CheckCircle2,
@@ -22,13 +16,36 @@ import {
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ToastContainer } from './components/common/ToastContainer';
 import { Modal } from './components/common/Modal';
+import { Header, Breadcrumbs } from './components/navigation';
+import { ProductGrid } from './components/catalog';
+import { ProductDetailPage } from './pages/ProductDetailPage';
+import { productApi, FALLBACK_PRODUCTS } from './api/product.api';
 import './styles/storefront.css';
 
 function StorefrontContent() {
   const { toast } = useToast();
-  const [wishlistCount] = useState(2);
+  const [wishlistCount, setWishlistCount] = useState(2);
   const [cartCount, setCartCount] = useState(1);
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [breadcrumbTrail, setBreadcrumbTrail] = useState([
+    { label: 'Home', href: '/' },
+    { label: "Men's Collection", href: '#mens-batik' },
+    { label: 'Handloom & Batik Apparel', active: true },
+  ]);
+
+  // Product Catalog State (STORM-FE-006)
+  const [products, setProducts] = useState(FALLBACK_PRODUCTS);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+  const [filters, setFilters] = useState({
+    category: 'all',
+    max_price: 20000,
+    size: '',
+    color: '',
+    sort: 'featured',
+  });
+  const [wishlistIds, setWishlistIds] = useState(['c0000000-0000-0000-0000-000000000002']);
+
   const [backendStatus, setBackendStatus] = useState({
     checked: false,
     healthy: false,
@@ -66,10 +83,100 @@ function StorefrontContent() {
     };
   }, []);
 
-  const handleAddToCartSample = () => {
+  // Fetch catalog products dynamically based on filters
+  useEffect(() => {
+    let isMounted = true;
+    if (products.length === 0) {
+      setIsLoadingProducts(true);
+    }
+
+    productApi
+      .getProducts(filters)
+      .then((res) => {
+        if (isMounted) {
+          setProducts(res.products || FALLBACK_PRODUCTS);
+          setIsLoadingProducts(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setProducts(FALLBACK_PRODUCTS);
+          setIsLoadingProducts(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [filters]);
+
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      category: 'all',
+      max_price: 20000,
+      size: '',
+      color: '',
+      sort: 'featured',
+    });
+    toast.info('All catalog filters have been reset.', { title: 'Filters Cleared' });
+  };
+
+  const handleAddToCart = (product) => {
     setCartCount((prev) => prev + 1);
-    toast.success('Signature Linen Batik Shirt (Size M) added to your shopping cart!', {
+    toast.success(`${product.title} added to your shopping cart!`, {
       title: 'Cart Updated',
+      duration: 4000,
+    });
+  };
+
+  const handleToggleWishlist = (product) => {
+    setWishlistIds((prev) => {
+      const isAlreadyWishlisted = prev.includes(product.id);
+      if (isAlreadyWishlisted) {
+        setWishlistCount((c) => Math.max(0, c - 1));
+        toast.info(`Removed ${product.title} from wishlist.`, { title: 'Wishlist' });
+        return prev.filter((id) => id !== product.id);
+      } else {
+        setWishlistCount((c) => c + 1);
+        toast.success(`Saved ${product.title} to your wishlist!`, { title: 'Wishlist' });
+        return [...prev, product.id];
+      }
+    });
+  };
+
+  const handleViewDetails = (product) => {
+    setSelectedProduct(product);
+    toast.info(`Viewing product details for ${product.title}`, { title: 'Product Details' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToCatalog = () => {
+    setSelectedProduct(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePdpAddToCart = (product, variant, qty = 1) => {
+    setCartCount((prev) => prev + qty);
+    toast.success(
+      `Added ${qty}x ${product.title} (${variant?.size || ''} / ${variant?.color || ''}) to your cart!`,
+      { title: 'Cart Updated', duration: 4000 }
+    );
+  };
+
+  const handlePdpReserveStock = (product, variant) => {
+    setIsReservationModalOpen(true);
+  };
+
+  const handlePdpNotifyMe = (product) => {
+    toast.info(`We'll notify you as soon as ${product.title} is back in stock!`, {
+      title: 'Restock Alert Active',
       duration: 4000,
     });
   };
@@ -82,87 +189,72 @@ function StorefrontContent() {
     });
   };
 
+  const handleSearch = (query) => {
+    setFilters((prev) => ({ ...prev, search: query }));
+    toast.info(`Searching clothing catalog for: "${query}"`, {
+      title: 'Catalog Search',
+      duration: 3500,
+    });
+  };
+
+  const handleCategorySelect = (category, subCategory) => {
+    const targetSlug = subCategory ? subCategory.slug : category.slug;
+    setFilters((prev) => ({ ...prev, category: targetSlug }));
+
+    if (subCategory) {
+      setBreadcrumbTrail([
+        { label: 'Home', href: '/' },
+        { label: category.name, href: `#catalog/${category.slug}` },
+        { label: subCategory.name, active: true },
+      ]);
+      toast.info(`Filtered: ${category.name} › ${subCategory.name}`, {
+        title: 'Category Selected',
+        duration: 3000,
+      });
+    } else {
+      setBreadcrumbTrail([
+        { label: 'Home', href: '/' },
+        { label: category.name, active: true },
+      ]);
+      toast.info(`Browsing ${category.name} collection`, {
+        title: 'Category Selected',
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <div className="storefront-app">
-      {/* 1. Top Announcement Bar */}
-      <div className="top-announcement-bar">
-        <div className="container announcement-content">
-          <div className="announcement-location">
-            <MapPin size={14} color="#D4AF37" />
-            <span>Main Street, Dickwella, Matara • Mon–Sun 9:00 AM – 8:00 PM</span>
-          </div>
-          <div>
-            <span>Islandwide Courier Delivery Across Sri Lanka • Free Shipping on Orders Over LKR 10,000</span>
-          </div>
-          <div className="announcement-location">
-            <Clock size={14} color="#10B981" />
-            <span>Dispatch: Next Business Day</span>
-          </div>
-        </div>
-      </div>
+      {/* 1. Header with Announcement Bar & Mega-Menu (STORM-FE-005) */}
+      <Header
+        wishlistCount={wishlistCount}
+        cartCount={cartCount}
+        onSearch={handleSearch}
+        onWishlistClick={() => toast.info('Wishlist drawer opening...', { title: 'Wishlist' })}
+        onCartClick={() => toast.info('Shopping cart drawer opening...', { title: 'Shopping Cart' })}
+        onAccountClick={() => toast.info('Customer authentication dialog opening...', { title: 'Account' })}
+        onCategorySelect={handleCategorySelect}
+      />
 
-      {/* 2. Storefront Main Header */}
-      <header className="storefront-header">
-        <div className="container header-inner">
-          {/* Brand Identity */}
-          <div className="brand-identity">
-            <a href="/" className="brand-title">
-              Dickwella Fashion Corner
-            </a>
-            <span className="brand-subtitle">Authentic Sri Lankan Apparel</span>
-          </div>
+      {/* Main View: Either Full PDP (STORM-FE-007) or Catalog Storefront */}
+      {selectedProduct ? (
+        <ProductDetailPage
+          productSlug={selectedProduct.slug}
+          initialProduct={selectedProduct}
+          onBack={handleBackToCatalog}
+          onAddToCart={handlePdpAddToCart}
+          onReserveStock={handlePdpReserveStock}
+          onToggleWishlist={handleToggleWishlist}
+          isWishlisted={wishlistIds.includes(selectedProduct.id)}
+          onNotifyMe={handlePdpNotifyMe}
+        />
+      ) : (
+        <>
+          {/* 2. Dynamic Breadcrumbs with Schema.org JSON-LD (STORM-FE-005) */}
+          <Breadcrumbs items={breadcrumbTrail} />
 
-          {/* Navigation Links */}
-          <nav className="header-nav" aria-label="Main Navigation">
-            <a href="#mens-batik" className="nav-link active">Men's Batik</a>
-            <a href="#womens-sarees" className="nav-link">Women's Sarees</a>
-            <a href="#handlooms" className="nav-link">Pure Handlooms</a>
-            <a href="#linen" className="nav-link">Linen Collection</a>
-            <a href="#offers" className="nav-link">New Arrivals</a>
-          </nav>
-
-          {/* Header Action Buttons */}
-          <div className="header-actions">
-            <button
-              className="action-btn"
-              aria-label="Search Catalog"
-              title="Search Catalog"
-              onClick={() => toast.info('Catalog search modal opening...', { title: 'Search' })}
-            >
-              <Search size={18} />
-            </button>
-            <button
-              className="action-btn"
-              aria-label="View Wishlist"
-              title="View Wishlist"
-              onClick={() => toast.info('Wishlist drawer opening...', { title: 'Wishlist' })}
-            >
-              <Heart size={18} />
-              {wishlistCount > 0 && <span className="badge-count">{wishlistCount}</span>}
-            </button>
-            <button
-              className="action-btn"
-              aria-label="View Shopping Cart"
-              title="View Shopping Cart"
-              onClick={() => toast.info('Shopping cart drawer opening...', { title: 'Shopping Cart' })}
-            >
-              <ShoppingBag size={18} />
-              {cartCount > 0 && <span className="badge-count">{cartCount}</span>}
-            </button>
-            <button
-              className="login-btn"
-              aria-label="Customer Account"
-              onClick={() => toast.info('Customer authentication dialog opening...', { title: 'Account' })}
-            >
-              <User size={16} />
-              <span>Sign In</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* 3. Hero Section */}
-      <section className="hero-section">
+          {/* 3. Hero Section */}
+          <section className="hero-section">
         <div className="hero-bg-accent" />
         <div className="container hero-grid">
           <div className="hero-content">
@@ -178,7 +270,7 @@ function StorefrontContent() {
               Engineered for tropical breathability, everyday comfort, and timeless island elegance.
             </p>
             <div className="hero-actions">
-              <a href="#collections" className="btn-primary">
+              <a href="#catalog" className="btn-primary">
                 <span>Explore Catalog</span>
                 <ArrowRight size={18} />
               </a>
@@ -262,111 +354,33 @@ function StorefrontContent() {
         </div>
       </section>
 
-      {/* 5. Featured Collections Preview Grid */}
-      <section className="collections-section" id="collections">
+      {/* 5. Dynamic Product Catalog Grid with Multi-Faceted Filters (STORM-FE-006) */}
+      <section className="collections-section" id="catalog">
         <div className="container">
           <div className="section-header">
             <div>
               <h2 className="section-title">Signature Collections</h2>
               <p className="section-subtitle">
-                Explore our curated range of authentic Sri Lankan apparel tailored for any occasion.
+                Filter and sort authentic Sri Lankan handloom sarees, bespoke batik shirts, and tailored linen apparel.
               </p>
             </div>
-            <a href="#catalog" className="explore-pill">
-              <span>View All Apparel</span>
+            <a href="#catalog" className="explore-pill" onClick={handleClearFilters}>
+              <span>Reset Filters</span>
               <ChevronRight size={16} />
             </a>
           </div>
 
-          <div className="collections-grid">
-            {/* Card 1 */}
-            <div className="collection-card" onClick={handleAddToCartSample} style={{ cursor: 'pointer' }}>
-              <div className="collection-image-wrapper">
-                <span className="collection-badge">Handcrafted</span>
-                <img
-                  src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=600&q=80"
-                  alt="Men's Batik Shirt"
-                  className="collection-img"
-                  loading="lazy"
-                />
-              </div>
-              <div className="collection-body">
-                <span className="collection-category">Men's Apparel</span>
-                <h3 className="collection-title">Signature Linen Batik Shirt</h3>
-                <p className="prop-desc">Hand-waxed tropical motif on breathable Southern linen.</p>
-                <div className="collection-price">
-                  <span>LKR 4,500.00</span>
-                  <span className="explore-pill">Quick Add <ChevronRight size={14} /></span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="collection-card">
-              <div className="collection-image-wrapper">
-                <span className="collection-badge">Heritage</span>
-                <img
-                  src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80"
-                  alt="Pure Handloom Saree"
-                  className="collection-img"
-                  loading="lazy"
-                />
-              </div>
-              <div className="collection-body">
-                <span className="collection-category">Women's Traditional</span>
-                <h3 className="collection-title">Pure Handloom Cotton Saree</h3>
-                <p className="prop-desc">Woven on pit looms with natural vegetable dyes and gold borders.</p>
-                <div className="collection-price">
-                  <span>LKR 12,500.00</span>
-                  <span className="explore-pill">Explore <ChevronRight size={14} /></span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="collection-card">
-              <div className="collection-image-wrapper">
-                <span className="collection-badge">Casual Luxury</span>
-                <img
-                  src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=600&q=80"
-                  alt="Casual Linen Trousers"
-                  className="collection-img"
-                  loading="lazy"
-                />
-              </div>
-              <div className="collection-body">
-                <span className="collection-category">Casual Wear</span>
-                <h3 className="collection-title">Tailored Linen Trousers</h3>
-                <p className="prop-desc">Comfort fit with elasticated drawstring waist and deep pockets.</p>
-                <div className="collection-price">
-                  <span>LKR 5,200.00</span>
-                  <span className="explore-pill">Explore <ChevronRight size={14} /></span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 4 */}
-            <div className="collection-card">
-              <div className="collection-image-wrapper">
-                <span className="collection-badge">Traditional</span>
-                <img
-                  src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=600&q=80"
-                  alt="Southern Handloom Sarong"
-                  className="collection-img"
-                  loading="lazy"
-                />
-              </div>
-              <div className="collection-body">
-                <span className="collection-category">Men's Traditional</span>
-                <h3 className="collection-title">Southern Handloom Sarong</h3>
-                <p className="prop-desc">High-count combed cotton weave with traditional striped borders.</p>
-                <div className="collection-price">
-                  <span>LKR 3,800.00</span>
-                  <span className="explore-pill">Explore <ChevronRight size={14} /></span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProductGrid
+            products={products}
+            isLoading={isLoadingProducts}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onClearFilters={handleClearFilters}
+            onAddToCart={handleAddToCart}
+            onToggleWishlist={handleToggleWishlist}
+            onViewDetails={handleViewDetails}
+            wishlistIds={wishlistIds}
+          />
         </div>
       </section>
 
@@ -380,7 +394,7 @@ function StorefrontContent() {
             </div>
             <span className="telemetry-badge">
               <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-              STORM-FE-001 & FE-002 Verified
+              STORM-FE-001 through FE-006 Verified
             </span>
           </div>
 
@@ -410,23 +424,23 @@ function StorefrontContent() {
           </div>
         </div>
 
-        {/* Interactive Verification Panel (STORM-FE-004) */}
+        {/* Interactive Verification Panel (STORM-FE-004 through FE-006) */}
         <div className="verification-card">
           <div className="verification-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Sparkles size={18} color="#D4AF37" />
               <h3 style={{ fontSize: 'var(--text-base)', margin: 0, color: 'var(--color-primary)' }}>
-                Global UI State & Feedback Verification (STORM-FE-004)
+                Global UI State & Feedback Verification (STORM-FE-004 through FE-006)
               </h3>
             </div>
             <span className="telemetry-badge">
               <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-              Portal & Toast Active
+              Faceted Catalog Active
             </span>
           </div>
 
           <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-4)' }}>
-            Test interactive toast notifications with auto-dismiss countdowns, pause-on-hover mechanics, and accessible React portal modal dialogs.
+            Use the multi-faceted filter sidebar above to filter by Category, Size, Color, and Price range, or trigger toast notifications and the stock reservation confirmation modal below.
           </p>
 
           <div className="verification-btn-group">
@@ -468,6 +482,15 @@ function StorefrontContent() {
 
             <button
               type="button"
+              className="action-pill-btn action-pill-btn--info"
+              onClick={() => handleViewDetails(products[0])}
+            >
+              <Sparkles size={16} />
+              <span>Preview Sample PDP (STORM-FE-007)</span>
+            </button>
+
+            <button
+              type="button"
               className="action-pill-btn action-pill-btn--modal"
               onClick={() => setIsReservationModalOpen(true)}
             >
@@ -477,6 +500,8 @@ function StorefrontContent() {
           </div>
         </div>
       </section>
+        </>
+      )}
 
       {/* 7. Storefront Footer */}
       <footer className="storefront-footer">
