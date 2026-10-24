@@ -59,7 +59,7 @@ export const ProductGrid = ({
       </div>
 
       {/* Main Catalog View */}
-      <main className="dk-catalog-content" data-testid="catalog-main-content">
+      <div className="dk-catalog-content" data-testid="catalog-main-content">
         {/* Toolbar: Count + Mobile Filter Trigger + Sort Dropdown */}
         <div className="dk-catalog-toolbar">
           <div className="dk-catalog-count" data-testid="products-count">
@@ -172,7 +172,7 @@ export const ProductGrid = ({
             </button>
           </div>
         )}
-      </main>
+      </div>
 
       {/* Mobile Filters Modal */}
       <Modal
