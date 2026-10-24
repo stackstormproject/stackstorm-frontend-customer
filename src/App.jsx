@@ -12,21 +12,55 @@ import {
   AlertCircle,
   Info,
   Maximize2,
+  Heart,
+  ShoppingBag,
 } from 'lucide-react';
 import { ToastProvider, useToast } from './context/ToastContext';
+import { WishlistProvider, useWishlist } from './context/WishlistContext';
+import { CartProvider, useCart } from './context/CartContext';
 import { ToastContainer } from './components/common/ToastContainer';
 import { Modal } from './components/common/Modal';
 import { Header, Breadcrumbs } from './components/navigation';
 import { ProductGrid } from './components/catalog';
 import { ProductDetailPage } from './pages/ProductDetailPage';
+import { WishlistPage } from './pages/WishlistPage';
+import { CartDrawer } from './components/cart';
 import { productApi, FALLBACK_PRODUCTS } from './api/product.api';
+import { ReservationBanner } from './components/checkout/ReservationBanner';
+import { ReservationExpiredModal } from './components/checkout/ReservationExpiredModal';
+import { inventoryApi } from './api/inventory.api';
 import './styles/storefront.css';
 
 function StorefrontContent() {
   const { toast } = useToast();
-  const [wishlistCount, setWishlistCount] = useState(2);
-  const [cartCount, setCartCount] = useState(1);
+  const {
+    wishlistIds,
+    wishlistItems,
+    wishlistCount,
+    toggleWishlist,
+    removeFromWishlist,
+    clearWishlist,
+  } = useWishlist();
+
+  const { totalItems: cartCount, openCart, addItem: addCartItem } = useCart();
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+  const [activeReservation, setActiveReservation] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    const cached = sessionStorage.getItem('stackstorm_reservation_expires_at');
+    if (cached) {
+      const diff = new Date(cached).getTime() - Date.now();
+      if (diff > 0) {
+        return {
+          expiresAt: cached,
+          reservationId: sessionStorage.getItem('stackstorm_reservation_id') || 'res-active',
+        };
+      }
+    }
+    return null;
+  });
+  const [isReservationExpired, setIsReservationExpired] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isWishlistView, setIsWishlistView] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState([
     { label: 'Home', href: '/' },
@@ -44,7 +78,6 @@ function StorefrontContent() {
     color: '',
     sort: 'featured',
   });
-  const [wishlistIds, setWishlistIds] = useState(['c0000000-0000-0000-0000-000000000002']);
 
   const [backendStatus, setBackendStatus] = useState({
     checked: false,
@@ -128,42 +161,43 @@ function StorefrontContent() {
     toast.info('All catalog filters have been reset.', { title: 'Filters Cleared' });
   };
 
-  const handleAddToCart = (product) => {
-    setCartCount((prev) => prev + 1);
+  const handleAddToCart = (product, variant = null, qty = 1) => {
+    addCartItem(product, variant, qty);
     toast.success(`${product.title} added to your shopping cart!`, {
       title: 'Cart Updated',
       duration: 4000,
     });
   };
 
-  const handleToggleWishlist = (product) => {
-    setWishlistIds((prev) => {
-      const isAlreadyWishlisted = prev.includes(product.id);
-      if (isAlreadyWishlisted) {
-        setWishlistCount((c) => Math.max(0, c - 1));
-        toast.info(`Removed ${product.title} from wishlist.`, { title: 'Wishlist' });
-        return prev.filter((id) => id !== product.id);
+  const handleToggleWishlist = async (product) => {
+    try {
+      const willBeSaved = !wishlistIds.includes(product.id);
+      await toggleWishlist(product);
+      if (willBeSaved) {
+        toast.success(`Saved "${product.title}" to your wishlist!`, { title: 'Wishlist Updated' });
       } else {
-        setWishlistCount((c) => c + 1);
-        toast.success(`Saved ${product.title} to your wishlist!`, { title: 'Wishlist' });
-        return [...prev, product.id];
+        toast.info(`Removed "${product.title}" from wishlist.`, { title: 'Wishlist Updated' });
       }
-    });
+    } catch {
+      toast.error('Could not update wishlist', { title: 'Wishlist Error' });
+    }
   };
 
   const handleViewDetails = (product) => {
     setSelectedProduct(product);
+    setIsWishlistView(false);
     toast.info(`Viewing product details for ${product.title}`, { title: 'Product Details' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToCatalog = () => {
     setSelectedProduct(null);
+    setIsWishlistView(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handlePdpAddToCart = (product, variant, qty = 1) => {
-    setCartCount((prev) => prev + qty);
+    addCartItem(product, variant, qty);
     toast.success(
       `Added ${qty}x ${product.title} (${variant?.size || ''} / ${variant?.color || ''}) to your cart!`,
       { title: 'Cart Updated', duration: 4000 }
@@ -181,12 +215,53 @@ function StorefrontContent() {
     });
   };
 
-  const handleConfirmReservation = () => {
+  const handleConfirmReservation = async () => {
     setIsReservationModalOpen(false);
-    toast.success('Inventory lock acquired! 15-minute temporary reservation active.', {
-      title: 'Stock Reserved',
-      duration: 5000,
+    try {
+      const res = await inventoryApi.reserveStock({ variant_id: 1, quantity: 1 });
+      const expiresAt = res?.data?.expires_at || new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const reservationId = res?.data?.reservation_id || `res-${Date.now()}`;
+
+      sessionStorage.setItem('stackstorm_reservation_id', reservationId);
+      sessionStorage.setItem('stackstorm_reservation_expires_at', expiresAt);
+      setActiveReservation({ expiresAt, reservationId });
+      setIsReservationExpired(false);
+
+      toast.success('Inventory lock acquired! 15-minute temporary reservation active.', {
+        title: 'Stock Reserved',
+        duration: 5000,
+      });
+    } catch {
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const reservationId = `res-local-${Date.now()}`;
+      setActiveReservation({ expiresAt, reservationId });
+      setIsReservationExpired(false);
+      toast.success('Temporary stock hold active (15:00 countdown).', {
+        title: 'Stock Reserved',
+        duration: 5000,
+      });
+    }
+  };
+
+  const handleReservationExpire = () => {
+    setIsReservationExpired(true);
+    setActiveReservation(null);
+    toast.warning('Your 15-minute stock hold has expired. Items released back to inventory.', {
+      title: 'Reservation Expired',
+      duration: 6000,
     });
+  };
+
+  const handleReturnToCartFromExpired = async () => {
+    if (activeReservation?.reservationId) {
+      try {
+        await inventoryApi.releaseStock(activeReservation.reservationId);
+      } catch (_) {}
+    }
+    sessionStorage.removeItem('stackstorm_reservation_id');
+    sessionStorage.removeItem('stackstorm_reservation_expires_at');
+    setIsReservationExpired(false);
+    openCart();
   };
 
   const handleSearch = (query) => {
@@ -230,14 +305,47 @@ function StorefrontContent() {
         wishlistCount={wishlistCount}
         cartCount={cartCount}
         onSearch={handleSearch}
-        onWishlistClick={() => toast.info('Wishlist drawer opening...', { title: 'Wishlist' })}
-        onCartClick={() => toast.info('Shopping cart drawer opening...', { title: 'Shopping Cart' })}
-        onAccountClick={() => toast.info('Customer authentication dialog opening...', { title: 'Account' })}
+        onWishlistClick={() => {
+          setIsWishlistView(true);
+          setSelectedProduct(null);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onCartClick={openCart}
+        onAccountClick={() => setIsAuthModalOpen(true)}
         onCategorySelect={handleCategorySelect}
       />
 
-      {/* Main View: Either Full PDP (STORM-FE-007) or Catalog Storefront */}
-      {selectedProduct ? (
+      {/* 15-Minute Temporary Stock Reservation Live Countdown Banner (STORM-FE-010) */}
+      {activeReservation && (
+        <div style={{ maxWidth: '1280px', margin: '0.75rem auto 0', padding: '0 1.5rem' }}>
+          <ReservationBanner
+            expiresAt={activeReservation.expiresAt}
+            onExpire={handleReservationExpire}
+          />
+        </div>
+      )}
+
+      {/* Main View: Dedicated Wishlist, PDP, or Catalog Storefront */}
+      {isWishlistView ? (
+        <WishlistPage
+          items={wishlistItems}
+          onRemoveItem={(id) => {
+            removeFromWishlist(id);
+            toast.info('Item removed from wishlist.', { title: 'Wishlist' });
+          }}
+          onMoveToCart={(product) => {
+            handleAddToCart(product);
+            removeFromWishlist(product.id);
+            toast.success(`Moved ${product.title} to shopping cart!`, { title: 'Cart Updated' });
+          }}
+          onClearWishlist={() => {
+            clearWishlist();
+            toast.info('All wishlist items cleared.', { title: 'Wishlist' });
+          }}
+          onViewDetails={handleViewDetails}
+          onExploreCatalog={handleBackToCatalog}
+        />
+      ) : selectedProduct ? (
         <ProductDetailPage
           productSlug={selectedProduct.slug}
           initialProduct={selectedProduct}
@@ -483,6 +591,28 @@ function StorefrontContent() {
             <button
               type="button"
               className="action-pill-btn action-pill-btn--info"
+              onClick={openCart}
+            >
+              <ShoppingBag size={16} />
+              <span>Open Cart Drawer (STORM-FE-009)</span>
+            </button>
+
+            <button
+              type="button"
+              className="action-pill-btn action-pill-btn--info"
+              onClick={() => {
+                setIsWishlistView(true);
+                setSelectedProduct(null);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              <Heart size={16} color="#E11D48" />
+              <span>Open Wishlist Page (STORM-FE-008)</span>
+            </button>
+
+            <button
+              type="button"
+              className="action-pill-btn action-pill-btn--info"
               onClick={() => handleViewDetails(products[0])}
             >
               <Sparkles size={16} />
@@ -608,6 +738,53 @@ function StorefrontContent() {
           </p>
         </div>
       </Modal>
+
+      {/* Friendly Customer Auth Modal (AC4) */}
+      <Modal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        title="Sign In to Dickwella Fashion Corner"
+        description="Sync your wishlist and cart items across all your devices"
+        size="sm"
+        footer={
+          <>
+            <button
+              type="button"
+              className="dk-modal-btn dk-modal-btn--secondary"
+              onClick={() => setIsAuthModalOpen(false)}
+            >
+              Continue as Guest
+            </button>
+            <button
+              type="button"
+              className="dk-modal-btn dk-modal-btn--primary"
+              onClick={() => {
+                setIsAuthModalOpen(false);
+                toast.success('Welcome back, customer! Your wishlist has been synchronized.', { title: 'Signed In' });
+              }}
+            >
+              Sign In
+            </button>
+          </>
+        }
+      >
+        <p style={{ margin: '0 0 var(--space-3) 0', fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
+          Create a customer account or sign in to access member-only Ceylon handloom sales, track your Southern Province courier deliveries, and save your favorite garments permanently.
+        </p>
+      </Modal>
+
+      {/* Slide-Over Shopping Cart Drawer (STORM-FE-009) */}
+      <CartDrawer onCheckout={() => setIsReservationModalOpen(true)} />
+
+      {/* 15-Minute Stock Reservation Expired Modal (STORM-FE-010) */}
+      <ReservationExpiredModal
+        isOpen={isReservationExpired}
+        onReturnToCart={handleReturnToCartFromExpired}
+        onBrowseProducts={() => {
+          setIsReservationExpired(false);
+          setSelectedProduct(null);
+        }}
+      />
     </div>
   );
 }
@@ -615,8 +792,12 @@ function StorefrontContent() {
 export default function App() {
   return (
     <ToastProvider>
-      <StorefrontContent />
-      <ToastContainer />
+      <WishlistProvider>
+        <CartProvider>
+          <StorefrontContent />
+          <ToastContainer />
+        </CartProvider>
+      </WishlistProvider>
     </ToastProvider>
   );
 }

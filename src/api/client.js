@@ -1,9 +1,27 @@
 import axios from 'axios'
 
-// In-memory access token storage (protects against XSS attacks)
 let inMemoryAccessToken = null
 let isRefreshing = false
 let failedQueue = []
+let guestSessionId = null
+
+/**
+ * Guest session ID generator and getter (persists in localStorage)
+ */
+export const getGuestSessionId = () => {
+  if (!guestSessionId) {
+    try {
+      guestSessionId = localStorage.getItem('stackstorm_guest_session_id')
+      if (!guestSessionId) {
+        guestSessionId = `guest_${Math.random().toString(36).substring(2, 10)}_${Date.now().toString(36)}`
+        localStorage.setItem('stackstorm_guest_session_id', guestSessionId)
+      }
+    } catch {
+      guestSessionId = `guest_${Date.now()}`
+    }
+  }
+  return guestSessionId
+}
 
 /**
  * Process queued requests waiting for a fresh access token
@@ -51,6 +69,10 @@ apiClient.interceptors.request.use(
   (config) => {
     if (inMemoryAccessToken && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${inMemoryAccessToken}`
+    }
+    const sessId = getGuestSessionId()
+    if (sessId && !config.headers['x-guest-session-id'] && !config.headers['x-session-id']) {
+      config.headers['x-guest-session-id'] = sessId
     }
     return config
   },
