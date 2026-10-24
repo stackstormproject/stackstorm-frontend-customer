@@ -29,6 +29,7 @@ import { productApi, FALLBACK_PRODUCTS } from './api/product.api';
 import { ReservationBanner } from './components/checkout/ReservationBanner';
 import { ReservationExpiredModal } from './components/checkout/ReservationExpiredModal';
 import { CheckoutPage } from './pages/CheckoutPage';
+import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { inventoryApi } from './api/inventory.api';
 import './styles/storefront.css';
 
@@ -63,6 +64,7 @@ function StorefrontContent() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isWishlistView, setIsWishlistView] = useState(false);
   const [isCheckoutView, setIsCheckoutView] = useState(false);
+  const [completedOrder, setCompletedOrder] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState([
     { label: 'Home', href: '/' },
@@ -332,14 +334,25 @@ function StorefrontContent() {
         </div>
       )}
 
-      {/* Main View: Checkout, Dedicated Wishlist, PDP, or Catalog Storefront */}
-      {isCheckoutView ? (
+      {/* Main View: Order Success Receipt, Checkout, Dedicated Wishlist, PDP, or Catalog */}
+      {completedOrder ? (
+        <OrderSuccessPage
+          order={completedOrder}
+          onContinueShopping={() => {
+            setCompletedOrder(null);
+            setIsCheckoutView(false);
+            setSelectedProduct(null);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      ) : isCheckoutView ? (
         <CheckoutPage
           onBackToCatalog={() => {
             setIsCheckoutView(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          onOrderCompleted={() => {
+          onOrderCompleted={(order) => {
+            setCompletedOrder(order);
             setIsCheckoutView(false);
             setSelectedProduct(null);
             window.scrollTo({ top: 0, behavior: 'smooth' });
