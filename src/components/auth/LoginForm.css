@@ -1,0 +1,200 @@
+/* ==============================================================================
+   LoginForm Styling — Pure Vanilla CSS Design Tokens
+   Dickwella Fashion Corner E-Commerce | Module Owner: Amarawickrama R.H.
+   ============================================================================== */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  font-family: var(--font-body);
+}
+
+.login-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.login-form__label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-form__forgot-link {
+  background: none;
+  border: none;
+  color: var(--color-accent, #D4AF37);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.input-with-trailing {
+  position: relative;
+}
+
+.input-trailing-action {
+  position: absolute;
+  right: 0.85rem;
+  background: none;
+  border: none;
+  color: var(--color-text-subtle, #94A3B8);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: var(--radius-sm, 4px);
+  transition: color 0.2s ease;
+}
+
+.input-trailing-action:hover {
+  color: var(--color-text-main, #0F172A);
+}
+
+/* 15-Minute Lockout Banner (HTTP 423) */
+.login-form__lockout-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  background: #FEF2F2;
+  border: 1.5px solid #FCA5A5;
+  border-radius: var(--radius-md, 8px);
+  padding: 1rem 1.15rem;
+  color: #991B1B;
+  animation: lockoutShake 0.4s ease;
+}
+
+@keyframes lockoutShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.login-form__lockout-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FEE2E2;
+  color: var(--color-danger, #EF4444);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.login-form__lockout-text {
+  font-size: var(--text-xs, 0.75rem);
+  line-height: 1.45;
+}
+
+.login-form__lockout-text strong {
+  font-size: var(--text-sm, 0.875rem);
+  color: #7F1D1D;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.login-form__lockout-text p {
+  margin: 0;
+}
+
+.login-form__lockout-clock {
+  font-family: monospace;
+  font-weight: 700;
+  background: #DC2626;
+  color: #FFFFFF;
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--radius-sm, 4px);
+  letter-spacing: 0.05em;
+}
+
+.login-form__error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: var(--radius-md, 8px);
+  padding: 0.75rem 1rem;
+  color: var(--color-danger, #EF4444);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 500;
+}
+
+.login-form__remember-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-muted, #475569);
+  cursor: pointer;
+}
+
+.checkbox-label input {
+  accent-color: var(--color-accent, #D4AF37);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.login-form__submit-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  background: var(--color-primary, #0A192F);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  font-weight: 600;
+  font-size: var(--text-sm, 0.875rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.login-form__submit-btn:hover:not(:disabled) {
+  background: var(--color-primary-light, #172A45);
+  box-shadow: 0 4px 12px rgba(10, 25, 47, 0.15);
+}
+
+.login-form__submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-form__footer-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-muted, #475569);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border, #E2E8F0);
+  margin-top: 0.5rem;
+}
+
+.login-form__switch-btn {
+  background: none;
+  border: none;
+  color: var(--color-accent, #D4AF37);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}

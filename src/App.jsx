@@ -31,6 +31,7 @@ import { ReservationExpiredModal } from './components/checkout/ReservationExpire
 import { CheckoutPage } from './pages/CheckoutPage';
 import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { inventoryApi } from './api/inventory.api';
+import { AuthModal } from './components/auth/AuthModal';
 import './styles/storefront.css';
 
 function StorefrontContent() {
@@ -772,39 +773,19 @@ function StorefrontContent() {
         </div>
       </Modal>
 
-      {/* Friendly Customer Auth Modal (AC4) */}
-      <Modal
+      {/* Customer Authentication Modal (STORM-FE-013) */}
+      <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        title="Sign In to Dickwella Fashion Corner"
-        description="Sync your wishlist and cart items across all your devices"
-        size="sm"
-        footer={
-          <>
-            <button
-              type="button"
-              className="dk-modal-btn dk-modal-btn--secondary"
-              onClick={() => setIsAuthModalOpen(false)}
-            >
-              Continue as Guest
-            </button>
-            <button
-              type="button"
-              className="dk-modal-btn dk-modal-btn--primary"
-              onClick={() => {
-                setIsAuthModalOpen(false);
-                toast.success('Welcome back, customer! Your wishlist has been synchronized.', { title: 'Signed In' });
-              }}
-            >
-              Sign In
-            </button>
-          </>
-        }
-      >
-        <p style={{ margin: '0 0 var(--space-3) 0', fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
-          Create a customer account or sign in to access member-only Ceylon handloom sales, track your Southern Province courier deliveries, and save your favorite garments permanently.
-        </p>
-      </Modal>
+        onSuccess={(userData) => {
+          setIsAuthModalOpen(false);
+          const name = userData?.customer?.first_name || userData?.customer?.email || 'Valued Customer';
+          toast.success(`Welcome, ${name}! Your profile and cart are synchronized.`, {
+            title: 'Authentication Successful',
+            duration: 5000,
+          });
+        }}
+      />
 
       {/* Slide-Over Shopping Cart Drawer (STORM-FE-009) */}
       <CartDrawer
