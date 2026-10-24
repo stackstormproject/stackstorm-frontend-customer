@@ -32,6 +32,9 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { inventoryApi } from './api/inventory.api';
 import { AuthModal } from './components/auth/AuthModal';
+import { CustomerProfilePage } from './pages/CustomerProfilePage';
+import { OrderHistoryPage } from './pages/OrderHistoryPage';
+import ChatWidget from './components/chat/ChatWidget';
 import './styles/storefront.css';
 
 function StorefrontContent() {
@@ -65,6 +68,9 @@ function StorefrontContent() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isWishlistView, setIsWishlistView] = useState(false);
   const [isCheckoutView, setIsCheckoutView] = useState(false);
+  const [isProfileView, setIsProfileView] = useState(false);
+  const [isOrderHistoryView, setIsOrderHistoryView] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [completedOrder, setCompletedOrder] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState([
@@ -314,14 +320,26 @@ function StorefrontContent() {
       <Header
         wishlistCount={wishlistCount}
         cartCount={cartCount}
+        currentUser={currentUser}
         onSearch={handleSearch}
         onWishlistClick={() => {
           setIsWishlistView(true);
+          setIsProfileView(false);
           setSelectedProduct(null);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onCartClick={openCart}
-        onAccountClick={() => setIsAuthModalOpen(true)}
+        onAccountClick={() => {
+          if (currentUser) {
+            setIsProfileView(true);
+            setIsWishlistView(false);
+            setIsCheckoutView(false);
+            setSelectedProduct(null);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            setIsAuthModalOpen(true);
+          }
+        }}
         onCategorySelect={handleCategorySelect}
       />
 
@@ -335,13 +353,14 @@ function StorefrontContent() {
         </div>
       )}
 
-      {/* Main View: Order Success Receipt, Checkout, Dedicated Wishlist, PDP, or Catalog */}
+      {/* Main View: Order Success Receipt, Checkout, Profile Hub, Dedicated Wishlist, PDP, or Catalog */}
       {completedOrder ? (
         <OrderSuccessPage
           order={completedOrder}
           onContinueShopping={() => {
             setCompletedOrder(null);
             setIsCheckoutView(false);
+            setIsProfileView(false);
             setSelectedProduct(null);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
@@ -355,10 +374,34 @@ function StorefrontContent() {
           onOrderCompleted={(order) => {
             setCompletedOrder(order);
             setIsCheckoutView(false);
+            setIsProfileView(false);
             setSelectedProduct(null);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           initialReservation={activeReservation}
+        />
+      ) : isOrderHistoryView ? (
+        <OrderHistoryPage
+          onBackToCatalog={() => {
+            setIsOrderHistoryView(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onViewInvoice={(ord) => {
+            setCompletedOrder(ord);
+            setIsOrderHistoryView(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      ) : isProfileView ? (
+        <CustomerProfilePage
+          initialProfile={currentUser}
+          onBackToCatalog={() => {
+            setIsProfileView(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onProfileUpdated={(updated) => {
+            setCurrentUser(updated);
+          }}
         />
       ) : isWishlistView ? (
         <WishlistPage
@@ -655,6 +698,37 @@ function StorefrontContent() {
 
             <button
               type="button"
+              className="action-pill-btn action-pill-btn--info"
+              onClick={() => {
+                setIsProfileView(true);
+                setIsWishlistView(false);
+                setIsCheckoutView(false);
+                setSelectedProduct(null);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              <Award size={16} color="#D4AF37" />
+              <span>Customer Profile & Loyalty Hub (STORM-FE-014)</span>
+            </button>
+
+            <button
+              type="button"
+              className="action-pill-btn action-pill-btn--info"
+              onClick={() => {
+                setIsOrderHistoryView(true);
+                setIsProfileView(false);
+                setIsWishlistView(false);
+                setIsCheckoutView(false);
+                setSelectedProduct(null);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              <Truck size={16} color="#0284C7" />
+              <span>Order History & 4-Stage Stepper (STORM-FE-015)</span>
+            </button>
+
+            <button
+              type="button"
               className="action-pill-btn action-pill-btn--modal"
               onClick={() => setIsReservationModalOpen(true)}
             >
@@ -685,7 +759,23 @@ function StorefrontContent() {
             <div>
               <h4 className="footer-col-title">Customer Care</h4>
               <ul className="footer-links">
-                <li><a href="#tracking" className="footer-link">Track Delivery Order</a></li>
+                <li>
+                  <a
+                    href="#tracking"
+                    className="footer-link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsOrderHistoryView(true);
+                      setIsProfileView(false);
+                      setIsWishlistView(false);
+                      setIsCheckoutView(false);
+                      setSelectedProduct(null);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  >
+                    Track Delivery Order
+                  </a>
+                </li>
                 <li><a href="#returns" className="footer-link">30-Day Return & Exchange Policy</a></li>
                 <li><a href="#shipping" className="footer-link">Islandwide Courier Rates</a></li>
                 <li><a href="#loyalty" className="footer-link">Loyalty Tier Benefits</a></li>
@@ -779,7 +869,9 @@ function StorefrontContent() {
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={(userData) => {
           setIsAuthModalOpen(false);
-          const name = userData?.customer?.first_name || userData?.customer?.email || 'Valued Customer';
+          const user = userData?.customer || userData?.user || userData;
+          setCurrentUser(user);
+          const name = user?.first_name || user?.name || user?.email || 'Valued Customer';
           toast.success(`Welcome, ${name}! Your profile and cart are synchronized.`, {
             title: 'Authentication Successful',
             duration: 5000,
@@ -804,6 +896,9 @@ function StorefrontContent() {
           setSelectedProduct(null);
         }}
       />
+
+      {/* Floating Live Support Chat Widget & Bot Fallback (STORM-FE-021) */}
+      <ChatWidget />
     </div>
   );
 }

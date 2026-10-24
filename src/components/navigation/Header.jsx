@@ -17,6 +17,7 @@ import './Header.css';
 export const Header = ({
   wishlistCount = 0,
   cartCount = 0,
+  currentUser = null,
   onSearch,
   onWishlistClick,
   onCartClick,
@@ -253,7 +254,7 @@ export const Header = ({
               data-testid="header-account-btn"
             >
               <User size={16} />
-              <span>Sign In</span>
+              <span>{currentUser ? (currentUser.first_name || currentUser.name || 'My Profile') : 'Sign In'}</span>
             </button>
           </div>
         </div>
