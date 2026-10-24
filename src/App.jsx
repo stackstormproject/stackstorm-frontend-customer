@@ -28,6 +28,7 @@ import { CartDrawer } from './components/cart';
 import { productApi, FALLBACK_PRODUCTS } from './api/product.api';
 import { ReservationBanner } from './components/checkout/ReservationBanner';
 import { ReservationExpiredModal } from './components/checkout/ReservationExpiredModal';
+import { CheckoutPage } from './pages/CheckoutPage';
 import { inventoryApi } from './api/inventory.api';
 import './styles/storefront.css';
 
@@ -61,6 +62,7 @@ function StorefrontContent() {
   const [isReservationExpired, setIsReservationExpired] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isWishlistView, setIsWishlistView] = useState(false);
+  const [isCheckoutView, setIsCheckoutView] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState([
     { label: 'Home', href: '/' },
@@ -231,11 +233,16 @@ function StorefrontContent() {
         title: 'Stock Reserved',
         duration: 5000,
       });
+
+      setIsCheckoutView(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch {
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
       const reservationId = `res-local-${Date.now()}`;
       setActiveReservation({ expiresAt, reservationId });
       setIsReservationExpired(false);
+      setIsCheckoutView(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       toast.success('Temporary stock hold active (15:00 countdown).', {
         title: 'Stock Reserved',
         duration: 5000,
@@ -325,8 +332,21 @@ function StorefrontContent() {
         </div>
       )}
 
-      {/* Main View: Dedicated Wishlist, PDP, or Catalog Storefront */}
-      {isWishlistView ? (
+      {/* Main View: Checkout, Dedicated Wishlist, PDP, or Catalog Storefront */}
+      {isCheckoutView ? (
+        <CheckoutPage
+          onBackToCatalog={() => {
+            setIsCheckoutView(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onOrderCompleted={() => {
+            setIsCheckoutView(false);
+            setSelectedProduct(null);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          initialReservation={activeReservation}
+        />
+      ) : isWishlistView ? (
         <WishlistPage
           items={wishlistItems}
           onRemoveItem={(id) => {
@@ -774,7 +794,12 @@ function StorefrontContent() {
       </Modal>
 
       {/* Slide-Over Shopping Cart Drawer (STORM-FE-009) */}
-      <CartDrawer onCheckout={() => setIsReservationModalOpen(true)} />
+      <CartDrawer
+        onCheckout={() => {
+          setIsCheckoutView(true);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
 
       {/* 15-Minute Stock Reservation Expired Modal (STORM-FE-010) */}
       <ReservationExpiredModal
