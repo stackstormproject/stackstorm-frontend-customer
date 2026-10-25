@@ -4,8 +4,6 @@ import {
   Heart,
   ShoppingBag,
   User,
-  MapPin,
-  Clock,
   Menu,
   X,
   ChevronDown,
@@ -84,28 +82,11 @@ export const Header = ({
 
   return (
     <header className="dk-header-root" data-testid="storefront-header">
-      {/* 1. Top Announcement Bar */}
-      <div className="dk-top-bar">
-        <div className="container dk-top-bar-inner">
-          <div className="dk-top-bar-item">
-            <MapPin size={13} color="#D4AF37" />
-            <span>Main Street, Dickwella, Matara • Mon–Sun 9:00 AM – 8:00 PM</span>
-          </div>
-          <div>
-            <span>Islandwide Courier Delivery Across Sri Lanka • Free Shipping Over LKR 10,000</span>
-          </div>
-          <div className="dk-top-bar-item">
-            <Clock size={13} color="#10B981" />
-            <span>Dispatch: Next Business Day</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Main Storefront Header Bar */}
+      {/* Main Storefront Header Bar */}
       <div className="dk-main-header" onMouseLeave={handleCategoryMouseLeave}>
         {/* Top Header Row with Centered Logo */}
         <div className="container dk-header-top-row">
-          {/* Left: Mobile Toggle & Desktop Search */}
+          {/* Left: Mobile Toggle & Responsive Search */}
           <div className="dk-header-left">
             <button
               type="button"
@@ -176,8 +157,9 @@ export const Header = ({
             </div>
           </div>
 
-          {/* Right: Header Action Badges */}
+          {/* Right: Action Badges (Wishlist, Cart & Account) */}
           <div className="dk-header-actions">
+
             <button
               type="button"
               className="dk-action-btn"

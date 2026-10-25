@@ -784,3 +784,36 @@
   background: var(--color-accent-subtle);
   font-weight: var(--font-semibold);
 }
+
+/* Bottom Service Announcement Bar (Relocated from Top Bar) */
+.storefront-bottom-bar {
+  background: var(--color-primary-dark, #020C1B);
+  color: var(--color-accent, #D4AF37);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--font-medium, 500);
+  letter-spacing: 0.04em;
+  padding: 0.85rem 0;
+  border-top: 1px solid rgba(212, 175, 55, 0.25);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.bottom-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4, 1rem);
+  flex-wrap: wrap;
+}
+
+.bottom-bar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  color: var(--color-text-inverse-muted, #94A3B8);
+}
+
+.bottom-bar-item--highlight {
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
