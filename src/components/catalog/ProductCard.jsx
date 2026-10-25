@@ -67,10 +67,15 @@ export const ProductCard = ({
         />
 
         <img
-          src={primary_image}
+          src={primary_image || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80'}
           alt={title}
           className="dk-card-img dk-card-img--primary"
           loading="lazy"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src =
+              'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
+          }}
         />
 
         {secondary_image && secondary_image !== primary_image && (
@@ -79,6 +84,11 @@ export const ProductCard = ({
             alt={`${title} alternate view`}
             className="dk-card-img dk-card-img--secondary"
             loading="lazy"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src =
+                'https://images.unsplash.com/photo-1620012253295-c15c429f66bf?auto=format&fit=crop&w=800&q=80';
+            }}
           />
         )}
       </div>
