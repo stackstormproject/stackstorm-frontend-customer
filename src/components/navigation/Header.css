@@ -181,41 +181,15 @@
   position: relative;
   display: flex;
   align-items: center;
-  max-width: 250px;
+  max-width: 290px;
   width: 100%;
   transition: all var(--transition-normal, 200ms ease);
 }
 
-@media (max-width: 1200px) {
-  .dk-header-search {
-    max-width: 190px;
-  }
-}
-
-@media (max-width: 900px) {
-  .dk-header-search {
-    max-width: 150px;
-  }
-  .dk-search-input {
-    font-size: 0.7rem;
-    padding-left: 1.85rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .dk-header-search {
-    max-width: 120px;
-  }
-  .dk-search-input {
-    font-size: 0.65rem;
-    padding: 0.3rem 0.5rem 0.3rem 1.6rem;
-    height: 32px;
-  }
-}
-
 .dk-search-input {
   width: 100%;
-  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem) var(--space-2, 0.5rem) 2.25rem;
+  height: 38px;
+  padding: 0 2.5rem 0 1rem;
   font-family: var(--font-body, 'Inter', sans-serif);
   font-size: var(--text-xs, 0.75rem);
   border: 1px solid var(--color-border, #E2E8F0);
@@ -226,17 +200,77 @@
   transition: all var(--transition-fast, 150ms ease);
 }
 
-.dk-search-input:focus {
-  border-color: var(--color-accent, #D4AF37);
-  background: var(--color-surface, #FFFFFF);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+.dk-search-input::-webkit-search-decoration,
+.dk-search-input::-webkit-search-cancel-button,
+.dk-search-input::-webkit-search-results-button,
+.dk-search-input::-webkit-search-results-decoration {
+  display: none;
+  -webkit-appearance: none;
 }
 
-.dk-search-icon {
+.dk-search-input:focus,
+.dk-search-input:focus-visible {
+  border-color: var(--color-accent, #D4AF37) !important;
+  background: var(--color-surface, #FFFFFF);
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.22) !important;
+}
+
+.dk-search-submit-btn {
   position: absolute;
-  left: 0.75rem;
-  pointer-events: none;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full, 9999px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
   color: var(--color-text-subtle, #94A3B8);
+  transition: all var(--transition-fast, 150ms ease);
+  padding: 0;
+}
+
+.dk-search-submit-btn:hover {
+  color: var(--color-accent, #D4AF37);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.dk-search-submit-btn:focus-visible {
+  outline: 2px solid var(--color-accent, #D4AF37);
+  outline-offset: 1px;
+}
+
+@media (max-width: 1200px) {
+  .dk-header-search {
+    max-width: 220px;
+  }
+}
+
+@media (max-width: 900px) {
+  .dk-header-search {
+    max-width: 175px;
+  }
+  .dk-search-input {
+    font-size: 0.7rem;
+    padding: 0 2.25rem 0 0.85rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .dk-header-search {
+    max-width: 135px;
+  }
+  .dk-search-input {
+    font-size: 0.65rem;
+    padding: 0 2rem 0 0.75rem;
+    height: 34px;
+  }
 }
 
 /* Header Action Badges & Buttons — Aligned to Far Right */

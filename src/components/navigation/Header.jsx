@@ -110,26 +110,12 @@ export const Header = ({
               />
               <button
                 type="submit"
-                className="action-btn"
+                className="dk-search-submit-btn"
                 aria-label="Search Catalog"
                 title="Search Catalog"
-                style={{
-                  position: 'absolute',
-                  right: '4px',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: 'none',
-                  background: 'transparent',
-                  cursor: 'pointer',
-                  color: 'var(--color-text-subtle)',
-                }}
                 data-testid="header-search-submit"
               >
-                <Search size={15} />
+                <Search size={16} />
               </button>
             </form>
           </div>
@@ -238,36 +224,48 @@ export const Header = ({
               {/* Quick Apparel Collection Shortcuts */}
               <div className="dk-nav-item">
                 <a
-                  href="#mens-batik"
+                  href="#catalog"
                   className="dk-nav-button"
-                  onClick={() => onCategorySelect && onCategorySelect({ name: "Men's Batik", slug: 'men-batik-shirts' })}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onCategorySelect) onCategorySelect({ name: "Men's Batik", slug: 'men-batik-shirts' });
+                  }}
                 >
                   <span>Men's Batik</span>
                 </a>
               </div>
               <div className="dk-nav-item">
                 <a
-                  href="#womens-sarees"
+                  href="#catalog"
                   className="dk-nav-button"
-                  onClick={() => onCategorySelect && onCategorySelect({ name: "Women's Sarees", slug: 'women-silk-saris' })}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onCategorySelect) onCategorySelect({ name: "Women's Sarees", slug: 'women-silk-saris' });
+                  }}
                 >
                   <span>Women's Sarees</span>
                 </a>
               </div>
               <div className="dk-nav-item">
                 <a
-                  href="#handlooms"
+                  href="#catalog"
                   className="dk-nav-button"
-                  onClick={() => onCategorySelect && onCategorySelect({ name: "Pure Handlooms", slug: 'handlooms' })}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onCategorySelect) onCategorySelect({ name: "Pure Handlooms", slug: 'handlooms' });
+                  }}
                 >
                   <span>Pure Handlooms</span>
                 </a>
               </div>
               <div className="dk-nav-item">
                 <a
-                  href="#linen"
+                  href="#catalog"
                   className="dk-nav-button"
-                  onClick={() => onCategorySelect && onCategorySelect({ name: "Linen Collection", slug: 'linen-collection' })}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onCategorySelect) onCategorySelect({ name: "Linen Collection", slug: 'linen-collection' });
+                  }}
                 >
                   <span>Linen Collection</span>
                 </a>

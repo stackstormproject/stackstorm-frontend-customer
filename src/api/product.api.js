@@ -278,11 +278,30 @@ function filterLocalFallback(params = {}) {
 
   // Category filter
   if (params.category && params.category !== 'all') {
-    list = list.filter((p) =>
-      p.category?.slug === params.category ||
-      p.category?.name?.toLowerCase() === params.category?.toLowerCase() ||
-      p.slug.includes(params.category)
-    );
+    const cat = String(params.category).toLowerCase();
+    list = list.filter((p) => {
+      const pCatSlug = p.category?.slug?.toLowerCase() || '';
+      const pCatName = p.category?.name?.toLowerCase() || '';
+      const pCatFull = (p.category_name || '').toLowerCase();
+      const pTitle = (p.title || '').toLowerCase();
+      const pDesc = (p.description || '').toLowerCase();
+
+      if (cat === 'men') return pCatSlug === 'men' || pCatName === 'men';
+      if (cat === 'women') return pCatSlug === 'women' || pCatName === 'women';
+      if (cat === 'kids') return pCatSlug === 'kids' || pCatName === 'kids';
+      if (cat === 'accessories') return pCatSlug === 'accessories' || pCatName === 'accessories';
+      if (cat.includes('batik')) return pTitle.includes('batik') || pDesc.includes('batik');
+      if (cat.includes('handloom')) return pTitle.includes('handloom') || pDesc.includes('handloom');
+      if (cat.includes('linen')) return pTitle.includes('linen') || pDesc.includes('linen');
+      if (cat.includes('saree') || cat.includes('sari')) return pTitle.includes('saree') || pTitle.includes('sari');
+
+      return (
+        pCatSlug === cat ||
+        pCatName === cat ||
+        pCatFull.includes(cat) ||
+        p.slug.includes(cat)
+      );
+    });
   }
 
   // Price Range
