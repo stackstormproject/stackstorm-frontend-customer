@@ -4,8 +4,6 @@ import {
   Heart,
   ShoppingBag,
   User,
-  MapPin,
-  Clock,
   Menu,
   X,
   ChevronDown,
@@ -84,38 +82,59 @@ export const Header = ({
 
   return (
     <header className="dk-header-root" data-testid="storefront-header">
-      {/* 1. Top Announcement Bar */}
-      <div className="dk-top-bar">
-        <div className="container dk-top-bar-inner">
-          <div className="dk-top-bar-item">
-            <MapPin size={13} color="#D4AF37" />
-            <span>Main Street, Dickwella, Matara • Mon–Sun 9:00 AM – 8:00 PM</span>
-          </div>
-          <div>
-            <span>Islandwide Courier Delivery Across Sri Lanka • Free Shipping Over LKR 10,000</span>
-          </div>
-          <div className="dk-top-bar-item">
-            <Clock size={13} color="#10B981" />
-            <span>Dispatch: Next Business Day</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Main Storefront Header Bar */}
+      {/* Main Storefront Header Bar */}
       <div className="dk-main-header" onMouseLeave={handleCategoryMouseLeave}>
-        <div className="container dk-header-inner">
-          {/* Mobile Hamburger Button */}
-          <button
-            type="button"
-            className="dk-mobile-toggle"
-            onClick={() => setIsMobileDrawerOpen(true)}
-            aria-label="Open mobile menu"
-            data-testid="mobile-menu-toggle"
-          >
-            <Menu size={22} />
-          </button>
+        {/* Top Header Row with Centered Logo */}
+        <div className="container dk-header-top-row">
+          {/* Left: Mobile Toggle & Responsive Search */}
+          <div className="dk-header-left">
+            <button
+              type="button"
+              className="dk-mobile-toggle"
+              onClick={() => setIsMobileDrawerOpen(true)}
+              aria-label="Open mobile menu"
+              data-testid="mobile-menu-toggle"
+            >
+              <Menu size={22} />
+            </button>
 
-          {/* Brand Identity */}
+            <form className="dk-header-search" onSubmit={handleSearchSubmit} role="search">
+              <input
+                type="search"
+                className="dk-search-input"
+                placeholder="Search handloom & batik..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search clothing catalog"
+                data-testid="header-search-input"
+              />
+              <button
+                type="submit"
+                className="action-btn"
+                aria-label="Search Catalog"
+                title="Search Catalog"
+                style={{
+                  position: 'absolute',
+                  right: '4px',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  color: 'var(--color-text-subtle)',
+                }}
+                data-testid="header-search-submit"
+              >
+                <Search size={15} />
+              </button>
+            </form>
+          </div>
+
+          {/* Center: Brand Identity — STACKSTORM over Dickwella Fashion Corner (Black & Centered) */}
           <div className="dk-brand-group">
             <div className="dk-brand-identity">
               <a
@@ -131,102 +150,15 @@ export const Header = ({
                   }
                 }}
               >
-                Dickwella Fashion Corner
+                <span className="dk-brand-main">STACKSTORM</span>
+                <span className="dk-brand-sub">Dickwella Fashion Corner</span>
               </a>
-              <span className="dk-brand-subtitle">Authentic Sri Lankan Apparel</span>
             </div>
           </div>
 
-          {/* Desktop Navigation with Hover Mega-Menu */}
-          <nav className="dk-nav-desktop" aria-label="Main Navigation">
-            {categories.map((category) => {
-              const hasChildren = category.children && category.children.length > 0;
-              const isActive = activeMegaCategory?.id === category.id;
-
-              return (
-                <div
-                  key={category.id || category.slug}
-                  className="dk-nav-item"
-                  onMouseEnter={() => handleCategoryMouseEnter(category)}
-                >
-                  <button
-                    type="button"
-                    className={`dk-nav-button ${isActive ? 'active' : ''}`}
-                    onClick={() => {
-                      if (onCategorySelect) onCategorySelect(category);
-                    }}
-                    aria-expanded={isActive}
-                    aria-haspopup={hasChildren ? 'true' : 'false'}
-                    data-testid={`nav-item-${category.slug}`}
-                  >
-                    <span>{category.name}</span>
-                    {hasChildren && <ChevronDown size={14} style={{ opacity: 0.7 }} />}
-                  </button>
-                </div>
-              );
-            })}
-
-            {/* Quick Apparel Collection Shortcuts */}
-            <div className="dk-nav-item">
-              <a href="#mens-batik" className="dk-nav-button" onClick={() => onCategorySelect && onCategorySelect({ name: "Men's Batik", slug: 'men-batik-shirts' })}>
-                <span>Men's Batik</span>
-              </a>
-            </div>
-            <div className="dk-nav-item">
-              <a href="#womens-sarees" className="dk-nav-button" onClick={() => onCategorySelect && onCategorySelect({ name: "Women's Sarees", slug: 'women-silk-saris' })}>
-                <span>Women's Sarees</span>
-              </a>
-            </div>
-            <div className="dk-nav-item">
-              <a href="#handlooms" className="dk-nav-button" onClick={() => onCategorySelect && onCategorySelect({ name: "Pure Handlooms", slug: 'handlooms' })}>
-                <span>Pure Handlooms</span>
-              </a>
-            </div>
-            <div className="dk-nav-item">
-              <a href="#linen" className="dk-nav-button" onClick={() => onCategorySelect && onCategorySelect({ name: "Linen Collection", slug: 'linen-collection' })}>
-                <span>Linen Collection</span>
-              </a>
-            </div>
-          </nav>
-
-          {/* Live Search Input */}
-          <form className="dk-header-search" onSubmit={handleSearchSubmit} role="search">
-            <input
-              type="search"
-              className="dk-search-input"
-              placeholder="Search handloom & batik..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Search clothing catalog"
-              data-testid="header-search-input"
-            />
-            <button
-              type="submit"
-              className="action-btn"
-              aria-label="Search Catalog"
-              title="Search Catalog"
-              style={{
-                position: 'absolute',
-                right: '4px',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                color: 'var(--color-text-subtle)'
-              }}
-              data-testid="header-search-submit"
-            >
-              <Search size={15} />
-            </button>
-          </form>
-
-          {/* Header Action Badges */}
+          {/* Right: Action Badges (Wishlist, Cart & Account) */}
           <div className="dk-header-actions">
+
             <button
               type="button"
               className="dk-action-btn"
@@ -272,6 +204,78 @@ export const Header = ({
           </div>
         </div>
 
+        {/* Centered Desktop Category Navigation */}
+        <div className="dk-header-nav-row">
+          <div className="container dk-nav-container">
+            <nav className="dk-nav-desktop" aria-label="Main Navigation">
+              {categories.map((category) => {
+                const hasChildren = category.children && category.children.length > 0;
+                const isActive = activeMegaCategory?.id === category.id;
+
+                return (
+                  <div
+                    key={category.id || category.slug}
+                    className="dk-nav-item"
+                    onMouseEnter={() => handleCategoryMouseEnter(category)}
+                  >
+                    <button
+                      type="button"
+                      className={`dk-nav-button ${isActive ? 'active' : ''}`}
+                      onClick={() => {
+                        if (onCategorySelect) onCategorySelect(category);
+                      }}
+                      aria-expanded={isActive}
+                      aria-haspopup={hasChildren ? 'true' : 'false'}
+                      data-testid={`nav-item-${category.slug}`}
+                    >
+                      <span>{category.name}</span>
+                      {hasChildren && <ChevronDown size={14} style={{ opacity: 0.7 }} />}
+                    </button>
+                  </div>
+                );
+              })}
+
+              {/* Quick Apparel Collection Shortcuts */}
+              <div className="dk-nav-item">
+                <a
+                  href="#mens-batik"
+                  className="dk-nav-button"
+                  onClick={() => onCategorySelect && onCategorySelect({ name: "Men's Batik", slug: 'men-batik-shirts' })}
+                >
+                  <span>Men's Batik</span>
+                </a>
+              </div>
+              <div className="dk-nav-item">
+                <a
+                  href="#womens-sarees"
+                  className="dk-nav-button"
+                  onClick={() => onCategorySelect && onCategorySelect({ name: "Women's Sarees", slug: 'women-silk-saris' })}
+                >
+                  <span>Women's Sarees</span>
+                </a>
+              </div>
+              <div className="dk-nav-item">
+                <a
+                  href="#handlooms"
+                  className="dk-nav-button"
+                  onClick={() => onCategorySelect && onCategorySelect({ name: "Pure Handlooms", slug: 'handlooms' })}
+                >
+                  <span>Pure Handlooms</span>
+                </a>
+              </div>
+              <div className="dk-nav-item">
+                <a
+                  href="#linen"
+                  className="dk-nav-button"
+                  onClick={() => onCategorySelect && onCategorySelect({ name: "Linen Collection", slug: 'linen-collection' })}
+                >
+                  <span>Linen Collection</span>
+                </a>
+              </div>
+            </nav>
+          </div>
+        </div>
+
         {/* Desktop Mega-Menu Overlay */}
         {activeMegaCategory && (
           <div onMouseEnter={handleMegaMenuMouseEnter}>
@@ -297,9 +301,14 @@ export const Header = ({
             data-testid="mobile-drawer"
           >
             <div className="dk-drawer-header">
-              <span className="dk-brand-title" style={{ fontSize: '1rem' }}>
-                Dickwella Corner
-              </span>
+              <div className="dk-brand-identity" style={{ alignItems: 'flex-start', textAlign: 'left' }}>
+                <span className="dk-brand-main" style={{ fontSize: '1.25rem', color: '#000000' }}>
+                  STACKSTORM
+                </span>
+                <span className="dk-brand-sub" style={{ fontSize: '0.62rem', color: '#000000' }}>
+                  Dickwella Fashion Corner
+                </span>
+              </div>
               <button
                 type="button"
                 className="dk-action-btn"

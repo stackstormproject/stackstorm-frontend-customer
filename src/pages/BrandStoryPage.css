@@ -1,0 +1,394 @@
+/* BrandStoryPage.css - Luxury Artisanal Heritage Styling */
+
+.brand-story-page {
+  background-color: var(--color-background, #FAFAFA);
+  color: var(--color-text, #1E293B);
+  padding-bottom: var(--space-16, 4rem);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 1. Hero Banner */
+.brand-story__hero {
+  background: linear-gradient(135deg, #0A192F 0%, #0F2744 50%, #172A45 100%);
+  color: #FFFFFF;
+  padding: var(--space-8, 2rem) 0 var(--space-16, 4rem);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.25);
+}
+
+.brand-story__hero::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.brand-story__hero-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-8, 2rem);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.brand-story__back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.brand-story__back-btn:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #D4AF37;
+  color: #D4AF37;
+  transform: translateX(-2px);
+}
+
+.brand-story__location-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--text-xs, 0.75rem);
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.brand-story__hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.brand-story__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #D4AF37;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-full, 9999px);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.brand-story__hero-title {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: #FFFFFF;
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.brand-story__hero-subtitle {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* 2. Stats Section */
+.brand-story__stats-section {
+  margin-top: -2.5rem;
+  position: relative;
+  z-index: 2;
+  margin-bottom: var(--space-12, 3rem);
+}
+
+.brand-story__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4, 1rem);
+}
+
+.brand-stat-card {
+  background: #FFFFFF;
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-6, 1.5rem);
+  box-shadow: 0 8px 24px rgba(10, 25, 47, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brand-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(10, 25, 47, 0.12);
+  border-color: #D4AF37;
+}
+
+.brand-stat-number {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #0A192F;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, #0A192F 0%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-stat-title {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 600;
+  color: #0A192F;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.brand-stat-desc {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-muted, #64748B);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 3. Deep Narrative: Chapters */
+.brand-story__narrative {
+  padding: var(--space-8, 2rem) 0;
+}
+
+.narrative-chapter {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: var(--space-8, 2rem);
+  align-items: center;
+  margin-bottom: var(--space-12, 3rem);
+}
+
+.narrative-chapter--reversed {
+  grid-template-columns: 0.8fr 1.2fr;
+}
+
+.narrative-chapter--reversed .narrative-chapter__content {
+  order: 2;
+}
+
+.narrative-chapter--reversed .narrative-chapter__card {
+  order: 1;
+}
+
+@media (max-width: 868px) {
+  .narrative-chapter,
+  .narrative-chapter--reversed {
+    grid-template-columns: 1fr;
+  }
+  .narrative-chapter--reversed .narrative-chapter__content {
+    order: 1;
+  }
+  .narrative-chapter--reversed .narrative-chapter__card {
+    order: 2;
+  }
+}
+
+.narrative-chapter__tag {
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #D4AF37;
+  margin-bottom: 0.5rem;
+}
+
+.narrative-chapter__title {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  color: #0A192F;
+  margin-bottom: var(--space-4, 1rem);
+  line-height: 1.25;
+}
+
+.narrative-chapter__content p {
+  font-size: var(--text-sm, 0.875rem);
+  line-height: 1.7;
+  color: #334155;
+  margin-bottom: 1rem;
+}
+
+.narrative-highlight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(212, 175, 55, 0.08);
+  border-left: 3px solid #D4AF37;
+  padding: 0.65rem 1rem;
+  border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  color: #0A192F;
+}
+
+.chapter-art-box {
+  background: linear-gradient(135deg, #0A192F 0%, #172A45 100%);
+  color: #FFFFFF;
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-8, 2rem);
+  text-align: center;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 10px 30px rgba(10, 25, 47, 0.12);
+}
+
+.chapter-art-box h3 {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.25rem;
+  color: #FFFFFF;
+  margin: 1rem 0 0.5rem;
+}
+
+.chapter-art-box p {
+  font-size: var(--text-xs, 0.75rem);
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 4. 4-Stage Process Section */
+.brand-story__process-section {
+  background: #F1F5F9;
+  padding: var(--space-12, 3rem) 0;
+  border-radius: var(--radius-xl, 16px);
+  margin-bottom: var(--space-12, 3rem);
+}
+
+.brand-story__section-header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto var(--space-8, 2rem);
+}
+
+.brand-story__section-title {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.85rem;
+  color: #0A192F;
+  margin-bottom: 0.5rem;
+}
+
+.brand-story__section-subtitle {
+  font-size: var(--text-sm, 0.875rem);
+  color: #64748B;
+}
+
+.brand-process-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4, 1rem);
+}
+
+.brand-process-step {
+  background: #FFFFFF;
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-6, 1.5rem);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.brand-process-step:hover {
+  border-color: #D4AF37;
+  transform: translateY(-2px);
+}
+
+.step-number {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #D4AF37;
+  margin-bottom: 0.5rem;
+}
+
+.brand-process-step h4 {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 700;
+  color: #0A192F;
+  margin-bottom: 0.5rem;
+}
+
+.brand-process-step p {
+  font-size: var(--text-xs, 0.75rem);
+  color: #64748B;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 5. Call to Action Box */
+.brand-cta-box {
+  background: linear-gradient(135deg, #0A192F 0%, #0F2744 100%);
+  color: #FFFFFF;
+  border-radius: var(--radius-xl, 16px);
+  padding: var(--space-10, 2.5rem);
+  text-align: center;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 12px 32px rgba(10, 25, 47, 0.15);
+}
+
+.brand-cta-box h2 {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  margin-bottom: 0.75rem;
+  color: #FFFFFF;
+}
+
+.brand-cta-box p {
+  font-size: var(--text-sm, 0.875rem);
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 580px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+
+.brand-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #D4AF37;
+  color: #0A192F;
+  font-weight: 700;
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius-md, 8px);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.brand-cta-btn:hover {
+  background: #E5C158;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.4);
+}
