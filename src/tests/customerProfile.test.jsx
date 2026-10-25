@@ -242,4 +242,18 @@ describe('STORM-FE-014: Customer Profile Hub, Multi-Address Management & Loyalty
       expect(screen.getByTestId('loyalty-progress-bar')).toBeInTheDocument();
     });
   });
+
+  describe('Customer Logout Action', () => {
+    it('renders Sign Out button and triggers onLogout callback when clicked', () => {
+      const handleLogout = vi.fn();
+      render(<CustomerProfilePage initialProfile={mockCustomer} onLogout={handleLogout} />);
+
+      const logoutBtn = screen.getByTestId('profile-logout-btn');
+      expect(logoutBtn).toBeInTheDocument();
+      expect(logoutBtn).toHaveTextContent(/Sign Out/i);
+
+      fireEvent.click(logoutBtn);
+      expect(handleLogout).toHaveBeenCalledTimes(1);
+    });
+  });
 });

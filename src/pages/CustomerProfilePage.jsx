@@ -9,6 +9,7 @@ import {
   Mail,
   Calendar,
   ArrowLeft,
+  LogOut,
   Save,
   Loader2,
   Sparkles,
@@ -30,6 +31,7 @@ export function CustomerProfilePage({
   initialProfile = null,
   onBackToCatalog,
   onProfileUpdated,
+  onLogout,
   className = '',
 }) {
   const { toast } = useToast();
@@ -142,7 +144,7 @@ export function CustomerProfilePage({
   return (
     <div className={`customer-profile-page ${className}`} data-testid="customer-profile-page">
       <div className="container">
-        {/* Navigation Breadcrumb / Back button */}
+        {/* Navigation Breadcrumb / Back button & Logout */}
         <div className="customer-profile__nav-bar">
           <button
             type="button"
@@ -153,6 +155,18 @@ export function CustomerProfilePage({
             <ArrowLeft size={16} />
             <span>Return to Boutique Catalog</span>
           </button>
+
+          {onLogout && (
+            <button
+              type="button"
+              className="customer-profile__logout-btn"
+              onClick={onLogout}
+              data-testid="profile-logout-btn"
+            >
+              <LogOut size={15} />
+              <span>Sign Out</span>
+            </button>
+          )}
         </div>
 
         {/* Profile Hero Header */}
