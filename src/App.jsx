@@ -35,6 +35,7 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { inventoryApi } from './api/inventory.api';
 import { AuthModal } from './components/auth/AuthModal';
+import { authApi } from './api/auth.api';
 import { CustomerProfilePage } from './pages/CustomerProfilePage';
 import { OrderHistoryPage } from './pages/OrderHistoryPage';
 import ChatWidget from './components/chat/ChatWidget';
@@ -121,7 +122,7 @@ function StorefrontContent() {
           setBackendStatus({
             checked: true,
             healthy: data.success === true,
-            message: 'Connected to StackStorm Backend (Port 5000)',
+            message: 'Connected to StackStorm Backend',
           });
         }
       })
@@ -347,13 +348,56 @@ function StorefrontContent() {
     openCart();
   };
 
+  const handleCustomerLogout = async () => {
+    try {
+      await authApi.logout();
+    } catch (err) {
+      console.warn('Customer logout error:', err?.message);
+    } finally {
+      setCurrentUser(null);
+      try {
+        localStorage.removeItem('stackstorm_user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('stackstorm_token');
+      } catch (_) {}
+      setIsProfileView(false);
+      toast.info('You have been logged out of your account.', {
+        title: 'Logged Out',
+        duration: 4000,
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const handleSearch = (query) => {
     setFilters((prev) => ({ ...prev, search: query }));
+    setSelectedProduct(null);
+    setIsBrandStoryView(false);
+    setIsWishlistView(false);
+    setIsProfileView(false);
+    setIsCheckoutView(false);
+    setIsOrderHistoryView(false);
+    setCompletedOrder(null);
+    setTimeout(() => {
+      const catalogEl = document.getElementById('catalog');
+      if (catalogEl) {
+        catalogEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
   };
 
   const handleCategorySelect = (category, subCategory) => {
     const targetSlug = subCategory ? subCategory.slug : category.slug;
     setFilters((prev) => ({ ...prev, category: targetSlug }));
+
+    setSelectedProduct(null);
+    setIsBrandStoryView(false);
+    setIsWishlistView(false);
+    setIsProfileView(false);
+    setIsCheckoutView(false);
+    setIsOrderHistoryView(false);
+    setCompletedOrder(null);
 
     if (subCategory) {
       setBreadcrumbTrail([
@@ -367,6 +411,13 @@ function StorefrontContent() {
         { label: category.name, active: true },
       ]);
     }
+
+    setTimeout(() => {
+      const catalogEl = document.getElementById('catalog');
+      if (catalogEl) {
+        catalogEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
   };
 
   return (
@@ -471,6 +522,7 @@ function StorefrontContent() {
           onProfileUpdated={(updated) => {
             setCurrentUser(updated);
           }}
+          onLogout={handleCustomerLogout}
         />
       ) : isWishlistView ? (
         <WishlistPage
@@ -661,16 +713,12 @@ function StorefrontContent() {
       <div className="storefront-bottom-bar" data-testid="bottom-announcement-bar">
         <div className="container bottom-bar-inner">
           <div className="bottom-bar-item">
-            <MapPin size={14} color="#D4AF37" />
+            <MapPin size={13} color="#D4AF37" />
             <span>Main Street, Dickwella, Matara • Mon–Sun 9:00 AM – 8:00 PM</span>
           </div>
           <div className="bottom-bar-item bottom-bar-item--highlight">
-            <Truck size={14} color="#D4AF37" />
+            <Truck size={13} color="#D4AF37" />
             <span>Islandwide Courier Delivery Across Sri Lanka • Free Shipping Over LKR 10,000</span>
-          </div>
-          <div className="bottom-bar-item">
-            <Clock size={14} color="#10B981" />
-            <span>Dispatch: Next Business Day</span>
           </div>
         </div>
       </div>
@@ -774,9 +822,6 @@ function StorefrontContent() {
 
           <div className="footer-bottom">
             <span>© 2026 Dickwella Fashion Corner. All Rights Reserved.</span>
-            <span className="credits-badge">
-              Software Engineering Team: Amarawickrama R.H. • S. Thanoogithan • B.K. Pabasara • Lakshani A.T.
-            </span>
           </div>
         </div>
       </footer>

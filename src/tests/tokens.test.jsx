@@ -100,13 +100,11 @@ describe('STORM-FE-001: Customer SPA React 18 + Vite Scaffolding & Vanilla CSS T
     expect(screen.getByText('LKR 12,500.00')).toBeInTheDocument()
   })
 
-  it('AC6: should display student engineering team credits in the footer', async () => {
+  it('AC6: should display brand copyright and academic attribution in the footer', async () => {
     await act(async () => {
       render(<App />)
     })
-    expect(screen.getByText(/Amarawickrama R.H./i)).toBeInTheDocument()
-    expect(screen.getByText(/S. Thanoogithan/i)).toBeInTheDocument()
-    expect(screen.getByText(/B.K. Pabasara/i)).toBeInTheDocument()
-    expect(screen.getByText(/Lakshani A.T./i)).toBeInTheDocument()
+    expect(screen.getByText(/Dickwella Fashion Corner\. All Rights Reserved/i)).toBeInTheDocument()
+    expect(screen.getByText(/Department of Software Engineering/i)).toBeInTheDocument()
   })
 })
