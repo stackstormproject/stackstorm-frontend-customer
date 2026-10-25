@@ -204,7 +204,6 @@ function StorefrontContent() {
       color: '',
       sort: 'featured',
     });
-    toast.info('All catalog filters have been reset.', { title: 'Filters Cleared' });
   };
 
   const handleAddToCart = (product, variant = null, qty = 1) => {
@@ -236,7 +235,6 @@ function StorefrontContent() {
     setIsCheckoutView(false);
     setIsOrderHistoryView(false);
     setCompletedOrder(null);
-    toast.info(`Viewing product details for ${product?.title || product?.name || 'product'}`, { title: 'Product Details' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -325,10 +323,6 @@ function StorefrontContent() {
 
   const handleSearch = (query) => {
     setFilters((prev) => ({ ...prev, search: query }));
-    toast.info(`Searching clothing catalog for: "${query}"`, {
-      title: 'Catalog Search',
-      duration: 3500,
-    });
   };
 
   const handleCategorySelect = (category, subCategory) => {
@@ -341,19 +335,11 @@ function StorefrontContent() {
         { label: category.name, href: `#catalog/${category.slug}` },
         { label: subCategory.name, active: true },
       ]);
-      toast.info(`Filtered: ${category.name} › ${subCategory.name}`, {
-        title: 'Category Selected',
-        duration: 3000,
-      });
     } else {
       setBreadcrumbTrail([
         { label: 'Home', href: '/' },
         { label: category.name, active: true },
       ]);
-      toast.info(`Browsing ${category.name} collection`, {
-        title: 'Category Selected',
-        duration: 3000,
-      });
     }
   };
 
@@ -680,45 +666,10 @@ function StorefrontContent() {
           </div>
 
           <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-4)' }}>
-            Use the multi-faceted filter sidebar above to filter by Category, Size, Color, and Price range, or trigger toast notifications and the stock reservation confirmation modal below.
+            Use the multi-faceted filter sidebar above to filter by Category, Size, Color, and Price range, or preview drawer and checkout flows below.
           </p>
 
           <div className="verification-btn-group">
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--success"
-              onClick={() => toast.success('Cart updated: 1 item added with free islandwide delivery eligible!', { title: 'Order Success' })}
-            >
-              <CheckCircle2 size={16} />
-              <span>Success Toast</span>
-            </button>
-
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--error"
-              onClick={() => toast.error('Payment gateway timed out. Please retry your card authorization.', { title: 'Gateway Error' })}
-            >
-              <AlertCircle size={16} />
-              <span>Error Toast</span>
-            </button>
-
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--warning"
-              onClick={() => toast.warning('Low stock alert: Only 2 items remain in Southern Batik collection.', { title: 'Stock Warning' })}
-            >
-              <AlertTriangle size={16} />
-              <span>Warning Toast</span>
-            </button>
-
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--info"
-              onClick={() => toast.info('Dickwella boutique is open for in-person handloom consultations.', { title: 'Store Info' })}
-            >
-              <Info size={16} />
-              <span>Info Toast</span>
-            </button>
 
             <button
               type="button"
