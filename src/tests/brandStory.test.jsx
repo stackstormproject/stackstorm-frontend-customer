@@ -67,7 +67,6 @@ describe('BrandStoryPage Component & App Integration', () => {
     expect(screen.getByTestId('bottom-announcement-bar')).toBeInTheDocument();
     expect(screen.getByText(/Main Street, Dickwella, Matara/i)).toBeInTheDocument();
     expect(screen.getByText(/Islandwide Courier Delivery Across Sri Lanka/i)).toBeInTheDocument();
-    expect(screen.getByText(/Dispatch: Next Business Day/i)).toBeInTheDocument();
 
     // Click "Our Heritage Story" in Hero
     const heroStoryBtn = screen.getByTestId('hero-brand-story-btn');

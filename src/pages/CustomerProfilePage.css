@@ -19,7 +19,12 @@
 }
 
 .customer-profile__nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: var(--space-5, 20px);
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .customer-profile__back-btn {
@@ -40,6 +45,28 @@
 .customer-profile__back-btn:hover {
   background: #e2e8f0;
   color: var(--color-text, #0f172a);
+}
+
+.customer-profile__logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #DC2626;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: var(--radius-md, 8px);
+  transition: all 0.2s ease;
+}
+
+.customer-profile__logout-btn:hover {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #B91C1C;
+  transform: translateY(-1px);
 }
 
 /* Hero Header */
