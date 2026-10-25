@@ -116,7 +116,7 @@ export function RegisterForm({
         password: formData.password,
       });
 
-      const user = res.data?.user || res.data;
+      const user = res?.customer || res?.user || res?.data?.user || res?.data || res;
       if (typeof onSuccess === 'function') {
         onSuccess(user);
       }

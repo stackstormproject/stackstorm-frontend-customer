@@ -71,7 +71,18 @@ function StorefrontContent() {
   const [isCheckoutView, setIsCheckoutView] = useState(false);
   const [isProfileView, setIsProfileView] = useState(false);
   const [isOrderHistoryView, setIsOrderHistoryView] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const rawUser =
+        localStorage.getItem('stackstorm_user') ||
+        localStorage.getItem('stackstorm_auth_user') ||
+        localStorage.getItem('user');
+      return rawUser ? JSON.parse(rawUser) : null;
+    } catch {
+      return null;
+    }
+  });
   const [completedOrder, setCompletedOrder] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState([
@@ -123,6 +134,29 @@ function StorefrontContent() {
           });
         }
       });
+
+    // Check for stored token and restore/verify user profile
+    const token =
+      localStorage.getItem('token') ||
+      localStorage.getItem('stackstorm_token') ||
+      localStorage.getItem('stackstorm_auth_token');
+    if (token) {
+      fetch('/api/v1/users/profile', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          const profile = data?.data || data?.user || data;
+          if (isMounted && profile && (profile.email || profile.id)) {
+            setCurrentUser(profile);
+            try {
+              localStorage.setItem('stackstorm_user', JSON.stringify(profile));
+            } catch (_) {}
+          }
+        })
+        .catch(() => {});
+    }
+
     return () => {
       isMounted = false;
     };
@@ -198,13 +232,21 @@ function StorefrontContent() {
   const handleViewDetails = (product) => {
     setSelectedProduct(product);
     setIsWishlistView(false);
-    toast.info(`Viewing product details for ${product.title}`, { title: 'Product Details' });
+    setIsProfileView(false);
+    setIsCheckoutView(false);
+    setIsOrderHistoryView(false);
+    setCompletedOrder(null);
+    toast.info(`Viewing product details for ${product?.title || product?.name || 'product'}`, { title: 'Product Details' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToCatalog = () => {
     setSelectedProduct(null);
     setIsWishlistView(false);
+    setIsProfileView(false);
+    setIsCheckoutView(false);
+    setIsOrderHistoryView(false);
+    setCompletedOrder(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -328,9 +370,13 @@ function StorefrontContent() {
         cartCount={cartCount}
         currentUser={currentUser}
         onSearch={handleSearch}
+        onHomeClick={handleBackToCatalog}
         onWishlistClick={() => {
           setIsWishlistView(true);
           setIsProfileView(false);
+          setIsCheckoutView(false);
+          setIsOrderHistoryView(false);
+          setCompletedOrder(null);
           setSelectedProduct(null);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
@@ -340,6 +386,8 @@ function StorefrontContent() {
             setIsProfileView(true);
             setIsWishlistView(false);
             setIsCheckoutView(false);
+            setIsOrderHistoryView(false);
+            setCompletedOrder(null);
             setSelectedProduct(null);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           } else {
@@ -686,6 +734,10 @@ function StorefrontContent() {
               className="action-pill-btn action-pill-btn--info"
               onClick={() => {
                 setIsWishlistView(true);
+                setIsProfileView(false);
+                setIsCheckoutView(false);
+                setIsOrderHistoryView(false);
+                setCompletedOrder(null);
                 setSelectedProduct(null);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
@@ -710,6 +762,8 @@ function StorefrontContent() {
                 setIsProfileView(true);
                 setIsWishlistView(false);
                 setIsCheckoutView(false);
+                setIsOrderHistoryView(false);
+                setCompletedOrder(null);
                 setSelectedProduct(null);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
@@ -726,6 +780,7 @@ function StorefrontContent() {
                 setIsProfileView(false);
                 setIsWishlistView(false);
                 setIsCheckoutView(false);
+                setCompletedOrder(null);
                 setSelectedProduct(null);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
@@ -879,6 +934,9 @@ function StorefrontContent() {
           setIsAuthModalOpen(false);
           const user = userData?.customer || userData?.user || userData;
           setCurrentUser(user);
+          try {
+            localStorage.setItem('stackstorm_user', JSON.stringify(user));
+          } catch (_) {}
           const name = user?.first_name || user?.name || user?.email || 'Valued Customer';
           toast.success(`Welcome, ${name}! Your profile and cart are synchronized.`, {
             title: 'Authentication Successful',
