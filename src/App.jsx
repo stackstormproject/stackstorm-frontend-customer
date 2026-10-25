@@ -89,11 +89,7 @@ function StorefrontContent() {
   });
   const [completedOrder, setCompletedOrder] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [breadcrumbTrail, setBreadcrumbTrail] = useState([
-    { label: 'Home', href: '/' },
-    { label: "Men's Collection", href: '#mens-batik' },
-    { label: 'Handloom & Batik Apparel', active: true },
-  ]);
+  const [breadcrumbTrail, setBreadcrumbTrail] = useState([]);
 
   // Product Catalog State (STORM-FE-006)
   const [products, setProducts] = useState(FALLBACK_PRODUCTS);
@@ -198,6 +194,20 @@ function StorefrontContent() {
       ...prev,
       [key]: value,
     }));
+    if (key === 'category') {
+      if (!value || value === 'all') {
+        setBreadcrumbTrail([]);
+      } else {
+        const formattedName = value
+          .split('-')
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(' ');
+        setBreadcrumbTrail([
+          { label: 'Home', href: '/' },
+          { label: formattedName, active: true },
+        ]);
+      }
+    }
   };
 
   const handleClearFilters = () => {
@@ -208,6 +218,7 @@ function StorefrontContent() {
       color: '',
       sort: 'featured',
     });
+    setBreadcrumbTrail([]);
   };
 
   const handleAddToCart = (product, variant = null, qty = 1) => {
@@ -240,6 +251,13 @@ function StorefrontContent() {
     setIsOrderHistoryView(false);
     setIsBrandStoryView(false);
     setCompletedOrder(null);
+    if (product) {
+      setBreadcrumbTrail([
+        { label: 'Home', href: '/' },
+        { label: product.category || 'Collections', href: '#catalog' },
+        { label: product.title, active: true },
+      ]);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -251,6 +269,8 @@ function StorefrontContent() {
     setIsOrderHistoryView(false);
     setIsBrandStoryView(false);
     setCompletedOrder(null);
+    setFilters((prev) => ({ ...prev, category: 'all', search: '' }));
+    setBreadcrumbTrail([]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -487,7 +507,7 @@ function StorefrontContent() {
       ) : (
         <>
           {/* 2. Dynamic Breadcrumbs with Schema.org JSON-LD (STORM-FE-005) */}
-          <Breadcrumbs items={breadcrumbTrail} />
+          <Breadcrumbs items={breadcrumbTrail} onHomeClick={handleBackToCatalog} />
 
           {/* 3. Hero Section */}
           <section className="hero-section">

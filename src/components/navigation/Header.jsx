@@ -152,7 +152,6 @@ export const Header = ({
               >
                 <span className="dk-brand-main">STACKSTORM</span>
                 <span className="dk-brand-sub">Dickwella Fashion Corner</span>
-                <span className="dk-brand-subtitle">Authentic Sri Lankan Apparel</span>
               </a>
             </div>
           </div>
