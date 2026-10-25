@@ -41,7 +41,7 @@ describe('STORM-FE-001: Customer SPA React 18 + Vite Scaffolding & Vanilla CSS T
     })
     const brandTitles = screen.getAllByText(/Dickwella Fashion Corner/i)
     expect(brandTitles.length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Authentic Sri Lankan Apparel/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/STACKSTORM/i).length).toBeGreaterThan(0)
   })
 
   it('AC2: should define required CSS Custom Properties design tokens in tokens.css', () => {

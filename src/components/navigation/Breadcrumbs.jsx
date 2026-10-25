@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import { Home, ChevronRight } from 'lucide-react';
 import './Breadcrumbs.css';
 
-export const Breadcrumbs = ({ items = [] }) => {
+export const Breadcrumbs = ({ items = [], onHomeClick }) => {
   const normalizedItems = useMemo(() => {
     if (!items || items.length === 0) {
-      return [{ label: 'Home', href: '/' }];
+      return [];
     }
     // If first item isn't Home, prepend Home
     if (items[0]?.label?.toLowerCase() !== 'home') {
@@ -16,6 +16,7 @@ export const Breadcrumbs = ({ items = [] }) => {
 
   // Generate Schema.org BreadcrumbList JSON-LD
   const schemaJsonLd = useMemo(() => {
+    if (!normalizedItems || normalizedItems.length <= 1) return null;
     const itemListElement = normalizedItems.map((item, index) => ({
       '@type': 'ListItem',
       position: index + 1,
@@ -31,6 +32,11 @@ export const Breadcrumbs = ({ items = [] }) => {
       itemListElement,
     });
   }, [normalizedItems]);
+
+  // Don't render breadcrumbs on root/home level
+  if (!normalizedItems || normalizedItems.length <= 1) {
+    return null;
+  }
 
   return (
     <nav className="dk-breadcrumbs-nav" aria-label="Breadcrumb" data-testid="breadcrumbs-nav">
@@ -56,6 +62,17 @@ export const Breadcrumbs = ({ items = [] }) => {
                     href={item.href || '#'}
                     className="dk-breadcrumbs-link"
                     data-testid={`breadcrumb-link-${index}`}
+                    onClick={(e) => {
+                      if (item.onClick) {
+                        e.preventDefault();
+                        item.onClick(e);
+                      } else if (isFirst || item.href === '/') {
+                        if (onHomeClick) {
+                          e.preventDefault();
+                          onHomeClick();
+                        }
+                      }
+                    }}
                   >
                     {item.label}
                   </a>
