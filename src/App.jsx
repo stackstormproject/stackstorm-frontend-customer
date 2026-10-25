@@ -14,6 +14,8 @@ import {
   Maximize2,
   Heart,
   ShoppingBag,
+  MapPin,
+  Clock,
 } from 'lucide-react';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { WishlistProvider, useWishlist } from './context/WishlistContext';
@@ -24,6 +26,7 @@ import { Header, Breadcrumbs } from './components/navigation';
 import { ProductGrid } from './components/catalog';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { WishlistPage } from './pages/WishlistPage';
+import { BrandStoryPage } from './pages/BrandStoryPage';
 import { CartDrawer } from './components/cart';
 import { productApi, FALLBACK_PRODUCTS } from './api/product.api';
 import { ReservationBanner } from './components/checkout/ReservationBanner';
@@ -71,6 +74,7 @@ function StorefrontContent() {
   const [isCheckoutView, setIsCheckoutView] = useState(false);
   const [isProfileView, setIsProfileView] = useState(false);
   const [isOrderHistoryView, setIsOrderHistoryView] = useState(false);
+  const [isBrandStoryView, setIsBrandStoryView] = useState(false);
   const [currentUser, setCurrentUser] = useState(() => {
     if (typeof window === 'undefined') return null;
     try {
@@ -234,6 +238,7 @@ function StorefrontContent() {
     setIsProfileView(false);
     setIsCheckoutView(false);
     setIsOrderHistoryView(false);
+    setIsBrandStoryView(false);
     setCompletedOrder(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -244,6 +249,7 @@ function StorefrontContent() {
     setIsProfileView(false);
     setIsCheckoutView(false);
     setIsOrderHistoryView(false);
+    setIsBrandStoryView(false);
     setCompletedOrder(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -362,6 +368,7 @@ function StorefrontContent() {
           setIsProfileView(false);
           setIsCheckoutView(false);
           setIsOrderHistoryView(false);
+          setIsBrandStoryView(false);
           setCompletedOrder(null);
           setSelectedProduct(null);
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -373,6 +380,7 @@ function StorefrontContent() {
             setIsWishlistView(false);
             setIsCheckoutView(false);
             setIsOrderHistoryView(false);
+            setIsBrandStoryView(false);
             setCompletedOrder(null);
             setSelectedProduct(null);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -463,6 +471,8 @@ function StorefrontContent() {
           onViewDetails={handleViewDetails}
           onExploreCatalog={handleBackToCatalog}
         />
+      ) : isBrandStoryView ? (
+        <BrandStoryPage onBackToCatalog={handleBackToCatalog} />
       ) : selectedProduct ? (
         <ProductDetailPage
           productSlug={selectedProduct.slug}
@@ -500,10 +510,24 @@ function StorefrontContent() {
                 <span>Explore Catalog</span>
                 <ArrowRight size={18} />
               </a>
-              <a href="#brand-story" className="btn-secondary">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  setIsBrandStoryView(true);
+                  setIsProfileView(false);
+                  setIsWishlistView(false);
+                  setIsCheckoutView(false);
+                  setIsOrderHistoryView(false);
+                  setSelectedProduct(null);
+                  setCompletedOrder(null);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                data-testid="hero-brand-story-btn"
+              >
                 <Sparkles size={18} color="#D4AF37" />
                 <span>Our Heritage Story</span>
-              </a>
+              </button>
             </div>
           </div>
 
@@ -609,151 +633,27 @@ function StorefrontContent() {
           />
         </div>
       </section>
-
-      {/* 6. System Architecture & Token Telemetry Box */}
-      <section className="container">
-        <div className="telemetry-card">
-          <div className="telemetry-header">
-            <div className="telemetry-title">
-              <Layers size={18} color="#D4AF37" />
-              <span>StackStorm Design Tokens & API Gateway Status</span>
-            </div>
-            <span className="telemetry-badge">
-              <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-              STORM-FE-001 through FE-006 Verified
-            </span>
-          </div>
-
-          <div className="telemetry-grid">
-            <div className="telemetry-item">
-              <div className="telemetry-label">Primary Brand Color</div>
-              <div className="telemetry-val" style={{ color: '#0A192F' }}>
-                #0A192F (Navy)
-              </div>
-            </div>
-            <div className="telemetry-item">
-              <div className="telemetry-label">Accent Gold</div>
-              <div className="telemetry-val" style={{ color: '#D4AF37' }}>
-                #D4AF37 (Gold)
-              </div>
-            </div>
-            <div className="telemetry-item">
-              <div className="telemetry-label">Typography Heading / Body</div>
-              <div className="telemetry-val">Outfit / Inter</div>
-            </div>
-            <div className="telemetry-item">
-              <div className="telemetry-label">Backend REST Gateway</div>
-              <div className="telemetry-val" style={{ color: backendStatus.healthy ? '#10B981' : '#F59E0B' }}>
-                {backendStatus.message}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Interactive Verification Panel (STORM-FE-004 through FE-006) */}
-        <div className="verification-card">
-          <div className="verification-header">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Sparkles size={18} color="#D4AF37" />
-              <h3 style={{ fontSize: 'var(--text-base)', margin: 0, color: 'var(--color-primary)' }}>
-                Global UI State & Feedback Verification (STORM-FE-004 through FE-006)
-              </h3>
-            </div>
-            <span className="telemetry-badge">
-              <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-              Faceted Catalog Active
-            </span>
-          </div>
-
-          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-4)' }}>
-            Use the multi-faceted filter sidebar above to filter by Category, Size, Color, and Price range, or preview drawer and checkout flows below.
-          </p>
-
-          <div className="verification-btn-group">
-
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--info"
-              onClick={openCart}
-            >
-              <ShoppingBag size={16} />
-              <span>Open Cart Drawer (STORM-FE-009)</span>
-            </button>
-
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--info"
-              onClick={() => {
-                setIsWishlistView(true);
-                setIsProfileView(false);
-                setIsCheckoutView(false);
-                setIsOrderHistoryView(false);
-                setCompletedOrder(null);
-                setSelectedProduct(null);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              <Heart size={16} color="#E11D48" />
-              <span>Open Wishlist Page (STORM-FE-008)</span>
-            </button>
-
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--info"
-              onClick={() => handleViewDetails(products[0])}
-            >
-              <Sparkles size={16} />
-              <span>Preview Sample PDP (STORM-FE-007)</span>
-            </button>
-
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--info"
-              onClick={() => {
-                setIsProfileView(true);
-                setIsWishlistView(false);
-                setIsCheckoutView(false);
-                setIsOrderHistoryView(false);
-                setCompletedOrder(null);
-                setSelectedProduct(null);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              <Award size={16} color="#D4AF37" />
-              <span>Customer Profile & Loyalty Hub (STORM-FE-014)</span>
-            </button>
-
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--info"
-              onClick={() => {
-                setIsOrderHistoryView(true);
-                setIsProfileView(false);
-                setIsWishlistView(false);
-                setIsCheckoutView(false);
-                setCompletedOrder(null);
-                setSelectedProduct(null);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              <Truck size={16} color="#0284C7" />
-              <span>Order History & 4-Stage Stepper (STORM-FE-015)</span>
-            </button>
-
-            <button
-              type="button"
-              className="action-pill-btn action-pill-btn--modal"
-              onClick={() => setIsReservationModalOpen(true)}
-            >
-              <Maximize2 size={16} />
-              <span>Open Stock Lock Modal</span>
-            </button>
-          </div>
-        </div>
-      </section>
         </>
       )}
       </main>
+
+      {/* 6. Bottom Service Announcement Bar (Relocated from Top Bar) */}
+      <div className="storefront-bottom-bar" data-testid="bottom-announcement-bar">
+        <div className="container bottom-bar-inner">
+          <div className="bottom-bar-item">
+            <MapPin size={14} color="#D4AF37" />
+            <span>Main Street, Dickwella, Matara • Mon–Sun 9:00 AM – 8:00 PM</span>
+          </div>
+          <div className="bottom-bar-item bottom-bar-item--highlight">
+            <Truck size={14} color="#D4AF37" />
+            <span>Islandwide Courier Delivery Across Sri Lanka • Free Shipping Over LKR 10,000</span>
+          </div>
+          <div className="bottom-bar-item">
+            <Clock size={14} color="#10B981" />
+            <span>Dispatch: Next Business Day</span>
+          </div>
+        </div>
+      </div>
 
       {/* 7. Storefront Footer */}
       <footer className="storefront-footer">
@@ -767,6 +667,37 @@ function StorefrontContent() {
               </p>
               <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-accent)' }}>
                 Main Street, Dickwella, Southern Province, Sri Lanka (Postal Code: 81100)
+              </p>
+              <p style={{ marginTop: '0.75rem' }}>
+                <button
+                  type="button"
+                  className="footer-link"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    color: '#D4AF37',
+                    fontWeight: 600,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                  onClick={() => {
+                    setIsBrandStoryView(true);
+                    setIsProfileView(false);
+                    setIsWishlistView(false);
+                    setIsCheckoutView(false);
+                    setIsOrderHistoryView(false);
+                    setSelectedProduct(null);
+                    setCompletedOrder(null);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  data-testid="footer-brand-story-btn"
+                >
+                  <Sparkles size={13} color="#D4AF37" />
+                  <span>Our Heritage Brand Story →</span>
+                </button>
               </p>
             </div>
 
