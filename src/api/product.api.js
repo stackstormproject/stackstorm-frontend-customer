@@ -255,6 +255,8 @@ function normalizeProduct(p) {
 
   return {
     ...p,
+    title: p.title || p.name || 'Artisan Garment',
+    base_price: p.base_price !== undefined ? p.base_price : (p.price !== undefined ? Number(p.price) : 0),
     category_name: p.category_name || p.category?.name || 'Handcrafted Apparel',
     primary_image: primaryImg,
     secondary_image: secondaryImg,

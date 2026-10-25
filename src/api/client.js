@@ -42,12 +42,37 @@ const processQueue = (error, token = null) => {
  */
 export const setAccessToken = (token) => {
   inMemoryAccessToken = token
+  if (token) {
+    try {
+      localStorage.setItem('token', token)
+      localStorage.setItem('stackstorm_token', token)
+      localStorage.setItem('stackstorm_auth_token', token)
+    } catch (_) {}
+  }
 }
 
-export const getAccessToken = () => inMemoryAccessToken
+export const getAccessToken = () => {
+  if (!inMemoryAccessToken) {
+    try {
+      inMemoryAccessToken =
+        localStorage.getItem('token') ||
+        localStorage.getItem('stackstorm_token') ||
+        localStorage.getItem('stackstorm_auth_token')
+    } catch {
+      inMemoryAccessToken = null
+    }
+  }
+  return inMemoryAccessToken
+}
 
 export const clearAccessToken = () => {
   inMemoryAccessToken = null
+  try {
+    localStorage.removeItem('token')
+    localStorage.removeItem('stackstorm_token')
+    localStorage.removeItem('stackstorm_auth_token')
+    localStorage.removeItem('stackstorm_user')
+  } catch (_) {}
 }
 
 /**
@@ -67,8 +92,9 @@ export const apiClient = axios.create({
  */
 apiClient.interceptors.request.use(
   (config) => {
-    if (inMemoryAccessToken && !config.headers.Authorization) {
-      config.headers.Authorization = `Bearer ${inMemoryAccessToken}`
+    const token = getAccessToken()
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`
     }
     const sessId = getGuestSessionId()
     if (sessId && !config.headers['x-guest-session-id'] && !config.headers['x-session-id']) {

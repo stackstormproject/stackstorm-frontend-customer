@@ -112,9 +112,28 @@ export function WishlistPage({
             {items.map((item) => {
               const product = item.product || item;
               const productId = product.id || item.product_id;
-              const inStock = item.in_stock !== undefined ? item.in_stock : ((product.availableStock || 0) > 0);
-              const price = product.base_price || 0;
-              const imgUrl = product.primary_image || (product.images && product.images[0]?.image_url);
+              const inStock =
+                item.in_stock !== undefined
+                  ? item.in_stock
+                  : (product.availableStock ??
+                      product.stock_quantity ??
+                      (product.variants && product.variants.length > 0 ? 1 : 0)) > 0;
+              const price =
+                product.base_price !== undefined
+                  ? Number(product.base_price)
+                  : product.price !== undefined
+                  ? Number(product.price)
+                  : 0;
+              const title = product.title || product.name || 'Artisan Handloom Garment';
+              const imgUrl =
+                product.primary_image ||
+                product.primaryImage ||
+                (product.images && product.images[0]?.image_url) ||
+                'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
+              const categoryName =
+                product.category_name ||
+                (typeof product.category === 'string' ? product.category : product.category?.name) ||
+                'Handloom Apparel';
 
               return (
                 <div key={productId} className="wishlist-card" data-testid={`wishlist-card-${productId}`}>
@@ -125,9 +144,14 @@ export function WishlistPage({
                   >
                     <img
                       src={imgUrl}
-                      alt={product.title}
+                      alt={title}
                       className="wishlist-card__image"
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src =
+                          'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
+                      }}
                     />
 
                     {/* Instant remove action */}
@@ -138,7 +162,7 @@ export function WishlistPage({
                         e.stopPropagation();
                         if (onRemoveItem) onRemoveItem(productId);
                       }}
-                      aria-label={`Remove ${product.title} from wishlist`}
+                      aria-label={`Remove ${title} from wishlist`}
                       title="Remove from wishlist"
                       data-testid={`remove-wishlist-${productId}`}
                     >
@@ -156,21 +180,17 @@ export function WishlistPage({
 
                   {/* Body Content */}
                   <div className="wishlist-card__body">
-                    <span className="wishlist-card__category">
-                      {product.category_name || product.category?.name || 'Handloom Apparel'}
-                    </span>
+                    <span className="wishlist-card__category">{categoryName}</span>
 
                     <h3
                       className="wishlist-card__title"
                       onClick={() => onViewDetails && onViewDetails(product)}
                       style={{ cursor: onViewDetails ? 'pointer' : 'default' }}
                     >
-                      {product.title}
+                      {title}
                     </h3>
 
-                    <div className="wishlist-card__price">
-                      {formatLKR(price)}
-                    </div>
+                    <div className="wishlist-card__price">{formatLKR(price)}</div>
 
                     <div className="wishlist-card__actions">
                       <button

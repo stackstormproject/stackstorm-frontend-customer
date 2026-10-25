@@ -148,7 +148,7 @@ export const ProductGrid = ({
                 onAddToCart={onAddToCart}
                 onToggleWishlist={onToggleWishlist}
                 onViewDetails={onViewDetails}
-                isWishlisted={wishlistIds.includes(product.id)}
+                isWishlisted={wishlistIds.some((id) => String(id) === String(product.id))}
               />
             ))}
           </div>
