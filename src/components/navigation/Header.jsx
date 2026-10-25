@@ -24,6 +24,7 @@ export const Header = ({
   onAccountClick,
   onCategorySelect,
   categories: initialCategories,
+  onHomeClick = null,
 }) => {
   const [categories, setCategories] = useState(initialCategories || []);
   const [activeMegaCategory, setActiveMegaCategory] = useState(null);
@@ -117,7 +118,19 @@ export const Header = ({
           {/* Brand Identity */}
           <div className="dk-brand-group">
             <div className="dk-brand-identity">
-              <a href="/" className="dk-brand-title" data-testid="header-brand-logo">
+              <a
+                href="/"
+                className="dk-brand-title"
+                data-testid="header-brand-logo"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onHomeClick) {
+                    onHomeClick();
+                  } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+              >
                 Dickwella Fashion Corner
               </a>
               <span className="dk-brand-subtitle">Authentic Sri Lankan Apparel</span>

@@ -10,11 +10,18 @@ export const authApi = {
    */
   async login(email, password) {
     const res = await apiClient.post('/auth/login', { email, password })
-    const token = res.data?.token || res.data?.accessToken
+    const payload = res?.data || res
+    const token = payload?.token || payload?.accessToken
     if (token) {
       setAccessToken(token)
+      try {
+        localStorage.setItem('token', token)
+        localStorage.setItem('stackstorm_token', token)
+      } catch (e) {
+        // Ignore localStorage quota errors in private browsing
+      }
     }
-    return res
+    return payload
   },
 
   /**
@@ -22,11 +29,18 @@ export const authApi = {
    */
   async register(userData) {
     const res = await apiClient.post('/auth/register', userData)
-    const token = res.data?.token || res.data?.accessToken
+    const payload = res?.data || res
+    const token = payload?.token || payload?.accessToken
     if (token) {
       setAccessToken(token)
+      try {
+        localStorage.setItem('token', token)
+        localStorage.setItem('stackstorm_token', token)
+      } catch (e) {
+        // Ignore localStorage quota errors
+      }
     }
-    return res
+    return payload
   },
 
   /**

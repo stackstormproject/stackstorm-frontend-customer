@@ -73,7 +73,7 @@ export function LoginForm({
 
     try {
       const res = await authApi.login(email.trim(), password);
-      const user = res.data?.user || res.data;
+      const user = res?.customer || res?.user || res?.data?.user || res?.data || res;
       if (typeof onSuccess === 'function') {
         onSuccess(user);
       }
