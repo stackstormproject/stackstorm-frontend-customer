@@ -142,8 +142,19 @@ class SocketService {
     }
     this.listeners.get(event).add(handler);
 
-    // Also attach directly to socket if connected
-    if (this.socket) {
+    const isForwarded = [
+      'connect',
+      'disconnect',
+      'connect_error',
+      'chat:joined',
+      'chat:message',
+      'chat:typing',
+      'chat:user_joined',
+      'chat:user_left',
+      'chat:error',
+    ].includes(event);
+
+    if (!isForwarded && this.socket) {
       this.socket.on(event, handler);
     }
 
