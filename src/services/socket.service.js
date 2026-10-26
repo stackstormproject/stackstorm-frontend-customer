@@ -88,9 +88,10 @@ class SocketService {
   /**
    * Joins or resumes a customer live chat session.
    */
-  joinChat(subject = 'Customer General Support', callback) {
+  joinChat(subject = 'Customer General Support', callback, existingSessionId = null) {
     if (!this.socket) this.connect();
-    this.socket.emit('chat:join', { subject }, (response) => {
+    const payload = existingSessionId ? { sessionId: existingSessionId, subject } : { subject };
+    this.socket.emit('chat:join', payload, (response) => {
       if (typeof callback === 'function') callback(response);
     });
   }
