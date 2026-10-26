@@ -19,11 +19,16 @@ class SocketService {
    * Attaches JWT authentication token from localStorage if present.
    */
   connect(token = null) {
-    if (this.socket && this.socket.connected) {
-      return this.socket;
+    const authToken = token || localStorage.getItem('token') || localStorage.getItem('stackstorm_token');
+
+    if (this.socket) {
+      if (this.socket.connected && this.currentAuthToken === authToken) {
+        return this.socket;
+      }
+      this.disconnect();
     }
 
-    const authToken = token || localStorage.getItem('token') || localStorage.getItem('stackstorm_token');
+    this.currentAuthToken = authToken;
 
     this.socket = io(SOCKET_URL, {
       transports: ['websocket', 'polling'],
@@ -88,9 +93,13 @@ class SocketService {
   /**
    * Joins or resumes a customer live chat session.
    */
-  joinChat(subject = 'Customer General Support', callback, existingSessionId = null) {
+  joinChat(subject = 'Customer General Support', callback, existingSessionId = null, customerMeta = null) {
     if (!this.socket) this.connect();
-    const payload = existingSessionId ? { sessionId: existingSessionId, subject } : { subject };
+    const payload = {
+      subject,
+      ...(existingSessionId ? { sessionId: existingSessionId } : {}),
+      ...(customerMeta ? customerMeta : {}),
+    };
     this.socket.emit('chat:join', payload, (response) => {
       if (typeof callback === 'function') callback(response);
     });
