@@ -82,12 +82,29 @@ export default function ChatWidget() {
       setMessages((prev) => {
         // Prevent duplicate messages if ID already exists
         if (data.id && prev.some((m) => m.id === data.id)) return prev;
+
+        // Prevent duplicate echo of customer's own sent message
+        if (
+          (data.senderRole === 'customer' || data.senderRole === 'user') &&
+          prev.some(
+            (m) =>
+              (m.senderRole === 'customer' || m.senderRole === 'user') &&
+              m.message === data.message &&
+              Math.abs(Date.now() - new Date(m.createdAt).getTime()) < 10000
+          )
+        ) {
+          return prev;
+        }
+
         return [
           ...prev,
           {
             id: data.id || `msg-${Date.now()}`,
             senderRole: data.senderRole || 'bot',
-            senderName: data.senderRole === 'support_agent' ? 'Support Agent' : 'Dickwella Virtual Assistant',
+            senderName:
+              data.senderRole === 'support_agent'
+                ? 'Support Agent'
+                : 'Dickwella Virtual Assistant',
             message: data.message,
             createdAt: data.createdAt || new Date().toISOString(),
             orderData: data.orderData || null,
@@ -165,60 +182,104 @@ export default function ChatWidget() {
     if (socketService.isConnected && sessionId) {
       socketService.sendMessage(sessionId, cleanText);
       setIsTyping(true);
-      return;
+      setTypingAuthor('Assistant');
     }
 
     // Client-side fallback rule simulation
-    setIsTyping(true);
-    setTypingAuthor('Assistant');
+    // Triggered immediately if socket is offline, or as a safety net if server socket does not reply
+    const triggerLocalFallback = () => {
+      setIsTyping(true);
+      setTypingAuthor('Assistant');
 
-    setTimeout(() => {
-      setIsTyping(false);
+      setTimeout(() => {
+        setIsTyping(false);
 
-      const lower = cleanText.toLowerCase();
+        const lower = cleanText.toLowerCase();
 
-      // Check order tracking intent (AC4)
-      const orderMatch = cleanText.match(/(?:DFC-[\w-]+|#\d+)/i);
-      if (orderMatch || lower.includes('where is my order') || lower.includes('track')) {
-        const orderNum = orderMatch ? orderMatch[0].replace('#', 'DFC-2026-') : 'DFC-2026-104';
+        // Check order tracking intent (AC4)
+        const orderMatch = cleanText.match(/(?:dfc-\d{4}-|#)?(\d+)/i);
+        if (orderMatch || lower.includes('where is my order') || lower.includes('track')) {
+          const orderNum = orderMatch ? orderMatch[1] : '1';
+          const botReply = {
+            id: `bot-${Date.now()}`,
+            senderRole: 'bot',
+            senderName: 'Dickwella Virtual Assistant',
+            message: `Checking order status for #${orderNum}... Your package is confirmed and in transit with Sri Lanka Post EMS.`,
+            createdAt: new Date().toISOString(),
+            orderData: {
+              order_number: `DFC-2026-${orderNum}`,
+              status: 'shipped',
+              courier: 'Sri Lanka Post EMS',
+              tracking_number: `SLPOST-${orderNum}00-LK`,
+              total_amount_formatted: 'LKR 8,500.00',
+            },
+          };
+          setMessages((prev) => {
+            if (
+              prev.some(
+                (m) =>
+                  m.senderRole === 'bot' &&
+                  Date.now() - new Date(m.createdAt).getTime() < 3000
+              )
+            ) {
+              return prev;
+            }
+            return [...prev, botReply];
+          });
+          return;
+        }
+
+        // Check FAQ rules
+        let replyText =
+          FALLBACK_FAQ_ANSWERS[lower] ||
+          FALLBACK_FAQ_ANSWERS[Object.keys(FALLBACK_FAQ_ANSWERS).find((k) => lower.includes(k))];
+
+        if (!replyText) {
+          replyText =
+            "Thank you for contacting Dickwella Fashion Corner! We've routed your query to our customer service desk. An agent will respond shortly.";
+        }
+
         const botReply = {
           id: `bot-${Date.now()}`,
-          senderRole: 'bot',
-          senderName: 'Dickwella Virtual Assistant',
-          message: `Checking order status for ${orderNum}... Your package is currently in transit with Sri Lanka Post EMS.`,
+          senderRole: lower.includes('agent') ? 'support_agent' : 'bot',
+          senderName: lower.includes('agent') ? 'Live Support Agent' : 'Dickwella Virtual Assistant',
+          message: replyText,
           createdAt: new Date().toISOString(),
-          orderData: {
-            order_number: orderNum,
-            status: 'shipped',
-            courier: 'Sri Lanka Post EMS',
-            tracking_number: 'SLPOST-81100-99',
-            total_amount_formatted: 'LKR 8,500.00',
-          },
         };
-        setMessages((prev) => [...prev, botReply]);
-        return;
-      }
 
-      // Check FAQ rules
-      let replyText =
-        FALLBACK_FAQ_ANSWERS[lower] ||
-        FALLBACK_FAQ_ANSWERS[Object.keys(FALLBACK_FAQ_ANSWERS).find((k) => lower.includes(k))];
+        setMessages((prev) => {
+          if (
+            prev.some(
+              (m) =>
+                (m.senderRole === 'bot' || m.senderRole === 'support_agent') &&
+                Date.now() - new Date(m.createdAt).getTime() < 3000
+            )
+          ) {
+            return prev;
+          }
+          return [...prev, botReply];
+        });
+      }, 700);
+    };
 
-      if (!replyText) {
-        replyText =
-          "Thank you for contacting Dickwella Fashion Corner! We've routed your query to our customer service desk. An agent will respond shortly.";
-      }
-
-      const botReply = {
-        id: `bot-${Date.now()}`,
-        senderRole: lower.includes('agent') ? 'support_agent' : 'bot',
-        senderName: lower.includes('agent') ? 'Live Support Agent' : 'Dickwella Virtual Assistant',
-        message: replyText,
-        createdAt: new Date().toISOString(),
-      };
-
-      setMessages((prev) => [...prev, botReply]);
-    }, 700);
+    if (!socketService.isConnected || !sessionId) {
+      triggerLocalFallback();
+    } else {
+      // Safety net fallback in case server socket doesn't reply within 2.5s
+      setTimeout(() => {
+        setMessages((current) => {
+          const lastMsg = current[current.length - 1];
+          if (
+            lastMsg &&
+            (lastMsg.senderRole === 'customer' || lastMsg.senderRole === 'user') &&
+            lastMsg.message === cleanText
+          ) {
+            triggerLocalFallback();
+          }
+          return current;
+        });
+      }, 2500);
+    }
   };
 
   const handleSendMessage = (e) => {
