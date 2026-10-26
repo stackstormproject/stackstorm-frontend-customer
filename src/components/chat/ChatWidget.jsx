@@ -143,16 +143,39 @@ export default function ChatWidget() {
           return prev;
         }
 
+        const isFromAgent =
+          data.senderRole === 'support_agent' ||
+          data.senderRole === 'agent' ||
+          data.senderRole === 'admin' ||
+          data.senderType === 'agent' ||
+          data.sender === 'agent';
+
+        const isFromCustomer =
+          !isFromAgent &&
+          (data.senderRole === 'customer' ||
+            data.senderRole === 'user' ||
+            data.senderType === 'customer' ||
+            data.sender === 'customer');
+
+        const normalizedRole = isFromAgent
+          ? 'support_agent'
+          : isFromCustomer
+          ? 'customer'
+          : 'bot';
+
+        const normalizedName = isFromAgent
+          ? data.senderName || 'Alex (Support Agent)'
+          : isFromCustomer
+          ? 'You'
+          : 'Dickwella Virtual Assistant';
+
         return [
           ...prev,
           {
             id: data.id || `msg-${Date.now()}`,
-            senderRole: data.senderRole || 'bot',
-            senderName:
-              data.senderRole === 'support_agent'
-                ? 'Support Agent'
-                : 'Dickwella Virtual Assistant',
-            message: data.message,
+            senderRole: normalizedRole,
+            senderName: normalizedName,
+            message: data.message || data.text,
             createdAt: data.createdAt || new Date().toISOString(),
             orderData: data.orderData || null,
           },
