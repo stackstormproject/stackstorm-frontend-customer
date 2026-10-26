@@ -46,7 +46,13 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([INITIAL_WELCOME_MESSAGE]);
   const [inputText, setInputText] = useState('');
-  const [sessionId, setSessionId] = useState(null);
+  const [sessionId, setSessionId] = useState(() => {
+    try {
+      return sessionStorage.getItem('dfc_chat_session_id') || null;
+    } catch {
+      return null;
+    }
+  });
   const [isTyping, setIsTyping] = useState(false);
   const [typingAuthor, setTypingAuthor] = useState('Assistant');
   const [hasUnread, setHasUnread] = useState(true);
@@ -66,11 +72,27 @@ export default function ChatWidget() {
 
     const handleConnect = () => {
       setConnectionStatus('connected');
-      socketService.joinChat('Customer Storefront Inquiry', (res) => {
-        if (res && res.sessionId) {
-          setSessionId(res.sessionId);
-        }
-      });
+      let currentSessionId = null;
+      try {
+        currentSessionId = sessionStorage.getItem('dfc_chat_session_id');
+      } catch {
+        // ignore
+      }
+
+      socketService.joinChat(
+        'Customer Storefront Inquiry',
+        (res) => {
+          if (res && res.sessionId) {
+            setSessionId(res.sessionId);
+            try {
+              sessionStorage.setItem('dfc_chat_session_id', res.sessionId);
+            } catch {
+              // ignore
+            }
+          }
+        },
+        currentSessionId
+      );
     };
 
     const handleDisconnect = () => {
@@ -264,21 +286,6 @@ export default function ChatWidget() {
 
     if (!socketService.isConnected || !sessionId) {
       triggerLocalFallback();
-    } else {
-      // Safety net fallback in case server socket doesn't reply within 2.5s
-      setTimeout(() => {
-        setMessages((current) => {
-          const lastMsg = current[current.length - 1];
-          if (
-            lastMsg &&
-            (lastMsg.senderRole === 'customer' || lastMsg.senderRole === 'user') &&
-            lastMsg.message === cleanText
-          ) {
-            triggerLocalFallback();
-          }
-          return current;
-        });
-      }, 2500);
     }
   };
 
