@@ -79,6 +79,30 @@ export default function ChatWidget() {
         // ignore
       }
 
+      const rawUser = (() => {
+        try {
+          const raw =
+            localStorage.getItem('stackstorm_user') ||
+            localStorage.getItem('stackstorm_auth_user') ||
+            localStorage.getItem('user');
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
+      })();
+
+      const customerMeta = rawUser
+        ? {
+            customerId: rawUser.id,
+            customerName:
+              rawUser.name ||
+              `${rawUser.first_name || ''} ${rawUser.last_name || ''}`.trim() ||
+              rawUser.email,
+            customerEmail: rawUser.email,
+            tier: rawUser.loyalty_tier || rawUser.loyaltyTier || 'Silver',
+          }
+        : null;
+
       socketService.joinChat(
         'Customer Storefront Inquiry',
         (res) => {
@@ -91,7 +115,8 @@ export default function ChatWidget() {
             }
           }
         },
-        currentSessionId
+        currentSessionId,
+        customerMeta
       );
     };
 
