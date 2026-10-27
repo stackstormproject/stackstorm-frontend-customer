@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Search,
-  Heart,
-  ShoppingBag,
-  User,
-  Menu,
-  X,
-  ChevronDown,
-} from 'lucide-react';
+import { Search, Heart, ShoppingBag, User, Menu, X, ChevronDown } from 'lucide-react';
 import { categoryApi } from '../../api/category.api';
 import { MegaMenu } from './MegaMenu';
 import './Header.css';
@@ -144,7 +136,6 @@ export const Header = ({
 
           {/* Right: Action Badges (Wishlist, Cart & Account) */}
           <div className="dk-header-actions">
-
             <button
               type="button"
               className="dk-action-btn"
@@ -185,7 +176,11 @@ export const Header = ({
               data-testid="header-account-btn"
             >
               <User size={16} />
-              <span>{currentUser ? (currentUser.first_name || currentUser.name || 'My Profile') : 'Sign In'}</span>
+              <span>
+                {currentUser
+                  ? currentUser.first_name || currentUser.name || 'My Profile'
+                  : 'Sign In'}
+              </span>
             </button>
           </div>
         </div>
@@ -228,7 +223,8 @@ export const Header = ({
                   className="dk-nav-button"
                   onClick={(e) => {
                     e.preventDefault();
-                    if (onCategorySelect) onCategorySelect({ name: "Men's Batik", slug: 'men-batik-shirts' });
+                    if (onCategorySelect)
+                      onCategorySelect({ name: "Men's Batik", slug: 'men-batik-shirts' });
                   }}
                 >
                   <span>Men's Batik</span>
@@ -240,7 +236,8 @@ export const Header = ({
                   className="dk-nav-button"
                   onClick={(e) => {
                     e.preventDefault();
-                    if (onCategorySelect) onCategorySelect({ name: "Women's Sarees", slug: 'women-silk-saris' });
+                    if (onCategorySelect)
+                      onCategorySelect({ name: "Women's Sarees", slug: 'women-silk-saris' });
                   }}
                 >
                   <span>Women's Sarees</span>
@@ -252,7 +249,8 @@ export const Header = ({
                   className="dk-nav-button"
                   onClick={(e) => {
                     e.preventDefault();
-                    if (onCategorySelect) onCategorySelect({ name: "Pure Handlooms", slug: 'handlooms' });
+                    if (onCategorySelect)
+                      onCategorySelect({ name: 'Pure Handlooms', slug: 'handlooms' });
                   }}
                 >
                   <span>Pure Handlooms</span>
@@ -264,7 +262,8 @@ export const Header = ({
                   className="dk-nav-button"
                   onClick={(e) => {
                     e.preventDefault();
-                    if (onCategorySelect) onCategorySelect({ name: "Linen Collection", slug: 'linen-collection' });
+                    if (onCategorySelect)
+                      onCategorySelect({ name: 'Linen Collection', slug: 'linen-collection' });
                   }}
                 >
                   <span>Linen Collection</span>
@@ -299,7 +298,10 @@ export const Header = ({
             data-testid="mobile-drawer"
           >
             <div className="dk-drawer-header">
-              <div className="dk-brand-identity" style={{ alignItems: 'flex-start', textAlign: 'left' }}>
+              <div
+                className="dk-brand-identity"
+                style={{ alignItems: 'flex-start', textAlign: 'left' }}
+              >
                 <span className="dk-brand-main" style={{ fontSize: '1.25rem', color: '#000000' }}>
                   STACKSTORM
                 </span>
@@ -358,7 +360,10 @@ export const Header = ({
                       </button>
 
                       {hasChildren && isExpanded && (
-                        <ul className="dk-drawer-sublist" data-testid={`mobile-sublist-${category.slug}`}>
+                        <ul
+                          className="dk-drawer-sublist"
+                          data-testid={`mobile-sublist-${category.slug}`}
+                        >
                           {category.children.map((subCat) => (
                             <li key={subCat.id || subCat.slug}>
                               <a

@@ -23,7 +23,7 @@ import './CustomerProfilePage.css';
 
 /**
  * CustomerProfilePage Component
- * 
+ *
  * Central self-service hub for registered customers to manage personal info,
  * shipping destinations, and view their Ceylon Heritage Loyalty tier (AC1–AC4).
  */
@@ -128,7 +128,8 @@ export function CustomerProfilePage({
   };
 
   // Avatar Initials
-  const fullName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Valued Customer';
+  const fullName =
+    `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Valued Customer';
   const initials = `${(profile.first_name?.[0] || 'D').toUpperCase()}${(profile.last_name?.[0] || 'C').toUpperCase()}`;
   const tier = (profile.loyalty?.tier || 'silver').toUpperCase();
 
@@ -181,7 +182,10 @@ export function CustomerProfilePage({
                 <h1 className="customer-profile__name" data-testid="customer-profile-name">
                   {fullName}
                 </h1>
-                <span className={`tier-badge-chip tier-badge-chip--${profile.loyalty?.tier || 'silver'}`} data-testid="header-tier-badge">
+                <span
+                  className={`tier-badge-chip tier-badge-chip--${profile.loyalty?.tier || 'silver'}`}
+                  data-testid="header-tier-badge"
+                >
                   <Award size={13} />
                   <span>{tier}</span>
                 </span>
@@ -198,7 +202,13 @@ export function CustomerProfilePage({
                 </span>
                 <span className="customer-meta-item">
                   <Calendar size={14} />
-                  <span>Member since {new Date(profile.created_at || '2026-01-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                  <span>
+                    Member since{' '}
+                    {new Date(profile.created_at || '2026-01-01').toLocaleDateString('en-US', {
+                      month: 'short',
+                      year: 'numeric',
+                    })}
+                  </span>
                 </span>
               </div>
             </div>
@@ -213,7 +223,7 @@ export function CustomerProfilePage({
             </div>
             <div className="quick-stat-box">
               <span className="quick-stat-val" data-testid="stat-saved-addresses">
-                {(profile.addresses?.length || 0)}
+                {profile.addresses?.length || 0}
               </span>
               <span className="quick-stat-label">Saved Addresses</span>
             </div>
@@ -243,7 +253,7 @@ export function CustomerProfilePage({
             data-testid="tab-profile-addresses"
           >
             <MapPin size={16} />
-            <span>Address Book ({(profile.addresses?.length || 0)})</span>
+            <span>Address Book ({profile.addresses?.length || 0})</span>
           </button>
 
           <button
@@ -265,10 +275,15 @@ export function CustomerProfilePage({
           {activeTab === 'overview' && (
             <div className="profile-tab-pane" data-testid="pane-overview">
               <div className="profile-details-grid">
-                <form onSubmit={handlePersonalFormSubmit} className="profile-form-card" data-testid="profile-form">
+                <form
+                  onSubmit={handlePersonalFormSubmit}
+                  className="profile-form-card"
+                  data-testid="profile-form"
+                >
                   <h3 className="pane-card-title">Edit Personal Information</h3>
                   <p className="pane-card-desc">
-                    Keep your primary contact information up to date for order tracking and courier dispatch.
+                    Keep your primary contact information up to date for order tracking and courier
+                    dispatch.
                   </p>
 
                   <div className="profile-form__row">
@@ -342,11 +357,14 @@ export function CustomerProfilePage({
                       <input
                         type="checkbox"
                         checked={formData.marketing_opt_in}
-                        onChange={(e) => setFormData({ ...formData, marketing_opt_in: e.target.checked })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, marketing_opt_in: e.target.checked })
+                        }
                         data-testid="checkbox-marketing-opt-in"
                       />
                       <span>
-                        Receive exclusive Dickwella seasonal batik catalogs and member-only promotions.
+                        Receive exclusive Dickwella seasonal batik catalogs and member-only
+                        promotions.
                       </span>
                     </label>
                   </div>
@@ -380,11 +398,18 @@ export function CustomerProfilePage({
                       <ShieldCheck size={20} color="#10B981" />
                       <h4>Account Security</h4>
                     </div>
-                    <p>Password last updated 3 months ago. Two-factor authentication available via SMS OTP.</p>
+                    <p>
+                      Password last updated 3 months ago. Two-factor authentication available via
+                      SMS OTP.
+                    </p>
                     <button
                       type="button"
                       className="btn-secondary btn-sm"
-                      onClick={() => toast.info('Password reset email dispatched to your inbox.', { title: 'Security' })}
+                      onClick={() =>
+                        toast.info('Password reset email dispatched to your inbox.', {
+                          title: 'Security',
+                        })
+                      }
                     >
                       Change Password
                     </button>
@@ -396,9 +421,21 @@ export function CustomerProfilePage({
                       <h4>Quick Actions</h4>
                     </div>
                     <ul className="side-card-links">
-                      <li><a href="#orders" onClick={onBackToCatalog}>View Order History</a></li>
-                      <li><a href="#wishlist" onClick={onBackToCatalog}>Manage Saved Wishlist</a></li>
-                      <li><a href="#returns" onClick={onBackToCatalog}>30-Day Return Requests</a></li>
+                      <li>
+                        <a href="#orders" onClick={onBackToCatalog}>
+                          View Order History
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#wishlist" onClick={onBackToCatalog}>
+                          Manage Saved Wishlist
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#returns" onClick={onBackToCatalog}>
+                          30-Day Return Requests
+                        </a>
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -437,21 +474,27 @@ export function CustomerProfilePage({
                     </thead>
                     <tbody>
                       <tr className={profile.loyalty?.tier === 'silver' ? 'tier-active-row' : ''}>
-                        <td><strong>Silver</strong></td>
+                        <td>
+                          <strong>Silver</strong>
+                        </td>
                         <td>Entry Level</td>
                         <td>1 pt / LKR 100</td>
                         <td>Free over LKR 10,000</td>
                         <td>30-Day Returns, Birthday Discount</td>
                       </tr>
                       <tr className={profile.loyalty?.tier === 'gold' ? 'tier-active-row' : ''}>
-                        <td><strong>Gold ⭐</strong></td>
+                        <td>
+                          <strong>Gold ⭐</strong>
+                        </td>
                         <td>LKR 25,000+</td>
                         <td>1.5 pts / LKR 100</td>
                         <td>Free Islandwide Courier</td>
                         <td>Early VIP Drops, Priority Support</td>
                       </tr>
                       <tr className={profile.loyalty?.tier === 'platinum' ? 'tier-active-row' : ''}>
-                        <td><strong>Platinum 💎</strong></td>
+                        <td>
+                          <strong>Platinum 💎</strong>
+                        </td>
                         <td>LKR 100,000+</td>
                         <td>2.0 pts / LKR 100</td>
                         <td>Free Same-Day / Express</td>

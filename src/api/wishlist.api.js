@@ -61,10 +61,10 @@ export const wishlistApi = {
       const items = Array.isArray(response)
         ? response
         : Array.isArray(response?.data)
-        ? response.data
-        : Array.isArray(response?.data?.data)
-        ? response.data.data
-        : null;
+          ? response.data
+          : Array.isArray(response?.data?.data)
+            ? response.data.data
+            : null;
 
       if (Array.isArray(items)) {
         return items;
@@ -95,7 +95,9 @@ export const wishlistApi = {
 
       const cached = getLocalWishlistItems();
       const nextCached = isPresent
-        ? cached.filter((it) => String(it.product_id || it.product?.id || it.id) !== String(productId))
+        ? cached.filter(
+            (it) => String(it.product_id || it.product?.id || it.id) !== String(productId)
+          )
         : cached;
       setLocalWishlistItems(nextCached);
 
@@ -154,7 +156,9 @@ export function getFallbackWishlist() {
   const result = [];
 
   localIds.forEach((id) => {
-    const fromCached = cachedItems.find((it) => String(it.product_id || it.product?.id || it.id) === String(id));
+    const fromCached = cachedItems.find(
+      (it) => String(it.product_id || it.product?.id || it.id) === String(id)
+    );
     if (fromCached) {
       result.push(fromCached);
       return;

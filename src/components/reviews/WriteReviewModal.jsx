@@ -18,17 +18,11 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB (AC3)
 
 /**
  * WriteReviewModal Component
- * 
+ *
  * Verified customer review submission with 1-5 star selector,
  * text commentary, and client-side validated image upload (AC3 & AC4).
  */
-export function WriteReviewModal({
-  isOpen = false,
-  onClose,
-  product,
-  order = null,
-  onSuccess,
-}) {
+export function WriteReviewModal({ isOpen = false, onClose, product, order = null, onSuccess }) {
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [title, setTitle] = useState('');
@@ -86,7 +80,9 @@ export function WriteReviewModal({
     }
 
     if (!comment.trim() || comment.trim().length < 10) {
-      setServerError('Please share at least 10 characters about your experience with this garment.');
+      setServerError(
+        'Please share at least 10 characters about your experience with this garment.'
+      );
       return;
     }
 
@@ -158,14 +154,13 @@ export function WriteReviewModal({
 
         {/* Non-Delivered Gate Explanation (AC4) */}
         {!isDelivered ? (
-          <div
-            className="review-modal__gate-card"
-            data-testid="review-gate-card"
-          >
+          <div className="review-modal__gate-card" data-testid="review-gate-card">
             <AlertCircle size={32} className="gate-icon" />
             <h4>Verified Delivered Purchases Only</h4>
             <p>
-              To protect the integrity of artisan craftsmanship ratings, reviews can only be submitted after your order has reached <strong>Delivered</strong> status and you have received the garment.
+              To protect the integrity of artisan craftsmanship ratings, reviews can only be
+              submitted after your order has reached <strong>Delivered</strong> status and you have
+              received the garment.
             </p>
             <button
               type="button"
@@ -180,7 +175,11 @@ export function WriteReviewModal({
           <form onSubmit={handleSubmit} className="review-modal__form" data-testid="review-form">
             {/* Server Error Alert */}
             {serverError && (
-              <div className="review-modal__error-banner" role="alert" data-testid="review-error-banner">
+              <div
+                className="review-modal__error-banner"
+                role="alert"
+                data-testid="review-error-banner"
+              >
                 <AlertCircle size={16} />
                 <span>{serverError}</span>
               </div>
@@ -191,7 +190,12 @@ export function WriteReviewModal({
               <label className="form-label">
                 Overall Satisfaction <span className="text-danger">*</span>
               </label>
-              <div className="star-rating-row" role="radiogroup" aria-label="Rating stars" data-testid="star-rating-row">
+              <div
+                className="star-rating-row"
+                role="radiogroup"
+                aria-label="Rating stars"
+                data-testid="star-rating-row"
+              >
                 {[1, 2, 3, 4, 5].map((starVal) => {
                   const isFilled = (hoverRating || rating) >= starVal;
                   return (
@@ -205,7 +209,11 @@ export function WriteReviewModal({
                       aria-label={`${starVal} star${starVal > 1 ? 's' : ''}`}
                       data-testid={`star-btn-${starVal}`}
                     >
-                      <Star size={24} fill={isFilled ? '#F59E0B' : 'none'} color={isFilled ? '#F59E0B' : '#94A3B8'} />
+                      <Star
+                        size={24}
+                        fill={isFilled ? '#F59E0B' : 'none'}
+                        color={isFilled ? '#F59E0B' : '#94A3B8'}
+                      />
                     </button>
                   );
                 })}
@@ -252,9 +260,7 @@ export function WriteReviewModal({
 
             {/* Image Attachment with Client MIME & 5MB Size Validation (AC3) */}
             <div className="form-group">
-              <label className="form-label">
-                Upload Photo of Garment (Optional, Max 5MB)
-              </label>
+              <label className="form-label">Upload Photo of Garment (Optional, Max 5MB)</label>
 
               {fileError && (
                 <div className="review-file-error" role="alert" data-testid="file-error-alert">
@@ -265,7 +271,11 @@ export function WriteReviewModal({
 
               {filePreview ? (
                 <div className="review-file-preview-card" data-testid="file-preview-card">
-                  <img src={filePreview} alt="Review attachment preview" className="preview-image" />
+                  <img
+                    src={filePreview}
+                    alt="Review attachment preview"
+                    className="preview-image"
+                  />
                   <div className="preview-meta">
                     <span className="preview-filename">{selectedFile?.name}</span>
                     <span className="preview-filesize">
@@ -283,7 +293,11 @@ export function WriteReviewModal({
                   </button>
                 </div>
               ) : (
-                <label className="review-dropzone" htmlFor="review-file-input" data-testid="review-dropzone">
+                <label
+                  className="review-dropzone"
+                  htmlFor="review-file-input"
+                  data-testid="review-dropzone"
+                >
                   <Upload size={20} className="dropzone-icon" />
                   <div>
                     <span className="dropzone-text">Click to choose image or drag & drop</span>

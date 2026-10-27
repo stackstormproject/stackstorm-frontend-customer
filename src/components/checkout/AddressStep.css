@@ -4,8 +4,8 @@
    ============================================================================== */
 
 .address-step {
-  background: var(--color-surface, #FFFFFF);
-  border: 1px solid var(--color-border, #E2E8F0);
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-lg, 12px);
   padding: 1.75rem 2rem;
   box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
@@ -28,14 +28,14 @@
 }
 
 .address-step__header-icon {
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
 }
 
 .address-step__title {
   font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
   margin: 0;
 }
 
@@ -43,9 +43,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: #F0FDF4;
+  background: #f0fdf4;
   color: #166534;
-  border: 1px solid #BBF7D0;
+  border: 1px solid #bbf7d0;
   border-radius: var(--radius-full, 9999px);
   padding: 0.25rem 0.65rem;
   font-size: var(--text-xs, 0.75rem);
@@ -76,7 +76,7 @@
   font-size: var(--text-xs, 0.75rem);
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: var(--color-text-subtle, #94A3B8);
+  color: var(--color-text-subtle, #94a3b8);
 }
 
 .address-step__divider::before,
@@ -84,7 +84,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: var(--color-border, #E2E8F0);
+  background: var(--color-border, #e2e8f0);
 }
 
 .address-step__divider span {
@@ -100,13 +100,13 @@
 .form-label {
   font-size: var(--text-xs, 0.75rem);
   font-weight: 600;
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 
 .text-danger {
-  color: var(--color-danger, #EF4444);
+  color: var(--color-danger, #ef4444);
 }
 
 .input-with-icon {
@@ -118,7 +118,7 @@
 .input-icon {
   position: absolute;
   left: 0.85rem;
-  color: var(--color-text-subtle, #94A3B8);
+  color: var(--color-text-subtle, #94a3b8);
   pointer-events: none;
 }
 
@@ -128,9 +128,9 @@
   padding: 0.75rem 1rem;
   font-size: var(--text-sm, 0.875rem);
   font-family: inherit;
-  color: var(--color-text-main, #0F172A);
-  background: var(--color-surface, #FFFFFF);
-  border: 1px solid var(--color-border, #E2E8F0);
+  color: var(--color-text-main, #0f172a);
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-md, 8px);
   transition: all 0.2s ease;
   outline: none;
@@ -142,14 +142,14 @@
 
 .form-input:focus,
 .form-select:focus {
-  border-color: var(--color-accent, #D4AF37);
+  border-color: var(--color-accent, #d4af37);
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
 }
 
 .form-input--error,
 .form-select--error {
-  border-color: var(--color-danger, #EF4444) !important;
-  background-color: #FEF2F2;
+  border-color: var(--color-danger, #ef4444) !important;
+  background-color: #fef2f2;
 }
 
 .form-input--error:focus,
@@ -159,7 +159,7 @@
 
 .form-error {
   font-size: var(--text-xs, 0.75rem);
-  color: var(--color-danger, #EF4444);
+  color: var(--color-danger, #ef4444);
   font-weight: 500;
   margin-top: 0.15rem;
 }
@@ -169,7 +169,7 @@
   justify-content: flex-end;
   margin-top: 2rem;
   padding-top: 1.25rem;
-  border-top: 1px solid var(--color-border, #E2E8F0);
+  border-top: 1px solid var(--color-border, #e2e8f0);
 }
 
 .address-step__submit-btn {
@@ -177,8 +177,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.85rem 1.75rem;
-  background: var(--color-primary, #0A192F);
-  color: #FFFFFF;
+  background: var(--color-primary, #0a192f);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-md, 8px);
   font-weight: 600;
@@ -188,7 +188,7 @@
 }
 
 .address-step__submit-btn:hover {
-  background: var(--color-primary-light, #172A45);
+  background: var(--color-primary-light, #172a45);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(10, 25, 47, 0.15);
 }

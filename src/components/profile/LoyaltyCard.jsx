@@ -4,7 +4,7 @@ import './LoyaltyCard.css';
 
 /**
  * LoyaltyCard Component
- * 
+ *
  * Displays customer's Ceylon Heritage Loyalty status, accrued points,
  * tier progress bar, and 12-month rolling expiration policy (AC3).
  * Defensively handles null/undefined loyalty objects per Failure Recovery Matrix.
@@ -40,18 +40,13 @@ export function LoyaltyCard({ loyalty, className = '' }) {
   );
 
   return (
-    <div
-      className={`loyalty-card loyalty-card--${tier} ${className}`}
-      data-testid="loyalty-card"
-    >
+    <div className={`loyalty-card loyalty-card--${tier} ${className}`} data-testid="loyalty-card">
       {/* Top Banner with Tier Badge */}
       <div className="loyalty-card__header">
         <div className="loyalty-card__badge-wrapper">
           <div className={`loyalty-badge loyalty-badge--${tier}`} data-testid="loyalty-tier-badge">
             <Award size={18} />
-            <span className="loyalty-badge__text">
-              {tier.toUpperCase()} TIER
-            </span>
+            <span className="loyalty-badge__text">{tier.toUpperCase()} TIER</span>
           </div>
           <span className="loyalty-card__program-name">Ceylon Heritage Rewards</span>
         </div>
@@ -67,7 +62,9 @@ export function LoyaltyCard({ loyalty, className = '' }) {
       {/* Progress Meter to Next Tier */}
       <div className="loyalty-card__progress-section">
         <div className="loyalty-card__progress-labels">
-          <span>Current: <strong>{tier.charAt(0).toUpperCase() + tier.slice(1)}</strong></span>
+          <span>
+            Current: <strong>{tier.charAt(0).toUpperCase() + tier.slice(1)}</strong>
+          </span>
           {spendToNext > 0 ? (
             <span data-testid="loyalty-next-tier-label">
               LKR {spendToNext.toLocaleString()} to <strong>{currentTierInfo.nextTier}</strong>
@@ -85,15 +82,15 @@ export function LoyaltyCard({ loyalty, className = '' }) {
           aria-valuemax="100"
           data-testid="loyalty-progress-bar"
         >
-          <div
-            className="loyalty-progress-fill"
-            style={{ width: `${progressPercent}%` }}
-          />
+          <div className="loyalty-progress-fill" style={{ width: `${progressPercent}%` }} />
         </div>
 
         <div className="loyalty-card__accrual-rate">
           <TrendingUp size={14} />
-          <span>Earning Rate: <strong>{safeLoyalty.accrual_rate || '1 pt per LKR 100'}</strong> on handloom textiles</span>
+          <span>
+            Earning Rate: <strong>{safeLoyalty.accrual_rate || '1 pt per LKR 100'}</strong> on
+            handloom textiles
+          </span>
         </div>
       </div>
 
@@ -117,7 +114,8 @@ export function LoyaltyCard({ loyalty, className = '' }) {
       <div className="loyalty-card__policy-footer" data-testid="loyalty-policy-note">
         <Clock size={14} />
         <span>
-          Points valid for <strong>{safeLoyalty.expires_in_months || 12} months</strong> from date of accrual. Points redeemable against future handloom purchases at LKR 1 per point.
+          Points valid for <strong>{safeLoyalty.expires_in_months || 12} months</strong> from date
+          of accrual. Points redeemable against future handloom purchases at LKR 1 per point.
         </span>
       </div>
     </div>

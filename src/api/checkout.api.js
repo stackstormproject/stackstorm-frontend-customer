@@ -8,7 +8,7 @@ export const checkoutApi = {
   /**
    * Initiates checkout for guest or authenticated customer.
    * Creates an order with pending status and locks temporary stock reservation.
-   * 
+   *
    * @param {Object} payload
    * @param {string} [payload.guestEmail]
    * @param {string} [payload.guestPhone]

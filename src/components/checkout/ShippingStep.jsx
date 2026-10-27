@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
-import { Truck, Zap, Store, ArrowLeft, ArrowRight, CheckCircle2, ShieldCheck, MapPin } from 'lucide-react';
+import {
+  Truck,
+  Zap,
+  Store,
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  ShieldCheck,
+  MapPin,
+} from 'lucide-react';
 import './ShippingStep.css';
 
 export const SHIPPING_METHODS = [
   {
     id: 'standard',
     title: 'Standard Island-Wide Courier',
-    description: 'Delivered to your door via Southern Province courier network (2-4 business days).',
+    description:
+      'Delivered to your door via Southern Province courier network (2-4 business days).',
     basePrice: 450,
     icon: Truck,
   },
@@ -28,7 +38,7 @@ export const SHIPPING_METHODS = [
 
 /**
  * ShippingStep Component
- * 
+ *
  * Step 2 of Checkout: Selecting delivery method with automatic Free Delivery calculation.
  */
 export function ShippingStep({
@@ -49,7 +59,8 @@ export function ShippingStep({
   };
 
   const handleContinue = () => {
-    const chosenMethod = SHIPPING_METHODS.find((m) => m.id === shippingMethod) || SHIPPING_METHODS[0];
+    const chosenMethod =
+      SHIPPING_METHODS.find((m) => m.id === shippingMethod) || SHIPPING_METHODS[0];
     const cost = getShippingCost(chosenMethod);
     if (typeof onSubmitShipping === 'function') {
       onSubmitShipping({

@@ -7,7 +7,7 @@ const DEFAULT_CATEGORIES = [
   { id: 'all', name: 'All Collections', slug: 'all' },
   { id: 'men', name: "Men's Apparel", slug: 'men' },
   { id: 'women', name: "Women's Sarees & Kurtis", slug: 'women' },
-  { id: 'kids', name: "Kids Traditional", slug: 'kids' },
+  { id: 'kids', name: 'Kids Traditional', slug: 'kids' },
   { id: 'accessories', name: 'Accessories & Shawls', slug: 'accessories' },
 ];
 
@@ -28,12 +28,7 @@ export const FilterSidebar = ({
   onClearFilters,
   categories = DEFAULT_CATEGORIES,
 }) => {
-  const {
-    category = 'all',
-    max_price = 20000,
-    size = '',
-    color = '',
-  } = filters;
+  const { category = 'all', max_price = 20000, size = '', color = '' } = filters;
 
   const handleCategorySelect = (catSlug) => {
     if (onFilterChange) {
@@ -65,7 +60,11 @@ export const FilterSidebar = ({
   const hasActiveFilters = category !== 'all' || max_price < 20000 || size || color;
 
   return (
-    <aside className="dk-filter-sidebar" data-testid="filter-sidebar" aria-label="Product Catalog Filters">
+    <aside
+      className="dk-filter-sidebar"
+      data-testid="filter-sidebar"
+      aria-label="Product Catalog Filters"
+    >
       <div className="dk-filter-header">
         <h3 className="dk-filter-title">
           <SlidersHorizontal size={18} color="#D4AF37" />
@@ -123,7 +122,10 @@ export const FilterSidebar = ({
           />
           <div className="dk-price-values">
             <span>Min: LKR 2,000</span>
-            <span style={{ color: 'var(--color-primary)', fontWeight: 600 }} data-testid="max-price-display">
+            <span
+              style={{ color: 'var(--color-primary)', fontWeight: 600 }}
+              data-testid="max-price-display"
+            >
               Up to {formatLKR(max_price)}
             </span>
           </div>

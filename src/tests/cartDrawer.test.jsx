@@ -41,9 +41,7 @@ describe('STORM-FE-009: Slide-Over Cart Drawer, Live Quantity Adjusters & Guest 
   it('AC1: should render CartDrawer slide-over and handle close trigger and backdrop dismissal', () => {
     const handleClose = vi.fn();
 
-    const { rerender } = render(
-      <CartDrawer isOpen={true} onClose={handleClose} items={[]} />
-    );
+    const { rerender } = render(<CartDrawer isOpen={true} onClose={handleClose} items={[]} />);
 
     const drawer = screen.getByTestId('cart-drawer-panel');
     expect(drawer).toBeInTheDocument();
@@ -66,18 +64,17 @@ describe('STORM-FE-009: Slide-Over Cart Drawer, Live Quantity Adjusters & Guest 
 
   // Test 2: CartDrawer renders line items with variant details and subtotal (AC2)
   it('AC2: should render line items with variant badges, unit price, and accurate subtotal', () => {
-    render(
-      <CartDrawer
-        isOpen={true}
-        items={[sampleCartItem]}
-      />
-    );
+    render(<CartDrawer isOpen={true} items={[sampleCartItem]} />);
 
     expect(screen.getByText('Signature Linen Batik Shirt')).toBeInTheDocument();
     expect(screen.getByTestId(`cart-item-size-${sampleCartItem.id}`)).toHaveTextContent('Size: M');
-    expect(screen.getByTestId(`cart-item-color-${sampleCartItem.id}`)).toHaveTextContent('Color: Ocean Blue');
+    expect(screen.getByTestId(`cart-item-color-${sampleCartItem.id}`)).toHaveTextContent(
+      'Color: Ocean Blue'
+    );
     expect(screen.getByTestId(`cart-qty-${sampleCartItem.id}`)).toHaveTextContent('2');
-    expect(screen.getByTestId(`cart-item-total-${sampleCartItem.id}`)).toHaveTextContent('LKR 9,000.00');
+    expect(screen.getByTestId(`cart-item-total-${sampleCartItem.id}`)).toHaveTextContent(
+      'LKR 9,000.00'
+    );
     expect(screen.getByTestId('cart-subtotal')).toHaveTextContent('LKR 9,000.00');
   });
 

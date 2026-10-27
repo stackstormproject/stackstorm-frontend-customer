@@ -12,16 +12,12 @@ describe('STORM-FE-005: Responsive Storefront Header, Category Mega-Menu & Dynam
 
   describe('Header Component', () => {
     it('AC1 & AC3: renders brand identity, navigation items, and action badges', () => {
-      render(
-        <Header
-          wishlistCount={3}
-          cartCount={2}
-          categories={DEFAULT_FALLBACK_CATEGORIES}
-        />
-      );
+      render(<Header wishlistCount={3} cartCount={2} categories={DEFAULT_FALLBACK_CATEGORIES} />);
 
       // Verify Brand Logo
-      expect(screen.getByTestId('header-brand-logo')).toHaveTextContent(/Dickwella Fashion Corner/i);
+      expect(screen.getByTestId('header-brand-logo')).toHaveTextContent(
+        /Dickwella Fashion Corner/i
+      );
 
       // Verify Badges
       expect(screen.getByTestId('wishlist-badge')).toHaveTextContent('3');
@@ -55,12 +51,7 @@ describe('STORM-FE-005: Responsive Storefront Header, Category Mega-Menu & Dynam
 
     it('AC3: handles live search query input and form submission', () => {
       const handleSearch = vi.fn();
-      render(
-        <Header
-          categories={DEFAULT_FALLBACK_CATEGORIES}
-          onSearch={handleSearch}
-        />
-      );
+      render(<Header categories={DEFAULT_FALLBACK_CATEGORIES} onSearch={handleSearch} />);
 
       const searchInput = screen.getByTestId('header-search-input');
       fireEvent.change(searchInput, { target: { value: 'Batik Saree' } });

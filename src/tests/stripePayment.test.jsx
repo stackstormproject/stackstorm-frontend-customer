@@ -7,7 +7,11 @@ import { OrderSuccessPage } from '../pages/OrderSuccessPage';
 // Mock Stripe React bindings for deterministic shift-left testing
 vi.mock('@stripe/react-stripe-js', () => ({
   Elements: ({ children }) => <div data-testid="mock-stripe-elements">{children}</div>,
-  CardElement: () => <div data-testid="mock-card-element"><input aria-label="Card details" /></div>,
+  CardElement: () => (
+    <div data-testid="mock-card-element">
+      <input aria-label="Card details" />
+    </div>
+  ),
   useStripe: () => ({
     confirmCardPayment: vi.fn().mockResolvedValue({
       paymentIntent: {
@@ -67,7 +71,9 @@ describe('STORM-FE-012: Stripe Elements Card Payment & Order Success Suite', () 
       fireEvent.click(submitBtn);
 
       await waitFor(() => {
-        expect(screen.getByTestId('payment-error-alert')).toHaveTextContent(/Please enter the name on the card/i);
+        expect(screen.getByTestId('payment-error-alert')).toHaveTextContent(
+          /Please enter the name on the card/i
+        );
       });
     });
 
@@ -147,12 +153,7 @@ describe('STORM-FE-012: Stripe Elements Card Payment & Order Success Suite', () 
       const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});
       const continueMock = vi.fn();
 
-      render(
-        <OrderSuccessPage
-          order={mockOrder}
-          onContinueShopping={continueMock}
-        />
-      );
+      render(<OrderSuccessPage order={mockOrder} onContinueShopping={continueMock} />);
 
       expect(screen.getByTestId('order-items-list')).toBeInTheDocument();
       expect(screen.getByText('Ceylon Handloom Batik Sarong')).toBeInTheDocument();

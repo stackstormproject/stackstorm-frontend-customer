@@ -5,7 +5,7 @@ import './ReservationBanner.css';
 
 /**
  * ReservationBanner Component
- * 
+ *
  * Prominently displays the 15-minute stock hold countdown during checkout.
  * Transitions through normal (sapphire/gold), amber warning, and critical red modes.
  */
@@ -50,7 +50,10 @@ export function ReservationBanner({
         <div className="reservation-banner__content">
           <div className="reservation-banner__badge" data-testid="reservation-badge">
             {isCritical ? (
-              <Flame className="reservation-banner__icon reservation-banner__icon--pulse" size={18} />
+              <Flame
+                className="reservation-banner__icon reservation-banner__icon--pulse"
+                size={18}
+              />
             ) : isUrgent ? (
               <AlertTriangle className="reservation-banner__icon" size={18} />
             ) : (
@@ -60,21 +63,24 @@ export function ReservationBanner({
               {isCritical
                 ? 'High Demand — Ending Soon'
                 : isUrgent
-                ? 'Stock Hold Expiring'
-                : 'Stock Held for Checkout'}
+                  ? 'Stock Hold Expiring'
+                  : 'Stock Held for Checkout'}
             </span>
           </div>
 
           <div className="reservation-banner__message">
             <span className="reservation-banner__text">
-              Items reserved for: <strong className="reservation-banner__clock" data-testid="countdown-clock">{formattedTime}</strong>
+              Items reserved for:{' '}
+              <strong className="reservation-banner__clock" data-testid="countdown-clock">
+                {formattedTime}
+              </strong>
             </span>
             <span className="reservation-banner__subtext">
               {isCritical
                 ? 'Your selected sizes will release back to public inventory in under 60 seconds.'
                 : isUrgent
-                ? 'Complete your order now to guarantee your sizes.'
-                : 'We are holding your apparel exclusively for you while you check out.'}
+                  ? 'Complete your order now to guarantee your sizes.'
+                  : 'We are holding your apparel exclusively for you while you check out.'}
             </span>
           </div>
         </div>

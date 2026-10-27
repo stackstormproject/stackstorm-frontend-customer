@@ -63,7 +63,10 @@ export const Modal = ({
     return () => {
       clearTimeout(timer);
       document.body.style.overflow = originalOverflow;
-      if (previousActiveElementRef.current && typeof previousActiveElementRef.current.focus === 'function') {
+      if (
+        previousActiveElementRef.current &&
+        typeof previousActiveElementRef.current.focus === 'function'
+      ) {
         previousActiveElementRef.current.focus();
       }
     };
@@ -98,12 +101,18 @@ export const Modal = ({
         const lastElement = focusableElements[focusableElements.length - 1];
 
         if (e.shiftKey) {
-          if (document.activeElement === firstElement || !modalRef.current.contains(document.activeElement)) {
+          if (
+            document.activeElement === firstElement ||
+            !modalRef.current.contains(document.activeElement)
+          ) {
             e.preventDefault();
             lastElement.focus();
           }
         } else {
-          if (document.activeElement === lastElement || !modalRef.current.contains(document.activeElement)) {
+          if (
+            document.activeElement === lastElement ||
+            !modalRef.current.contains(document.activeElement)
+          ) {
             e.preventDefault();
             firstElement.focus();
           }
@@ -128,11 +137,7 @@ export const Modal = ({
   };
 
   return createPortal(
-    <div
-      className="dk-modal-backdrop"
-      onClick={handleBackdropClick}
-      data-testid="modal-backdrop"
-    >
+    <div className="dk-modal-backdrop" onClick={handleBackdropClick} data-testid="modal-backdrop">
       <div
         ref={modalRef}
         className={`dk-modal-dialog dk-modal-dialog--${size}`}

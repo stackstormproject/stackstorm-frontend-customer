@@ -69,11 +69,7 @@ export const ToastProvider = ({ children }) => {
     clear: clearToasts,
   };
 
-  return (
-    <ToastContext.Provider value={contextValue}>
-      {children}
-    </ToastContext.Provider>
-  );
+  return <ToastContext.Provider value={contextValue}>{children}</ToastContext.Provider>;
 };
 
 export const useToast = () => {

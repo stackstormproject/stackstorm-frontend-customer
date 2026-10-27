@@ -123,10 +123,18 @@ describe('STORM-FE-013: Customer Authentication Modal with Lockout Countdown & P
       fireEvent.click(submitBtn);
 
       await waitFor(() => {
-        expect(screen.getByTestId('error-register-name')).toHaveTextContent(/Full name is required/i);
-        expect(screen.getByTestId('error-register-email')).toHaveTextContent(/Email address is required/i);
-        expect(screen.getByTestId('error-register-phone')).toHaveTextContent(/Phone number is required/i);
-        expect(screen.getByTestId('error-register-password')).toHaveTextContent(/Password is required/i);
+        expect(screen.getByTestId('error-register-name')).toHaveTextContent(
+          /Full name is required/i
+        );
+        expect(screen.getByTestId('error-register-email')).toHaveTextContent(
+          /Email address is required/i
+        );
+        expect(screen.getByTestId('error-register-phone')).toHaveTextContent(
+          /Phone number is required/i
+        );
+        expect(screen.getByTestId('error-register-password')).toHaveTextContent(
+          /Password is required/i
+        );
       });
 
       // Invalid phone
@@ -135,7 +143,9 @@ describe('STORM-FE-013: Customer Authentication Modal with Lockout Countdown & P
       fireEvent.blur(phoneInput);
 
       await waitFor(() => {
-        expect(screen.getByTestId('error-register-phone')).toHaveTextContent(/valid Sri Lankan mobile number/i);
+        expect(screen.getByTestId('error-register-phone')).toHaveTextContent(
+          /valid Sri Lankan mobile number/i
+        );
       });
     });
   });
@@ -194,8 +204,12 @@ describe('STORM-FE-013: Customer Authentication Modal with Lockout Countdown & P
       const handleSuccess = vi.fn();
       render(<LoginForm onSuccess={handleSuccess} />);
 
-      fireEvent.change(screen.getByTestId('input-login-email'), { target: { value: 'kamal@dickwella.lk' } });
-      fireEvent.change(screen.getByTestId('input-login-password'), { target: { value: 'CorrectPass1' } });
+      fireEvent.change(screen.getByTestId('input-login-email'), {
+        target: { value: 'kamal@dickwella.lk' },
+      });
+      fireEvent.change(screen.getByTestId('input-login-password'), {
+        target: { value: 'CorrectPass1' },
+      });
       fireEvent.click(screen.getByTestId('login-submit-btn'));
 
       await waitFor(() => {

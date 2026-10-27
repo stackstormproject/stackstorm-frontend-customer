@@ -26,7 +26,8 @@ describe('inventoryApi Client Gateway Suite', () => {
 
   it('falls back to /checkout/reserve if /inventory/reserve returns 404', async () => {
     const error404 = { response: { status: 404 } };
-    const mockPost = vi.spyOn(apiClient, 'post')
+    const mockPost = vi
+      .spyOn(apiClient, 'post')
       .mockRejectedValueOnce(error404)
       .mockResolvedValueOnce({
         data: {
@@ -36,8 +37,14 @@ describe('inventoryApi Client Gateway Suite', () => {
       });
 
     const res = await inventoryApi.reserveStock({ variant_id: 2, quantity: 1 });
-    expect(mockPost).toHaveBeenNthCalledWith(1, '/inventory/reserve', { variant_id: 2, quantity: 1 });
-    expect(mockPost).toHaveBeenNthCalledWith(2, '/checkout/reserve', { variant_id: 2, quantity: 1 });
+    expect(mockPost).toHaveBeenNthCalledWith(1, '/inventory/reserve', {
+      variant_id: 2,
+      quantity: 1,
+    });
+    expect(mockPost).toHaveBeenNthCalledWith(2, '/checkout/reserve', {
+      variant_id: 2,
+      quantity: 1,
+    });
     expect(res.data.reservation_id).toBe('fallback-res-456');
   });
 

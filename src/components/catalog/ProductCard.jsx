@@ -67,7 +67,10 @@ export const ProductCard = ({
         />
 
         <img
-          src={primary_image || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80'}
+          src={
+            primary_image ||
+            'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80'
+          }
           alt={title}
           className="dk-card-img dk-card-img--primary"
           loading="lazy"
@@ -99,7 +102,9 @@ export const ProductCard = ({
           <span className="dk-card-category">{category_name}</span>
           <div className="dk-card-rating" aria-label={`Rating ${rating} stars`}>
             <Star size={13} fill="#D4AF37" color="#D4AF37" />
-            <span>{formatRating(rating)} ({review_count})</span>
+            <span>
+              {formatRating(rating)} ({review_count})
+            </span>
           </div>
         </div>
 

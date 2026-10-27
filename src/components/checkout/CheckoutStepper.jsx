@@ -10,14 +10,10 @@ export const CHECKOUT_STEPS = [
 
 /**
  * CheckoutStepper Component
- * 
+ *
  * Renders the 3-stage checkout progress bar (AC1).
  */
-export function CheckoutStepper({
-  currentStep = 1,
-  onStepClick = null,
-  className = '',
-}) {
+export function CheckoutStepper({ currentStep = 1, onStepClick = null, className = '' }) {
   return (
     <nav
       className={`checkout-stepper ${className}`}
@@ -38,8 +34,8 @@ export function CheckoutStepper({
                 isActive
                   ? 'checkout-stepper__item--active'
                   : isCompleted
-                  ? 'checkout-stepper__item--completed'
-                  : 'checkout-stepper__item--upcoming'
+                    ? 'checkout-stepper__item--completed'
+                    : 'checkout-stepper__item--upcoming'
               }`}
               data-testid={`step-indicator-${step.id}`}
             >

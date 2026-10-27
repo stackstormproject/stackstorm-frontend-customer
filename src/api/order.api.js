@@ -30,7 +30,8 @@ export const FALLBACK_ORDERS = [
         total_price: 9250,
         size: 'FREE',
         color: 'Indigo & Sunlight Gold',
-        image_url: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80',
+        image_url:
+          'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80',
       },
       {
         id: 'item-2',
@@ -40,14 +41,35 @@ export const FALLBACK_ORDERS = [
         total_price: 5500,
         size: 'L',
         color: 'Ocean Wave Navy',
-        image_url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=400&q=80',
+        image_url:
+          'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=400&q=80',
       },
     ],
     milestones: [
-      { stage: 'placed', label: 'Order Placed', timestamp: '2026-10-04T08:30:00.000Z', description: 'Order confirmed and inventory locked.' },
-      { stage: 'processing', label: 'Artisan Tailoring', timestamp: '2026-10-04T14:15:00.000Z', description: 'Handloom inspected at Dickwella boutique.' },
-      { stage: 'shipped', label: 'Dispatched with Courier', timestamp: '2026-10-05T09:00:00.000Z', description: 'Handed over to Southern Province Express.' },
-      { stage: 'delivered', label: 'Delivered', timestamp: null, description: 'Expected delivery by Oct 7, 2026.' },
+      {
+        stage: 'placed',
+        label: 'Order Placed',
+        timestamp: '2026-10-04T08:30:00.000Z',
+        description: 'Order confirmed and inventory locked.',
+      },
+      {
+        stage: 'processing',
+        label: 'Artisan Tailoring',
+        timestamp: '2026-10-04T14:15:00.000Z',
+        description: 'Handloom inspected at Dickwella boutique.',
+      },
+      {
+        stage: 'shipped',
+        label: 'Dispatched with Courier',
+        timestamp: '2026-10-05T09:00:00.000Z',
+        description: 'Handed over to Southern Province Express.',
+      },
+      {
+        stage: 'delivered',
+        label: 'Delivered',
+        timestamp: null,
+        description: 'Expected delivery by Oct 7, 2026.',
+      },
     ],
   },
   {
@@ -80,14 +102,35 @@ export const FALLBACK_ORDERS = [
         total_price: 8050,
         size: 'FREE',
         color: 'Emerald & Rust Gold',
-        image_url: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=400&q=80',
+        image_url:
+          'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=400&q=80',
       },
     ],
     milestones: [
-      { stage: 'placed', label: 'Order Placed', timestamp: '2026-09-20T10:15:00.000Z', description: 'Order confirmed.' },
-      { stage: 'processing', label: 'Artisan Tailoring', timestamp: '2026-09-21T09:00:00.000Z', description: 'Quality inspection complete.' },
-      { stage: 'shipped', label: 'Dispatched', timestamp: '2026-09-22T11:00:00.000Z', description: 'Courier in transit.' },
-      { stage: 'delivered', label: 'Delivered', timestamp: '2026-09-23T14:30:00.000Z', description: 'Signed and delivered in Dickwella.' },
+      {
+        stage: 'placed',
+        label: 'Order Placed',
+        timestamp: '2026-09-20T10:15:00.000Z',
+        description: 'Order confirmed.',
+      },
+      {
+        stage: 'processing',
+        label: 'Artisan Tailoring',
+        timestamp: '2026-09-21T09:00:00.000Z',
+        description: 'Quality inspection complete.',
+      },
+      {
+        stage: 'shipped',
+        label: 'Dispatched',
+        timestamp: '2026-09-22T11:00:00.000Z',
+        description: 'Courier in transit.',
+      },
+      {
+        stage: 'delivered',
+        label: 'Delivered',
+        timestamp: '2026-09-23T14:30:00.000Z',
+        description: 'Signed and delivered in Dickwella.',
+      },
     ],
   },
 ];
@@ -113,7 +156,10 @@ export const orderApi = {
       const res = await apiClient.get(`/orders/${orderId}`);
       return res.data?.data || res.data;
     } catch {
-      return FALLBACK_ORDERS.find((o) => o.id === orderId || o.order_number === orderId) || FALLBACK_ORDERS[0];
+      return (
+        FALLBACK_ORDERS.find((o) => o.id === orderId || o.order_number === orderId) ||
+        FALLBACK_ORDERS[0]
+      );
     }
   },
 
@@ -125,7 +171,9 @@ export const orderApi = {
       const res = await apiClient.get(`/orders/${orderId}/track`);
       return res.data?.data || res.data;
     } catch {
-      const order = FALLBACK_ORDERS.find((o) => o.id === orderId || o.order_number === orderId) || FALLBACK_ORDERS[0];
+      const order =
+        FALLBACK_ORDERS.find((o) => o.id === orderId || o.order_number === orderId) ||
+        FALLBACK_ORDERS[0];
       return {
         order_number: order.order_number,
         status: order.status,

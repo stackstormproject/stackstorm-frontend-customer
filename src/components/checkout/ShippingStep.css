@@ -4,8 +4,8 @@
    ============================================================================== */
 
 .shipping-step {
-  background: var(--color-surface, #FFFFFF);
-  border: 1px solid var(--color-border, #E2E8F0);
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-lg, 12px);
   padding: 1.75rem 2rem;
   box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
@@ -13,8 +13,8 @@
 }
 
 .shipping-step__address-card {
-  background: var(--color-surface-subtle, #F8FAFC);
-  border: 1px solid var(--color-border, #E2E8F0);
+  background: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-md, 8px);
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
@@ -35,17 +35,17 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-text-subtle, #94A3B8);
+  color: var(--color-text-subtle, #94a3b8);
 }
 
 .shipping-step__pin-icon {
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
 }
 
 .shipping-step__edit-btn {
   background: none;
   border: none;
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
   font-size: var(--text-xs, 0.75rem);
   font-weight: 600;
   cursor: pointer;
@@ -55,7 +55,7 @@
 
 .shipping-step__address-body {
   font-size: var(--text-sm, 0.875rem);
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
   line-height: 1.5;
 }
 
@@ -63,7 +63,7 @@
   font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
   margin: 0 0 0.35rem 0;
 }
 
@@ -84,7 +84,7 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1.15rem 1.25rem;
-  border: 1.5px solid var(--color-border, #E2E8F0);
+  border: 1.5px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-md, 8px);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -92,19 +92,19 @@
 }
 
 .shipping-method-card:hover {
-  border-color: var(--color-accent, #D4AF37);
-  background: var(--color-surface-subtle, #F8FAFC);
+  border-color: var(--color-accent, #d4af37);
+  background: var(--color-surface-subtle, #f8fafc);
 }
 
 .shipping-method-card--selected {
-  border-color: var(--color-accent, #D4AF37);
+  border-color: var(--color-accent, #d4af37);
   background: rgba(212, 175, 55, 0.05);
-  box-shadow: 0 0 0 1px var(--color-accent, #D4AF37);
+  box-shadow: 0 0 0 1px var(--color-accent, #d4af37);
 }
 
 .shipping-method-card__radio {
   margin-top: 0.2rem;
-  accent-color: var(--color-accent, #D4AF37);
+  accent-color: var(--color-accent, #d4af37);
   width: 18px;
   height: 18px;
   cursor: pointer;
@@ -114,17 +114,17 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--color-surface-subtle, #F8FAFC);
+  background: var(--color-surface-subtle, #f8fafc);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
   flex-shrink: 0;
 }
 
 .shipping-method-card--selected .shipping-method-card__icon-wrap {
-  background: var(--color-accent, #D4AF37);
-  color: #0A192F;
+  background: var(--color-accent, #d4af37);
+  color: #0a192f;
 }
 
 .shipping-method-card__details {
@@ -141,17 +141,17 @@
 .shipping-method-card__title {
   font-weight: 600;
   font-size: var(--text-sm, 0.875rem);
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
 }
 
 .shipping-method-card__cost {
   font-weight: 700;
   font-size: var(--text-sm, 0.875rem);
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
 }
 
 .shipping-method-card__cost--free {
-  color: var(--color-success, #10B981);
+  color: var(--color-success, #10b981);
 }
 
 .shipping-method-card__desc {
@@ -166,7 +166,7 @@
   font-size: 0.7rem;
   font-weight: 600;
   color: #166534;
-  background: #DCFCE7;
+  background: #dcfce7;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm, 4px);
 }
@@ -177,7 +177,7 @@
   align-items: center;
   margin-top: 2rem;
   padding-top: 1.25rem;
-  border-top: 1px solid var(--color-border, #E2E8F0);
+  border-top: 1px solid var(--color-border, #e2e8f0);
   gap: 1rem;
 }
 
@@ -187,8 +187,8 @@
   gap: 0.5rem;
   padding: 0.85rem 1.25rem;
   background: transparent;
-  color: var(--color-text-main, #0F172A);
-  border: 1px solid var(--color-border, #E2E8F0);
+  color: var(--color-text-main, #0f172a);
+  border: 1px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-md, 8px);
   font-size: var(--text-sm, 0.875rem);
   font-weight: 500;
@@ -197,7 +197,7 @@
 }
 
 .shipping-step__back-btn:hover {
-  background: var(--color-surface-subtle, #F8FAFC);
+  background: var(--color-surface-subtle, #f8fafc);
 }
 
 .shipping-step__submit-btn {
@@ -205,8 +205,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.85rem 1.75rem;
-  background: var(--color-primary, #0A192F);
-  color: #FFFFFF;
+  background: var(--color-primary, #0a192f);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-md, 8px);
   font-weight: 600;
@@ -216,7 +216,7 @@
 }
 
 .shipping-step__submit-btn:hover {
-  background: var(--color-primary-light, #172A45);
+  background: var(--color-primary-light, #172a45);
   box-shadow: 0 4px 12px rgba(10, 25, 47, 0.15);
 }
 
