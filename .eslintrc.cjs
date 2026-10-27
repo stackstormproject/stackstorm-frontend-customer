@@ -20,7 +20,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never' }],
     'no-console': ['error', { allow: ['warn', 'error'] }],
-    'jsx-a11y/label-has-associated-control': ['error', { assert: 'either' }],
+    'jsx-a11y/label-has-associated-control': ['error', { assert: 'either', depth: 3 }],
   },
   overrides: [
     {
