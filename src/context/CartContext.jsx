@@ -47,7 +47,13 @@ export function CartProvider({ children, initialItems = null }) {
   const addItem = useCallback((product, variant = null, quantity = 1) => {
     if (!product) return;
 
-    const unitPrice = variant?.price_override || product.base_price || 0;
+    const rawPrice =
+      variant?.price_override ??
+      variant?.price ??
+      product.base_price ??
+      product.price ??
+      0;
+    const unitPrice = Number(rawPrice) || 0;
     const variantId = variant?.id || `var-${product.id}`;
     const size = variant?.size || product.sizes?.[0] || 'M';
     const color = variant?.color || product.colors?.[0] || 'Ocean Blue';
@@ -64,10 +70,13 @@ export function CartProvider({ children, initialItems = null }) {
         const next = [...prevItems];
         const existing = next[existingIdx];
         const updatedQty = existing.quantity + quantity;
+        const itemPrice = Number(existing.unit_price ?? existing.price ?? unitPrice);
         next[existingIdx] = {
           ...existing,
+          unit_price: itemPrice,
+          price: itemPrice,
           quantity: updatedQty,
-          subtotal: existing.unit_price * updatedQty,
+          subtotal: itemPrice * updatedQty,
         };
         return next;
       }
@@ -77,10 +86,11 @@ export function CartProvider({ children, initialItems = null }) {
         product_id: product.id,
         variant_id: variantId,
         sku,
-        title: product.title,
+        title: product.title || product.name || 'Artisan Garment',
         size,
         color,
         unit_price: unitPrice,
+        price: unitPrice,
         quantity,
         subtotal: unitPrice * quantity,
         image_url: imgUrl,
@@ -118,10 +128,13 @@ export function CartProvider({ children, initialItems = null }) {
           const boundedQty = item.available_stock
             ? Math.min(newQuantity, item.available_stock)
             : newQuantity;
+          const itemPrice = Number(item.unit_price ?? item.price ?? 0);
           return {
             ...item,
+            unit_price: itemPrice,
+            price: itemPrice,
             quantity: boundedQty,
-            subtotal: item.unit_price * boundedQty,
+            subtotal: itemPrice * boundedQty,
           };
         }
         return item;
@@ -208,7 +221,10 @@ export function CartProvider({ children, initialItems = null }) {
 
   // Financial aggregates
   const totalItems = items.reduce((sum, it) => sum + (it.quantity || 1), 0);
-  const subtotal = items.reduce((sum, it) => sum + (it.unit_price * (it.quantity || 1)), 0);
+  const subtotal = items.reduce((sum, it) => {
+    const itemPrice = Number(it.unit_price ?? it.price ?? 0);
+    return sum + (itemPrice * (it.quantity || 1));
+  }, 0);
   const discountAmount = Math.round(subtotal * promoDiscountRate);
   const discountedSubtotal = subtotal - discountAmount;
   const isFreeShipping = discountedSubtotal >= FREE_SHIPPING_THRESHOLD || discountedSubtotal === 0;
@@ -222,6 +238,7 @@ export function CartProvider({ children, initialItems = null }) {
     isOpen,
     totalItems,
     subtotal,
+    discount: discountAmount,
     discountAmount,
     discountedSubtotal,
     shippingFee,
