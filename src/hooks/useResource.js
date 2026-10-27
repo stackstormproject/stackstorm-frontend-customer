@@ -17,8 +17,9 @@ export function useResource(load, deps) {
   useEffect(() => {
     let active = true;
     setState((prev) => ({ ...prev, error: null, loading: true }));
-    loadRef
-      .current()
+    // Promise.resolve().then() also captures a loader that throws synchronously.
+    Promise.resolve()
+      .then(() => loadRef.current())
       .then((data) => active && setState({ data, error: null, loading: false }))
       .catch((error) => active && setState({ data: null, error, loading: false }));
     return () => {
