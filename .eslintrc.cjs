@@ -1,9 +1,8 @@
+// Team standard (documents/standards/coding-standards.md): Airbnb style, enforced by ESLint,
+// formatting owned by Prettier.
 module.exports = {
   root: true,
-  env: {
-    browser: true,
-    es2021: true,
-  },
+  env: { browser: true, es2022: true },
   extends: ['airbnb', 'airbnb/hooks', 'plugin:react/jsx-runtime', 'prettier'],
   parserOptions: {
     ecmaVersion: 'latest',
@@ -11,11 +10,37 @@ module.exports = {
     ecmaFeatures: { jsx: true },
   },
   settings: {
-    react: { version: 'detect' },
+    react: { version: '19.0' },
+    'import/resolver': { node: { extensions: ['.js', '.jsx'] } },
   },
   rules: {
-    'react/jsx-filename-extension': ['warn', { extensions: ['.jsx'] }],
-    'react/prop-types': 'off',
+    'react/prop-types': 'off', // plain JS project; shapes are documented with JSDoc
+    'react/require-default-props': 'off',
+    'react/jsx-props-no-spreading': 'off',
     'import/prefer-default-export': 'off',
+    'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never' }],
+    'no-console': ['error', { allow: ['warn', 'error'] }],
+    'jsx-a11y/label-has-associated-control': ['error', { assert: 'either' }],
   },
+  overrides: [
+    {
+      files: ['src/**/*.test.{js,jsx}', 'src/tests/**/*.{js,jsx}'],
+      env: { node: true },
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+      rules: { 'import/no-extraneous-dependencies': ['error', { devDependencies: true }] },
+    },
+    {
+      files: ['vite.config.js'],
+      rules: { 'import/no-extraneous-dependencies': ['error', { devDependencies: true }] },
+    },
+  ],
 };
