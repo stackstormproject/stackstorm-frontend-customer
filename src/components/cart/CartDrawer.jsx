@@ -34,14 +34,14 @@ export function CartDrawer() {
         aria-labelledby="bag-title"
         tabIndex={-1}
       >
-        <header className="drawer__header">
+        <div className="drawer__header">
           <h2 id="bag-title">
             Your bag <span className="drawer__count">({itemCount})</span>
           </h2>
           <button type="button" className="icon-button" onClick={closeCart} aria-label="Close bag">
             <X size={20} aria-hidden="true" />
           </button>
-        </header>
+        </div>
         <div className="drawer__body">
           <CartContents onNavigate={closeCart} />
         </div>
