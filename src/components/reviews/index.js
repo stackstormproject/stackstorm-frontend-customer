@@ -1,1 +1,0 @@
-export { WriteReviewModal } from './WriteReviewModal';
