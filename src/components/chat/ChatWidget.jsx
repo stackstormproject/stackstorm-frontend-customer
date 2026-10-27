@@ -46,7 +46,13 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([INITIAL_WELCOME_MESSAGE]);
   const [inputText, setInputText] = useState('');
-  const [sessionId, setSessionId] = useState(null);
+  const [sessionId, setSessionId] = useState(() => {
+    try {
+      return sessionStorage.getItem('dfc_chat_session_id') || null;
+    } catch {
+      return null;
+    }
+  });
   const [isTyping, setIsTyping] = useState(false);
   const [typingAuthor, setTypingAuthor] = useState('Assistant');
   const [hasUnread, setHasUnread] = useState(true);
@@ -66,11 +72,52 @@ export default function ChatWidget() {
 
     const handleConnect = () => {
       setConnectionStatus('connected');
-      socketService.joinChat('Customer Storefront Inquiry', (res) => {
-        if (res && res.sessionId) {
-          setSessionId(res.sessionId);
+      let currentSessionId = null;
+      try {
+        currentSessionId = sessionStorage.getItem('dfc_chat_session_id');
+      } catch {
+        // ignore
+      }
+
+      const rawUser = (() => {
+        try {
+          const raw =
+            localStorage.getItem('stackstorm_user') ||
+            localStorage.getItem('stackstorm_auth_user') ||
+            localStorage.getItem('user');
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
         }
-      });
+      })();
+
+      const customerMeta = rawUser
+        ? {
+            customerId: rawUser.id,
+            customerName:
+              rawUser.name ||
+              `${rawUser.first_name || ''} ${rawUser.last_name || ''}`.trim() ||
+              rawUser.email,
+            customerEmail: rawUser.email,
+            tier: rawUser.loyalty_tier || rawUser.loyaltyTier || 'Silver',
+          }
+        : null;
+
+      socketService.joinChat(
+        'Customer Storefront Inquiry',
+        (res) => {
+          if (res && res.sessionId) {
+            setSessionId(res.sessionId);
+            try {
+              sessionStorage.setItem('dfc_chat_session_id', res.sessionId);
+            } catch {
+              // ignore
+            }
+          }
+        },
+        currentSessionId,
+        customerMeta
+      );
     };
 
     const handleDisconnect = () => {
@@ -96,16 +143,39 @@ export default function ChatWidget() {
           return prev;
         }
 
+        const isFromAgent =
+          data.senderRole === 'support_agent' ||
+          data.senderRole === 'agent' ||
+          data.senderRole === 'admin' ||
+          data.senderType === 'agent' ||
+          data.sender === 'agent';
+
+        const isFromCustomer =
+          !isFromAgent &&
+          (data.senderRole === 'customer' ||
+            data.senderRole === 'user' ||
+            data.senderType === 'customer' ||
+            data.sender === 'customer');
+
+        const normalizedRole = isFromAgent
+          ? 'support_agent'
+          : isFromCustomer
+          ? 'customer'
+          : 'bot';
+
+        const normalizedName = isFromAgent
+          ? data.senderName || 'Alex (Support Agent)'
+          : isFromCustomer
+          ? 'You'
+          : 'Dickwella Virtual Assistant';
+
         return [
           ...prev,
           {
             id: data.id || `msg-${Date.now()}`,
-            senderRole: data.senderRole || 'bot',
-            senderName:
-              data.senderRole === 'support_agent'
-                ? 'Support Agent'
-                : 'Dickwella Virtual Assistant',
-            message: data.message,
+            senderRole: normalizedRole,
+            senderName: normalizedName,
+            message: data.message || data.text,
             createdAt: data.createdAt || new Date().toISOString(),
             orderData: data.orderData || null,
           },
@@ -264,21 +334,6 @@ export default function ChatWidget() {
 
     if (!socketService.isConnected || !sessionId) {
       triggerLocalFallback();
-    } else {
-      // Safety net fallback in case server socket doesn't reply within 2.5s
-      setTimeout(() => {
-        setMessages((current) => {
-          const lastMsg = current[current.length - 1];
-          if (
-            lastMsg &&
-            (lastMsg.senderRole === 'customer' || lastMsg.senderRole === 'user') &&
-            lastMsg.message === cleanText
-          ) {
-            triggerLocalFallback();
-          }
-          return current;
-        });
-      }, 2500);
     }
   };
 
