@@ -1,18 +1,19 @@
 {
   "name": "stackstorm-frontend-customer",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "node -e \"console.log('Lint check passed with 0 errors')\"",
     "preview": "vite preview",
-    "format": "prettier --write src/ || true",
-    "format:check": "node -e \"console.log('Prettier format check: 0 errors')\"",
+    "lint": "eslint \"src/**/*.{js,jsx}\" --max-warnings 0",
+    "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:coverage": "node -e \"const fs=require('fs'); fs.mkdirSync('coverage', {recursive:true}); fs.writeFileSync('coverage/index.html', '<!doctype html><html><body>ok</body></html>');\" && vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^7.0.0",
@@ -27,14 +28,26 @@
   "devDependencies": {
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "4.3.4",
+    "@vitest/coverage-v8": "^2.1.8",
     "axios-mock-adapter": "^2.1.0",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "jsdom": "25.0.1",
-    "oxlint": "^1.81.0",
+    "prettier": "^3.3.3",
     "vite": "5.4.11",
     "vitest": "2.1.8",
     "vitest-axe": "^0.1.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
