@@ -5,13 +5,13 @@ import { SIZE_OPTIONS, PRICE_BANDS } from '../../lib/catalogQuery';
  * FR002 filters. Each control writes to the URL through `onChange(key, value)`.
  * Sub-categories of the current top-level category are listed as links.
  */
-export function FilterPanel({ category, categories, params, onChange, onClear }) {
+export function FilterPanel({ id, isOpen, category, categories, params, onChange, onClear }) {
   const current = (categories || []).find((c) => c.slug === category);
   const parent = current?.parentId ? categories.find((c) => c.id === current.parentId) : current;
   const children = parent ? categories.filter((c) => c.parentId === parent.id) : [];
 
   return (
-    <aside className="filters" aria-label="Filters">
+    <aside id={id} className={`filters ${isOpen ? 'is-open' : ''}`} aria-label="Filters">
       {parent && children.length > 0 && (
         <fieldset className="filters__group">
           <legend>{parent.name}</legend>

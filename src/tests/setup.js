@@ -1,5 +1,8 @@
 import '@testing-library/jest-dom/vitest';
+import * as axeMatchers from 'vitest-axe/matchers';
 import { cleanup } from '@testing-library/react';
+
+expect.extend(axeMatchers);
 
 // Node 24 (the CI runtime) builds Request with its own fetch, which rejects jsdom's
 // AbortSignal. React Router creates a Request for every navigation, so without this every
