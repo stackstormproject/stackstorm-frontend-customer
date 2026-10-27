@@ -1,6 +1,7 @@
 import { Layout } from './components/layout/Layout';
 import HomePage from './pages/HomePage';
 import CatalogPage from './pages/CatalogPage';
+import ProductPage from './pages/ProductPage';
 import HelpPage from './pages/HelpPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -15,6 +16,7 @@ export const routes = [
       { index: true, element: <HomePage /> },
       { path: 'shop', element: <CatalogPage /> },
       { path: 'shop/:category', element: <CatalogPage /> },
+      { path: 'products/:slug', element: <ProductPage /> },
       { path: 'help/:topic', element: <HelpPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
