@@ -52,15 +52,18 @@ export const setAccessToken = (token) => {
 }
 
 export const getAccessToken = () => {
-  if (!inMemoryAccessToken) {
-    try {
-      inMemoryAccessToken =
-        localStorage.getItem('token') ||
-        localStorage.getItem('stackstorm_token') ||
-        localStorage.getItem('stackstorm_auth_token')
-    } catch {
+  try {
+    const storedToken =
+      localStorage.getItem('token') ||
+      localStorage.getItem('stackstorm_token') ||
+      localStorage.getItem('stackstorm_auth_token')
+    if (!storedToken) {
       inMemoryAccessToken = null
+    } else if (!inMemoryAccessToken) {
+      inMemoryAccessToken = storedToken
     }
+  } catch {
+    // Retain in-memory token if localStorage is blocked/inaccessible
   }
   return inMemoryAccessToken
 }
@@ -122,10 +125,16 @@ apiClient.interceptors.response.use(
     }
 
     const { status, data } = error.response
-    const isAuthRefresh = originalRequest.url && originalRequest.url.includes('/auth/refresh-token')
+    const isAuthEndpoint =
+      originalRequest.url &&
+      (originalRequest.url.includes('/auth/refresh-token') ||
+        originalRequest.url.includes('/auth/login') ||
+        originalRequest.url.includes('/auth/register') ||
+        originalRequest.url.includes('/auth/admin/login') ||
+        originalRequest.url.includes('/auth/logout'))
 
-    // Handle 401 Unauthorized token expiry with single-use rotation
-    if (status === 401 && !originalRequest._retry && !isAuthRefresh) {
+    // Handle 401 Unauthorized token expiry with single-use rotation (only for protected API endpoints, never auth endpoints)
+    if (status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       if (isRefreshing) {
         // Enqueue concurrent requests while single refresh promise resolves
         return new Promise((resolve, reject) => {
