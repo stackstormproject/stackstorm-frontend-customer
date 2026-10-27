@@ -10,6 +10,7 @@ import './styles/catalog.css';
 import './styles/product.css';
 import './styles/cart.css';
 import './styles/checkout.css';
+import './styles/account.css';
 
 const router = createBrowserRouter(routes);
 
