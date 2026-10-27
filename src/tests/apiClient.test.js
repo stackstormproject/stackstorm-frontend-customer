@@ -200,4 +200,37 @@ describe('STORM-FE-002: Centralized Axios API Gateway & Dual JWT Auto-Refresh', 
       expect(err.errors[0].field).toBe('quantity')
     }
   })
+
+  it('AC7: should NOT trigger refresh token rotation when /auth/login returns 401', async () => {
+    let refreshTriggered = false
+    mock.onPost('/auth/refresh-token').reply(() => {
+      refreshTriggered = true
+      return [200, { success: true, data: { token: 'bad-token' } }]
+    })
+
+    mock.onPost('/auth/login').reply(401, {
+      success: false,
+      message: 'Email or password is incorrect.',
+      errors: [],
+    })
+
+    try {
+      await apiClient.post('/auth/login', { email: 'alice@example.com', password: 'wrong' })
+      expect.fail('Should reject on invalid credentials')
+    } catch (err) {
+      expect(err.status).toBe(401)
+      expect(err.message).toBe('Email or password is incorrect.')
+      expect(refreshTriggered).toBe(false)
+    }
+  })
+
+  it('AC8: should sync in-memory token to null when localStorage is emptied externally', () => {
+    setAccessToken('temporary-token')
+    expect(getAccessToken()).toBe('temporary-token')
+
+    // Simulate user clearing Application storage in DevTools
+    localStorage.clear()
+    expect(getAccessToken()).toBeNull()
+  })
 })
+
