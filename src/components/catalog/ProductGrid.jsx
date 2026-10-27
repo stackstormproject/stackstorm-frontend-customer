@@ -19,13 +19,7 @@ export const ProductGrid = ({
 }) => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  const {
-    category = 'all',
-    max_price = 20000,
-    size = '',
-    color = '',
-    sort = 'featured',
-  } = filters;
+  const { category = 'all', max_price = 20000, size = '', color = '', sort = 'featured' } = filters;
 
   const handleSortChange = (e) => {
     if (onFilterChange) {
@@ -160,7 +154,8 @@ export const ProductGrid = ({
             </div>
             <h3 className="dk-empty-title">No apparel matches your filter criteria</h3>
             <p className="dk-empty-desc">
-              We couldn't find any Sri Lankan handloom or batik items matching your chosen filters. Try expanding your price budget, selecting different sizes, or resetting all filters.
+              We couldn't find any Sri Lankan handloom or batik items matching your chosen filters.
+              Try expanding your price budget, selecting different sizes, or resetting all filters.
             </p>
             <button
               type="button"

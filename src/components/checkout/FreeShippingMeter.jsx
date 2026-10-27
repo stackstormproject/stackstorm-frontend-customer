@@ -6,7 +6,7 @@ export const FREE_SHIPPING_THRESHOLD = 10000; // LKR 10,000.00 standard across S
 
 /**
  * FreeShippingMeter Component
- * 
+ *
  * Visually displays progress towards qualifying for Free Island-Wide Delivery (AC3).
  * Threshold: LKR 10,000.00
  */
@@ -31,7 +31,10 @@ export function FreeShippingMeter({ subtotal = 0, className = '' }) {
       <div className="free-shipping-meter__header">
         <div className="free-shipping-meter__icon-wrap">
           {isQualified ? (
-            <CheckCircle2 size={18} className="free-shipping-meter__icon free-shipping-meter__icon--success" />
+            <CheckCircle2
+              size={18}
+              className="free-shipping-meter__icon free-shipping-meter__icon--success"
+            />
           ) : (
             <Truck size={18} className="free-shipping-meter__icon" />
           )}
@@ -39,11 +42,13 @@ export function FreeShippingMeter({ subtotal = 0, className = '' }) {
         <p className="free-shipping-meter__text" data-testid="free-shipping-message">
           {isQualified ? (
             <span>
-              <strong>Congratulations!</strong> You have unlocked <strong>FREE Delivery</strong> across Sri Lanka!
+              <strong>Congratulations!</strong> You have unlocked <strong>FREE Delivery</strong>{' '}
+              across Sri Lanka!
             </span>
           ) : (
             <span>
-              Add <strong data-testid="free-shipping-remaining">{formatCurrency(remaining)}</strong> more to qualify for <strong>FREE Delivery!</strong>
+              Add <strong data-testid="free-shipping-remaining">{formatCurrency(remaining)}</strong>{' '}
+              more to qualify for <strong>FREE Delivery!</strong>
             </span>
           )}
         </p>

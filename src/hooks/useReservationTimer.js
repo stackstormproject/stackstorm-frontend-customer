@@ -5,7 +5,7 @@ const DEFAULT_TOTAL_SECONDS = 900; // 15 minutes
 
 /**
  * useReservationTimer Hook
- * 
+ *
  * Accurately tracks temporary stock reservation countdown against absolute UTC expires_at.
  * Prevents client-side clock skew drift and preserves state across page refreshes.
  *
@@ -108,18 +108,21 @@ export function useReservationTimer({
   };
 
   // 5. Public controller actions
-  const startTimer = useCallback((newExpiresAt) => {
-    const parsed = new Date(newExpiresAt).getTime();
-    if (!isNaN(parsed)) {
-      if (autoSyncSession && typeof window !== 'undefined') {
-        sessionStorage.setItem(SESSION_STORAGE_KEY, new Date(newExpiresAt).toISOString());
+  const startTimer = useCallback(
+    (newExpiresAt) => {
+      const parsed = new Date(newExpiresAt).getTime();
+      if (!isNaN(parsed)) {
+        if (autoSyncSession && typeof window !== 'undefined') {
+          sessionStorage.setItem(SESSION_STORAGE_KEY, new Date(newExpiresAt).toISOString());
+        }
+        setTargetTimestamp(parsed);
+        const remaining = Math.max(0, Math.floor((parsed - Date.now()) / 1000));
+        setTimeLeft(remaining);
+        setIsExpired(remaining <= 0);
       }
-      setTargetTimestamp(parsed);
-      const remaining = Math.max(0, Math.floor((parsed - Date.now()) / 1000));
-      setTimeLeft(remaining);
-      setIsExpired(remaining <= 0);
-    }
-  }, [autoSyncSession]);
+    },
+    [autoSyncSession]
+  );
 
   const clearTimer = useCallback(() => {
     setTargetTimestamp(null);
@@ -132,7 +135,8 @@ export function useReservationTimer({
 
   const isUrgent = timeLeft > 0 && timeLeft <= 180; // 3 minutes warning
   const isCritical = timeLeft > 0 && timeLeft <= 60; // 1 minute warning
-  const percentRemaining = totalSeconds > 0 ? Math.min(100, Math.max(0, (timeLeft / totalSeconds) * 100)) : 0;
+  const percentRemaining =
+    totalSeconds > 0 ? Math.min(100, Math.max(0, (timeLeft / totalSeconds) * 100)) : 0;
 
   return {
     timeLeft,

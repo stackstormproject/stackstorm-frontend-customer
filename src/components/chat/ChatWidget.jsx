@@ -13,11 +13,7 @@ import ChatMessageList from './ChatMessageList';
 import socketService from '../../services/socket.service';
 import './ChatWidget.css';
 
-const DEFAULT_QUICK_REPLIES = [
-  'Track My Order',
-  'Return Policy',
-  'Speak to an Agent',
-];
+const DEFAULT_QUICK_REPLIES = ['Track My Order', 'Return Policy', 'Speak to an Agent'];
 
 const INITIAL_WELCOME_MESSAGE = {
   id: 'welcome-1',
@@ -157,17 +153,13 @@ export default function ChatWidget() {
             data.senderType === 'customer' ||
             data.sender === 'customer');
 
-        const normalizedRole = isFromAgent
-          ? 'support_agent'
-          : isFromCustomer
-          ? 'customer'
-          : 'bot';
+        const normalizedRole = isFromAgent ? 'support_agent' : isFromCustomer ? 'customer' : 'bot';
 
         const normalizedName = isFromAgent
           ? data.senderName || 'Alex (Support Agent)'
           : isFromCustomer
-          ? 'You'
-          : 'Dickwella Virtual Assistant';
+            ? 'You'
+            : 'Dickwella Virtual Assistant';
 
         return [
           ...prev,
@@ -287,9 +279,7 @@ export default function ChatWidget() {
           setMessages((prev) => {
             if (
               prev.some(
-                (m) =>
-                  m.senderRole === 'bot' &&
-                  Date.now() - new Date(m.createdAt).getTime() < 3000
+                (m) => m.senderRole === 'bot' && Date.now() - new Date(m.createdAt).getTime() < 3000
               )
             ) {
               return prev;
@@ -312,7 +302,9 @@ export default function ChatWidget() {
         const botReply = {
           id: `bot-${Date.now()}`,
           senderRole: lower.includes('agent') ? 'support_agent' : 'bot',
-          senderName: lower.includes('agent') ? 'Live Support Agent' : 'Dickwella Virtual Assistant',
+          senderName: lower.includes('agent')
+            ? 'Live Support Agent'
+            : 'Dickwella Virtual Assistant',
           message: replyText,
           createdAt: new Date().toISOString(),
         };
@@ -372,12 +364,16 @@ export default function ChatWidget() {
             <div className="chat-header-info">
               <div className="chat-header-avatar">
                 <Bot size={18} />
-                <span className={`status-indicator ${connectionStatus === 'connected' ? 'online' : 'standby'}`} />
+                <span
+                  className={`status-indicator ${connectionStatus === 'connected' ? 'online' : 'standby'}`}
+                />
               </div>
               <div>
                 <h4 className="chat-header-title">Dickwella Live Concierge</h4>
                 <span className="chat-header-sub">
-                  {connectionStatus === 'connected' ? 'Connected to Store Support' : 'Automated FAQ & Order Assistant'}
+                  {connectionStatus === 'connected'
+                    ? 'Connected to Store Support'
+                    : 'Automated FAQ & Order Assistant'}
                 </span>
               </div>
             </div>

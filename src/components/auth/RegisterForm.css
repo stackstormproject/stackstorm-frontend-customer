@@ -20,11 +20,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #FEF2F2;
-  border: 1px solid #FECACA;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
   border-radius: var(--radius-md, 8px);
   padding: 0.75rem 1rem;
-  color: var(--color-danger, #EF4444);
+  color: var(--color-danger, #ef4444);
   font-size: var(--text-xs, 0.75rem);
   font-weight: 500;
 }
@@ -34,8 +34,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  background: var(--color-surface-subtle, #F8FAFC);
-  border: 1px solid var(--color-border, #E2E8F0);
+  background: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-md, 8px);
   padding: 0.65rem 0.85rem;
   margin-top: 0.35rem;
@@ -46,7 +46,7 @@
   align-items: center;
   gap: 0.45rem;
   font-size: 0.7rem;
-  color: var(--color-text-subtle, #94A3B8);
+  color: var(--color-text-subtle, #94a3b8);
   transition: all 0.2s ease;
 }
 
@@ -54,16 +54,16 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #CBD5E1;
+  background: #cbd5e1;
 }
 
 .criterion-item--met {
-  color: var(--color-success, #10B981);
+  color: var(--color-success, #10b981);
   font-weight: 600;
 }
 
 .criterion-item--met svg {
-  color: var(--color-success, #10B981);
+  color: var(--color-success, #10b981);
 }
 
 .register-form__terms {
@@ -74,7 +74,7 @@
 }
 
 .register-form__terms a {
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
   text-decoration: underline;
 }
 
@@ -85,8 +85,8 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.85rem 1.5rem;
-  background: var(--color-primary, #0A192F);
-  color: #FFFFFF;
+  background: var(--color-primary, #0a192f);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-md, 8px);
   font-weight: 600;
@@ -97,7 +97,7 @@
 }
 
 .register-form__submit-btn:hover:not(:disabled) {
-  background: var(--color-primary-light, #172A45);
+  background: var(--color-primary-light, #172a45);
   box-shadow: 0 4px 12px rgba(10, 25, 47, 0.15);
 }
 
@@ -114,14 +114,14 @@
   font-size: var(--text-xs, 0.75rem);
   color: var(--color-text-muted, #475569);
   padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border, #E2E8F0);
+  border-top: 1px solid var(--color-border, #e2e8f0);
   margin-top: 0.5rem;
 }
 
 .register-form__switch-btn {
   background: none;
   border: none;
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
   font-weight: 700;
   cursor: pointer;
   padding: 0;

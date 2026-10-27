@@ -18,7 +18,7 @@ import './OrderHistoryPage.css';
 
 /**
  * OrderHistoryPage Component
- * 
+ *
  * Lists past and active customer orders with status filters, search,
  * and 4-stage delivery milestone stepper tracking (AC1–AC4).
  */
@@ -67,7 +67,12 @@ export function OrderHistoryPage({
 
     // Tab Filter
     if (activeFilter === 'active') {
-      if (status !== 'placed' && status !== 'processing' && status !== 'shipped' && status !== 'in_transit') {
+      if (
+        status !== 'placed' &&
+        status !== 'processing' &&
+        status !== 'shipped' &&
+        status !== 'in_transit'
+      ) {
         return false;
       }
     } else if (activeFilter === 'delivered') {
@@ -136,7 +141,9 @@ export function OrderHistoryPage({
             <div className="order-stat-pill">
               <Truck size={18} color="#D97706" />
               <div>
-                <span className="stat-num" data-testid="active-orders-count">{activeCount}</span>
+                <span className="stat-num" data-testid="active-orders-count">
+                  {activeCount}
+                </span>
                 <span className="stat-label">In Transit</span>
               </div>
             </div>

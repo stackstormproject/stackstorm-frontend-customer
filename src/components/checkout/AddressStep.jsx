@@ -33,7 +33,7 @@ export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * AddressStep Component
- * 
+ *
  * Captures customer contact and delivery address with strict Sri Lankan geographic validation.
  * Satisfies AC2 (Sri Lankan validation rules) and AC4 (Guest checkout without forced auth).
  */
@@ -195,7 +195,9 @@ export function AddressStep({
             />
           </div>
           {errors.fullName && touched.fullName && (
-            <span className="form-error" data-testid="error-fullname">{errors.fullName}</span>
+            <span className="form-error" data-testid="error-fullname">
+              {errors.fullName}
+            </span>
           )}
         </div>
 
@@ -218,7 +220,9 @@ export function AddressStep({
             />
           </div>
           {errors.email && touched.email && (
-            <span className="form-error" data-testid="error-email">{errors.email}</span>
+            <span className="form-error" data-testid="error-email">
+              {errors.email}
+            </span>
           )}
         </div>
 
@@ -241,7 +245,9 @@ export function AddressStep({
             />
           </div>
           {errors.phone && touched.phone && (
-            <span className="form-error" data-testid="error-phone">{errors.phone}</span>
+            <span className="form-error" data-testid="error-phone">
+              {errors.phone}
+            </span>
           )}
         </div>
       </div>
@@ -271,7 +277,9 @@ export function AddressStep({
             />
           </div>
           {errors.line1 && touched.line1 && (
-            <span className="form-error" data-testid="error-line1">{errors.line1}</span>
+            <span className="form-error" data-testid="error-line1">
+              {errors.line1}
+            </span>
           )}
         </div>
 
@@ -332,7 +340,9 @@ export function AddressStep({
             ))}
           </select>
           {errors.district && touched.district && (
-            <span className="form-error" data-testid="error-district">{errors.district}</span>
+            <span className="form-error" data-testid="error-district">
+              {errors.district}
+            </span>
           )}
         </div>
 
@@ -352,7 +362,9 @@ export function AddressStep({
             data-testid="input-city"
           />
           {errors.city && touched.city && (
-            <span className="form-error" data-testid="error-city">{errors.city}</span>
+            <span className="form-error" data-testid="error-city">
+              {errors.city}
+            </span>
           )}
         </div>
 
@@ -373,7 +385,9 @@ export function AddressStep({
             data-testid="input-postalcode"
           />
           {errors.postalCode && touched.postalCode && (
-            <span className="form-error" data-testid="error-postalcode">{errors.postalCode}</span>
+            <span className="form-error" data-testid="error-postalcode">
+              {errors.postalCode}
+            </span>
           )}
         </div>
       </div>

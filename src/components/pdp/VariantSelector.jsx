@@ -12,7 +12,7 @@ const COLOR_HEX_MAP = {
   'earthy ochre': '#B45309',
   'natural sand': '#D7C4A5',
   'pure white': '#FFFFFF',
-  'charcoal': '#334155',
+  charcoal: '#334155',
 };
 
 function getColorHex(colorName = '') {
@@ -42,16 +42,21 @@ export function VariantSelector({
   const sizes = product.sizes || [];
 
   // Resolve matching variant from selected attributes
-  const activeVariant = variants.find(
-    (v) =>
-      (!selectedColor || v.color?.toLowerCase() === selectedColor?.toLowerCase()) &&
-      (!selectedSize || v.size?.toUpperCase() === selectedSize?.toUpperCase())
-  ) || variants[0] || null;
+  const activeVariant =
+    variants.find(
+      (v) =>
+        (!selectedColor || v.color?.toLowerCase() === selectedColor?.toLowerCase()) &&
+        (!selectedSize || v.size?.toUpperCase() === selectedSize?.toUpperCase())
+    ) ||
+    variants[0] ||
+    null;
 
   // Safe non-negative available stock calculation (Failure Recovery Matrix fix)
   const availableStock = activeVariant
     ? Math.max(0, (activeVariant.stock_quantity || 0) - (activeVariant.reserved_quantity || 0))
-    : (product.availableStock !== undefined ? product.availableStock : 45);
+    : product.availableStock !== undefined
+      ? product.availableStock
+      : 45;
 
   const isOutOfStock = availableStock === 0;
   const isLowStock = availableStock > 0 && availableStock <= 5;
@@ -95,10 +100,7 @@ export function VariantSelector({
                   data-testid={`color-option-${color.toLowerCase().replace(/\s+/g, '-')}`}
                   onClick={() => onSelectColor && onSelectColor(color)}
                 >
-                  <span
-                    className="variant-color-dot"
-                    style={{ backgroundColor: hex }}
-                  />
+                  <span className="variant-color-dot" style={{ backgroundColor: hex }} />
                   <span>{color}</span>
                   {isSelected && <Check size={12} style={{ marginLeft: 2 }} />}
                 </button>
@@ -127,7 +129,10 @@ export function VariantSelector({
                   v.size?.toUpperCase() === size.toUpperCase()
               );
               const sizeStock = matchingVar
-                ? Math.max(0, (matchingVar.stock_quantity || 0) - (matchingVar.reserved_quantity || 0))
+                ? Math.max(
+                    0,
+                    (matchingVar.stock_quantity || 0) - (matchingVar.reserved_quantity || 0)
+                  )
                 : 1;
               const sizeOutOfStock = matchingVar && sizeStock === 0;
 
@@ -161,15 +166,24 @@ export function VariantSelector({
 
         <div className="variant-stock-status">
           {isOutOfStock ? (
-            <span className="variant-stock-badge variant-stock-badge--out-of-stock" data-testid="pdp-stock-badge">
+            <span
+              className="variant-stock-badge variant-stock-badge--out-of-stock"
+              data-testid="pdp-stock-badge"
+            >
               Out of Stock
             </span>
           ) : isLowStock ? (
-            <span className="variant-stock-badge variant-stock-badge--low-stock" data-testid="pdp-stock-badge">
+            <span
+              className="variant-stock-badge variant-stock-badge--low-stock"
+              data-testid="pdp-stock-badge"
+            >
               Low Stock (Only {availableStock} left!)
             </span>
           ) : (
-            <span className="variant-stock-badge variant-stock-badge--in-stock" data-testid="pdp-stock-badge">
+            <span
+              className="variant-stock-badge variant-stock-badge--in-stock"
+              data-testid="pdp-stock-badge"
+            >
               In Stock ({availableStock} available)
             </span>
           )}
@@ -179,7 +193,9 @@ export function VariantSelector({
       {/* 4. Price & Quantity Stepper */}
       <div className="variant-purchase-row">
         <div className="variant-price-display">
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>Price (LKR)</div>
+          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
+            Price (LKR)
+          </div>
           <div
             style={{
               fontFamily: 'var(--font-heading)',
@@ -195,7 +211,9 @@ export function VariantSelector({
 
         {/* Quantity Stepper */}
         <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>Quantity</span>
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
+            Quantity
+          </span>
           <div className="variant-quantity-control">
             <button
               type="button"

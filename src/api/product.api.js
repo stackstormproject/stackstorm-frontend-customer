@@ -11,8 +11,10 @@ export const FALLBACK_PRODUCTS = [
     category_name: "Men's Apparel",
     rating: 4.9,
     review_count: 38,
-    primary_image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
-    secondary_image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
+    primary_image:
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
+    secondary_image:
+      'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
     availableStock: 70,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['Ocean Blue', 'Indigo Navy'],
@@ -28,8 +30,10 @@ export const FALLBACK_PRODUCTS = [
     category_name: "Men's Apparel",
     rating: 5.0,
     review_count: 52,
-    primary_image: 'https://images.unsplash.com/photo-1620012253295-c15c429f66bf?auto=format&fit=crop&w=800&q=80',
-    secondary_image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
+    primary_image:
+      'https://images.unsplash.com/photo-1620012253295-c15c429f66bf?auto=format&fit=crop&w=800&q=80',
+    secondary_image:
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
     availableStock: 50,
     sizes: ['S', 'M', 'L'],
     colors: ['Indigo Navy'],
@@ -39,14 +43,17 @@ export const FALLBACK_PRODUCTS = [
     id: 'c0000000-0000-0000-0000-000000000003',
     title: 'Pure Handloom Cotton Saree',
     slug: 'pure-handloom-cotton-saree',
-    description: 'Handwoven on pit looms in Dickwella with natural vegetable dyes and gold borders.',
+    description:
+      'Handwoven on pit looms in Dickwella with natural vegetable dyes and gold borders.',
     base_price: 12500,
     category: { name: 'Women', slug: 'women' },
     category_name: "Women's Traditional",
     rating: 4.8,
     review_count: 45,
-    primary_image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80',
-    secondary_image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80',
+    primary_image:
+      'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80',
+    secondary_image:
+      'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80',
     availableStock: 25,
     sizes: ['Free Size'],
     colors: ['Kandyan Red', 'Pure White', 'Ceylon Emerald'],
@@ -62,8 +69,10 @@ export const FALLBACK_PRODUCTS = [
     category_name: "Men's Apparel",
     rating: 4.7,
     review_count: 29,
-    primary_image: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=800&q=80',
-    secondary_image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
+    primary_image:
+      'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=800&q=80',
+    secondary_image:
+      'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
     availableStock: 48,
     sizes: ['M', 'L', 'XL'],
     colors: ['Earthy Ochre'],
@@ -79,8 +88,10 @@ export const FALLBACK_PRODUCTS = [
     category_name: 'Casual Wear',
     rating: 4.6,
     review_count: 19,
-    primary_image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
-    secondary_image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
+    primary_image:
+      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
+    secondary_image:
+      'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
     availableStock: 40,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: ['Natural Sand', 'Pure White', 'Indigo Navy'],
@@ -96,8 +107,10 @@ export const FALLBACK_PRODUCTS = [
     category_name: "Men's Traditional",
     rating: 4.9,
     review_count: 64,
-    primary_image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
-    secondary_image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
+    primary_image:
+      'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
+    secondary_image:
+      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
     availableStock: 95,
     sizes: ['Free Size'],
     colors: ['Ocean Blue', 'Earthy Ochre', 'Kandyan Red'],
@@ -113,8 +126,10 @@ export const FALLBACK_PRODUCTS = [
     category_name: "Women's Apparel",
     rating: 4.8,
     review_count: 31,
-    primary_image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80',
-    secondary_image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80',
+    primary_image:
+      'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80',
+    secondary_image:
+      'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80',
     availableStock: 28,
     sizes: ['S', 'M', 'L'],
     colors: ['Pure White', 'Ceylon Emerald', 'Ocean Blue'],
@@ -130,8 +145,10 @@ export const FALLBACK_PRODUCTS = [
     category_name: 'Kids Festive',
     rating: 5.0,
     review_count: 22,
-    primary_image: 'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=80',
-    secondary_image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
+    primary_image:
+      'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=80',
+    secondary_image:
+      'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
     availableStock: 35,
     sizes: ['S', 'M', 'L'],
     colors: ['Ocean Blue', 'Kandyan Red', 'Pure White'],
@@ -192,27 +209,36 @@ export const productApi = {
  * Normalize backend product representation to frontend UI contract
  */
 function normalizeProduct(p) {
-  const images = (p.images && p.images.length > 0)
-    ? p.images
-    : [
-        {
-          id: `${p.id || 'img'}-1`,
-          image_url: p.primary_image || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
-          alt_text: `${p.title || 'Product'} Primary View`,
-          is_primary: true,
-          display_order: 1,
-        },
-        {
-          id: `${p.id || 'img'}-2`,
-          image_url: p.secondary_image || 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
-          alt_text: `${p.title || 'Product'} Detail View`,
-          is_primary: false,
-          display_order: 2,
-        },
-      ];
+  const images =
+    p.images && p.images.length > 0
+      ? p.images
+      : [
+          {
+            id: `${p.id || 'img'}-1`,
+            image_url:
+              p.primary_image ||
+              'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
+            alt_text: `${p.title || 'Product'} Primary View`,
+            is_primary: true,
+            display_order: 1,
+          },
+          {
+            id: `${p.id || 'img'}-2`,
+            image_url:
+              p.secondary_image ||
+              'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
+            alt_text: `${p.title || 'Product'} Detail View`,
+            is_primary: false,
+            display_order: 2,
+          },
+        ];
 
-  const primaryImg = p.primary_image || (images.find((img) => img.is_primary) || images[0])?.image_url;
-  const secondaryImg = p.secondary_image || (images.find((img) => !img.is_primary) || images[1])?.image_url || primaryImg;
+  const primaryImg =
+    p.primary_image || (images.find((img) => img.is_primary) || images[0])?.image_url;
+  const secondaryImg =
+    p.secondary_image ||
+    (images.find((img) => !img.is_primary) || images[1])?.image_url ||
+    primaryImg;
 
   // Extract variants sizes and colors if present
   let variants = p.variants || [];
@@ -226,10 +252,14 @@ function normalizeProduct(p) {
     variants = [];
     effectiveColors.forEach((color, cIdx) => {
       effectiveSizes.forEach((size, sIdx) => {
-        const cleanSlug = (p.slug || 'PRD').replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 6);
+        const cleanSlug = (p.slug || 'PRD')
+          .replace(/[^a-zA-Z0-9]/g, '')
+          .toUpperCase()
+          .substring(0, 6);
         const skuCode = `${cleanSlug}-${color.substring(0, 3).toUpperCase()}-${size}`;
         // Give varying stock quantities to make tests and UX realistic
-        const stockQty = (cIdx === 0 && sIdx === effectiveSizes.length - 1) ? 0 : (15 + (cIdx * 5) + (sIdx * 3));
+        const stockQty =
+          cIdx === 0 && sIdx === effectiveSizes.length - 1 ? 0 : 15 + cIdx * 5 + sIdx * 3;
         variants.push({
           id: `var-${p.id || 'p'}-${color}-${size}`,
           product_id: p.id,
@@ -247,16 +277,18 @@ function normalizeProduct(p) {
     // Normalize existing variants with available_stock
     variants = variants.map((v) => ({
       ...v,
-      available_stock: v.available_stock !== undefined
-        ? v.available_stock
-        : Math.max(0, (v.stock_quantity || 0) - (v.reserved_quantity || 0)),
+      available_stock:
+        v.available_stock !== undefined
+          ? v.available_stock
+          : Math.max(0, (v.stock_quantity || 0) - (v.reserved_quantity || 0)),
     }));
   }
 
   return {
     ...p,
     title: p.title || p.name || 'Artisan Garment',
-    base_price: p.base_price !== undefined ? p.base_price : (p.price !== undefined ? Number(p.price) : 0),
+    base_price:
+      p.base_price !== undefined ? p.base_price : p.price !== undefined ? Number(p.price) : 0,
     category_name: p.category_name || p.category?.name || 'Handcrafted Apparel',
     primary_image: primaryImg,
     secondary_image: secondaryImg,
@@ -266,7 +298,7 @@ function normalizeProduct(p) {
     review_count: p.review_count || 30,
     sizes: effectiveSizes,
     colors: effectiveColors,
-    availableStock: p.availableStock !== undefined ? p.availableStock : (p.stock_quantity || 45),
+    availableStock: p.availableStock !== undefined ? p.availableStock : p.stock_quantity || 45,
   };
 }
 
@@ -291,16 +323,13 @@ function filterLocalFallback(params = {}) {
       if (cat === 'kids') return pCatSlug === 'kids' || pCatName === 'kids';
       if (cat === 'accessories') return pCatSlug === 'accessories' || pCatName === 'accessories';
       if (cat.includes('batik')) return pTitle.includes('batik') || pDesc.includes('batik');
-      if (cat.includes('handloom')) return pTitle.includes('handloom') || pDesc.includes('handloom');
+      if (cat.includes('handloom'))
+        return pTitle.includes('handloom') || pDesc.includes('handloom');
       if (cat.includes('linen')) return pTitle.includes('linen') || pDesc.includes('linen');
-      if (cat.includes('saree') || cat.includes('sari')) return pTitle.includes('saree') || pTitle.includes('sari');
+      if (cat.includes('saree') || cat.includes('sari'))
+        return pTitle.includes('saree') || pTitle.includes('sari');
 
-      return (
-        pCatSlug === cat ||
-        pCatName === cat ||
-        pCatFull.includes(cat) ||
-        p.slug.includes(cat)
-      );
+      return pCatSlug === cat || pCatName === cat || pCatFull.includes(cat) || p.slug.includes(cat);
     });
   }
 
@@ -325,10 +354,11 @@ function filterLocalFallback(params = {}) {
   // Search keyword
   if (params.search) {
     const q = params.search.toLowerCase();
-    list = list.filter((p) =>
-      p.title.toLowerCase().includes(q) ||
-      p.description.toLowerCase().includes(q) ||
-      p.category_name.toLowerCase().includes(q)
+    list = list.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        p.category_name.toLowerCase().includes(q)
     );
   }
 
