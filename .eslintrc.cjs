@@ -39,6 +39,15 @@ module.exports = {
       rules: { 'import/no-extraneous-dependencies': ['error', { devDependencies: true }] },
     },
     {
+      files: ['e2e/**/*.js', 'playwright.config.js'],
+      env: { node: true },
+      rules: {
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+        'no-await-in-loop': 'off', // e2e steps are sequential by design
+        'no-restricted-syntax': 'off',
+      },
+    },
+    {
       files: ['vite.config.js'],
       rules: { 'import/no-extraneous-dependencies': ['error', { devDependencies: true }] },
     },
