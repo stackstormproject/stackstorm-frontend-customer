@@ -138,11 +138,7 @@ export function ProductDetailPage({
         <div className="pdp-grid">
           {/* Column 1: Image Gallery with Thumbnails & Zoom Modal (AC2) */}
           <div className="pdp-gallery-column">
-            <ProductGallery
-              images={product.images}
-              title={product.title}
-              badge={product.badge}
-            />
+            <ProductGallery images={product.images} title={product.title} badge={product.badge} />
           </div>
 
           {/* Column 2: Purchase & Variant Resolution Panel (AC3, AC4) */}
@@ -169,7 +165,8 @@ export function ProductDetailPage({
               </div>
               <span className="pdp-rating-num">{formatRating(product.rating || 4.8)}</span>
               <span className="pdp-review-count">
-                ({product.review_count || 1} verified customer review{product.review_count === 1 ? '' : 's'})
+                ({product.review_count || 1} verified customer review
+                {product.review_count === 1 ? '' : 's'})
               </span>
             </div>
 
@@ -253,11 +250,15 @@ export function ProductDetailPage({
               <div className="pdp-specs-grid" data-testid="tab-content-specs">
                 <div className="pdp-spec-card">
                   <div className="pdp-spec-label">Fabric & Fiber</div>
-                  <div className="pdp-spec-value">100% Natural Breathable Sri Lankan Cotton / Linen</div>
+                  <div className="pdp-spec-value">
+                    100% Natural Breathable Sri Lankan Cotton / Linen
+                  </div>
                 </div>
                 <div className="pdp-spec-card">
                   <div className="pdp-spec-label">Dye Technique</div>
-                  <div className="pdp-spec-value">Wax-Resist Hand Batik & Natural Vegetable Dyes</div>
+                  <div className="pdp-spec-value">
+                    Wax-Resist Hand Batik & Natural Vegetable Dyes
+                  </div>
                 </div>
                 <div className="pdp-spec-card">
                   <div className="pdp-spec-label">Provenance</div>
@@ -274,27 +275,44 @@ export function ProductDetailPage({
               <div className="pdp-specs-grid" data-testid="tab-content-delivery">
                 <div className="pdp-spec-card">
                   <div className="pdp-spec-label">Southern Province Delivery</div>
-                  <div className="pdp-spec-value">Same-day or next-day delivery across Matara, Galle & Hambantota</div>
+                  <div className="pdp-spec-value">
+                    Same-day or next-day delivery across Matara, Galle & Hambantota
+                  </div>
                 </div>
                 <div className="pdp-spec-card">
                   <div className="pdp-spec-label">Islandwide Express</div>
-                  <div className="pdp-spec-value">1–3 business days via Sri Lanka Post Express & Prompt Courier</div>
+                  <div className="pdp-spec-value">
+                    1–3 business days via Sri Lanka Post Express & Prompt Courier
+                  </div>
                 </div>
                 <div className="pdp-spec-card">
                   <div className="pdp-spec-label">Free Shipping Threshold</div>
-                  <div className="pdp-spec-value">Complimentary delivery for orders exceeding LKR 10,000</div>
+                  <div className="pdp-spec-value">
+                    Complimentary delivery for orders exceeding LKR 10,000
+                  </div>
                 </div>
                 <div className="pdp-spec-card">
                   <div className="pdp-spec-label">Exchange Policy</div>
-                  <div className="pdp-spec-value">30-day exchange window for unworn items with original tags</div>
+                  <div className="pdp-spec-value">
+                    30-day exchange window for unworn items with original tags
+                  </div>
                 </div>
               </div>
             )}
 
             {activeTab === 'reviews' && (
               <div className="pdp-reviews-list" data-testid="tab-content-reviews">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
-                  <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>Customer Community Ratings</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 'var(--space-4)',
+                  }}
+                >
+                  <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
+                    Customer Community Ratings
+                  </span>
                   <button
                     type="button"
                     className="btn-secondary btn-sm"
@@ -306,7 +324,7 @@ export function ProductDetailPage({
                   </button>
                 </div>
 
-                {(product.reviews && product.reviews.length > 0) ? (
+                {product.reviews && product.reviews.length > 0 ? (
                   product.reviews.map((rev) => (
                     <div key={rev.id} className="pdp-review-card">
                       <div className="pdp-review-header">
@@ -327,7 +345,13 @@ export function ProductDetailPage({
                           />
                         ))}
                       </div>
-                      <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: 'var(--text-sm)',
+                          color: 'var(--color-text-muted)',
+                        }}
+                      >
                         {rev.comment}
                       </p>
                     </div>
@@ -335,7 +359,9 @@ export function ProductDetailPage({
                 ) : (
                   <div className="pdp-review-card">
                     <div className="pdp-review-header">
-                      <span className="pdp-review-title">Southern Province Heritage Enthusiast</span>
+                      <span className="pdp-review-title">
+                        Southern Province Heritage Enthusiast
+                      </span>
                       <span className="pdp-review-badge">
                         <CheckCircle2 size={14} /> Verified Buyer
                       </span>
@@ -345,8 +371,15 @@ export function ProductDetailPage({
                         <Star key={i} size={14} fill="#D4AF37" color="#D4AF37" />
                       ))}
                     </div>
-                    <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
-                      Superb quality batik shirt! The ocean blue dye pattern is distinct and the breathable cotton is ideal for coastal weather in Matara.
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 'var(--text-sm)',
+                        color: 'var(--color-text-muted)',
+                      }}
+                    >
+                      Superb quality batik shirt! The ocean blue dye pattern is distinct and the
+                      breathable cotton is ideal for coastal weather in Matara.
                     </p>
                   </div>
                 )}

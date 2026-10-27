@@ -84,7 +84,10 @@ export function CartProvider({ children, initialItems = null }) {
         quantity,
         subtotal: unitPrice * quantity,
         image_url: imgUrl,
-        available_stock: variant?.available_stock !== undefined ? variant.available_stock : (product.availableStock || 30),
+        available_stock:
+          variant?.available_stock !== undefined
+            ? variant.available_stock
+            : product.availableStock || 30,
       };
 
       return [...prevItems, newItem];
@@ -94,12 +97,14 @@ export function CartProvider({ children, initialItems = null }) {
     setIsOpen(true);
 
     // Dispatches network call asynchronously
-    cartApi.addItem({
-      variantId,
-      quantity,
-    }).catch((err) => {
-      console.warn('Backend cart addItem error:', err);
-    });
+    cartApi
+      .addItem({
+        variantId,
+        quantity,
+      })
+      .catch((err) => {
+        console.warn('Backend cart addItem error:', err);
+      });
   }, []);
 
   /**
@@ -179,12 +184,12 @@ export function CartProvider({ children, initialItems = null }) {
     setPromoCode(cleanCode);
 
     if (cleanCode === 'DICKWELLA10') {
-      setPromoDiscountRate(0.10);
+      setPromoDiscountRate(0.1);
       setPromoError('');
       return { success: true, message: '10% Southern Province Heritage Discount Applied!' };
     }
     if (cleanCode === 'BATIK20') {
-      setPromoDiscountRate(0.20);
+      setPromoDiscountRate(0.2);
       setPromoError('');
       return { success: true, message: '20% Artisan Batik Voucher Applied!' };
     }
@@ -208,13 +213,16 @@ export function CartProvider({ children, initialItems = null }) {
 
   // Financial aggregates
   const totalItems = items.reduce((sum, it) => sum + (it.quantity || 1), 0);
-  const subtotal = items.reduce((sum, it) => sum + (it.unit_price * (it.quantity || 1)), 0);
+  const subtotal = items.reduce((sum, it) => sum + it.unit_price * (it.quantity || 1), 0);
   const discountAmount = Math.round(subtotal * promoDiscountRate);
   const discountedSubtotal = subtotal - discountAmount;
   const isFreeShipping = discountedSubtotal >= FREE_SHIPPING_THRESHOLD || discountedSubtotal === 0;
   const shippingFee = isFreeShipping ? 0 : STANDARD_SHIPPING_FEE;
   const total = discountedSubtotal + shippingFee;
-  const freeShippingProgress = Math.min(100, Math.round((discountedSubtotal / FREE_SHIPPING_THRESHOLD) * 100));
+  const freeShippingProgress = Math.min(
+    100,
+    Math.round((discountedSubtotal / FREE_SHIPPING_THRESHOLD) * 100)
+  );
   const amountToFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - discountedSubtotal);
 
   const value = {

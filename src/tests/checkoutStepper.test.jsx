@@ -1,7 +1,10 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { FreeShippingMeter, FREE_SHIPPING_THRESHOLD } from '../components/checkout/FreeShippingMeter';
+import {
+  FreeShippingMeter,
+  FREE_SHIPPING_THRESHOLD,
+} from '../components/checkout/FreeShippingMeter';
 import { AddressStep, PHONE_REGEX, POSTAL_CODE_REGEX } from '../components/checkout/AddressStep';
 import { ShippingStep } from '../components/checkout/ShippingStep';
 import { CheckoutStepper } from '../components/checkout/CheckoutStepper';
@@ -121,11 +124,15 @@ describe('STORM-FE-011: Multi-Step Checkout Stepper, Address Book & Free Shippin
       fireEvent.change(postalInput, { target: { value: '811' } });
       fireEvent.blur(postalInput);
 
-      expect(screen.getByTestId('error-postalcode')).toHaveTextContent(/5-digit Sri Lankan postal code/i);
+      expect(screen.getByTestId('error-postalcode')).toHaveTextContent(
+        /5-digit Sri Lankan postal code/i
+      );
 
       // Fix inputs with valid Sri Lankan address
       fireEvent.change(screen.getByTestId('input-fullname'), { target: { value: 'Kamal Perera' } });
-      fireEvent.change(screen.getByTestId('input-email'), { target: { value: 'kamal@example.com' } });
+      fireEvent.change(screen.getByTestId('input-email'), {
+        target: { value: 'kamal@example.com' },
+      });
       fireEvent.change(screen.getByTestId('input-phone'), { target: { value: '0771234567' } });
       fireEvent.change(screen.getByTestId('input-line1'), { target: { value: '12 Beach Road' } });
       fireEvent.change(screen.getByTestId('input-city'), { target: { value: 'Dickwella' } });
@@ -156,7 +163,13 @@ describe('STORM-FE-011: Multi-Step Checkout Stepper, Address Book & Free Shippin
       render(
         <ShippingStep
           subtotal={5000}
-          selectedAddress={{ fullName: 'Kamal', phone: '0771234567', line1: 'Beach Rd', city: 'Dickwella', postalCode: '81100' }}
+          selectedAddress={{
+            fullName: 'Kamal',
+            phone: '0771234567',
+            line1: 'Beach Rd',
+            city: 'Dickwella',
+            postalCode: '81100',
+          }}
           onSubmitShipping={submitMock}
         />
       );
@@ -180,7 +193,13 @@ describe('STORM-FE-011: Multi-Step Checkout Stepper, Address Book & Free Shippin
       render(
         <ShippingStep
           subtotal={12000}
-          selectedAddress={{ fullName: 'Kamal', phone: '0771234567', line1: 'Beach Rd', city: 'Dickwella', postalCode: '81100' }}
+          selectedAddress={{
+            fullName: 'Kamal',
+            phone: '0771234567',
+            line1: 'Beach Rd',
+            city: 'Dickwella',
+            postalCode: '81100',
+          }}
           onSubmitShipping={submitMock}
         />
       );

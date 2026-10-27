@@ -6,7 +6,9 @@ export const MegaMenu = ({ category, onClose, onSelectCategory }) => {
   if (!category) return null;
 
   const children = category.children || [];
-  const featuredImage = category.featuredImage || 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=600&q=80';
+  const featuredImage =
+    category.featuredImage ||
+    'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=600&q=80';
   const tagline = category.tagline || 'Artisan Sri Lankan Heritage Collection';
 
   const handleSubcategoryClick = (subCat, e) => {
@@ -56,7 +58,13 @@ export const MegaMenu = ({ category, onClose, onSelectCategory }) => {
                 </li>
               ))
             ) : (
-              <li style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-sm)', padding: 'var(--space-2)' }}>
+              <li
+                style={{
+                  color: 'var(--color-text-muted)',
+                  fontSize: 'var(--text-sm)',
+                  padding: 'var(--space-2)',
+                }}
+              >
                 Explore all {category.name} handcrafted apparel online.
               </li>
             )}
@@ -68,7 +76,9 @@ export const MegaMenu = ({ category, onClose, onSelectCategory }) => {
               className="mega-menu-link"
               onClick={(e) => handleSubcategoryClick(null, e)}
             >
-              <span>View All {category.name} ({children.length} Categories)</span>
+              <span>
+                View All {category.name} ({children.length} Categories)
+              </span>
               <ArrowRight size={12} />
             </a>
             <a href="#new-arrivals" className="mega-menu-link">

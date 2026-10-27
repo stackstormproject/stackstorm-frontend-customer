@@ -147,12 +147,7 @@ describe('STORM-FE-010: Stock Reservation Countdown & Expiration Suite', () => {
   describe('ReservationExpiredModal Flow', () => {
     it('renders expired modal and triggers onReturnToCart callback when clicked', () => {
       const returnMock = vi.fn();
-      render(
-        <ReservationExpiredModal
-          isOpen={true}
-          onReturnToCart={returnMock}
-        />
-      );
+      render(<ReservationExpiredModal isOpen={true} onReturnToCart={returnMock} />);
 
       expect(screen.getByTestId('reservation-expired-modal')).toBeInTheDocument();
       expect(screen.getByText('Reservation Expired')).toBeInTheDocument();
@@ -164,9 +159,7 @@ describe('STORM-FE-010: Stock Reservation Countdown & Expiration Suite', () => {
     });
 
     it('returns null when isOpen is false', () => {
-      const { container } = render(
-        <ReservationExpiredModal isOpen={false} />
-      );
+      const { container } = render(<ReservationExpiredModal isOpen={false} />);
       expect(container.firstChild).toBeNull();
     });
   });

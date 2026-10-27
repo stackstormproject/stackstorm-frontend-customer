@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, Lock, Eye, EyeOff, Check, X, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import {
+  User,
+  Mail,
+  Phone,
+  Lock,
+  Eye,
+  EyeOff,
+  Check,
+  X,
+  ArrowRight,
+  Loader2,
+  AlertCircle,
+} from 'lucide-react';
 import authApi from '../../api/auth.api';
 import './RegisterForm.css';
 
@@ -9,15 +21,11 @@ const PHONE_REGEX = /^(?:\+94\s?|0)?7[0-9]{8}$/;
 
 /**
  * RegisterForm Component
- * 
+ *
  * Captures customer registration with real-time password complexity meter,
  * Sri Lankan phone validation, and password visibility toggle (AC2 & AC3).
  */
-export function RegisterForm({
-  onSuccess,
-  onSwitchToLogin,
-  className = '',
-}) {
+export function RegisterForm({ onSuccess, onSwitchToLogin, className = '' }) {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -142,7 +150,11 @@ export function RegisterForm({
     >
       {/* Server Error Alert */}
       {serverError && (
-        <div className="register-form__error-banner" role="alert" data-testid="register-error-banner">
+        <div
+          className="register-form__error-banner"
+          role="alert"
+          data-testid="register-error-banner"
+        >
           <AlertCircle size={18} />
           <span>{serverError}</span>
         </div>
@@ -169,7 +181,9 @@ export function RegisterForm({
           />
         </div>
         {errors.fullName && touched.fullName && (
-          <span className="form-error" data-testid="error-register-name">{errors.fullName}</span>
+          <span className="form-error" data-testid="error-register-name">
+            {errors.fullName}
+          </span>
         )}
       </div>
 
@@ -194,7 +208,9 @@ export function RegisterForm({
           />
         </div>
         {errors.email && touched.email && (
-          <span className="form-error" data-testid="error-register-email">{errors.email}</span>
+          <span className="form-error" data-testid="error-register-email">
+            {errors.email}
+          </span>
         )}
       </div>
 
@@ -219,7 +235,9 @@ export function RegisterForm({
           />
         </div>
         {errors.phone && touched.phone && (
-          <span className="form-error" data-testid="error-register-phone">{errors.phone}</span>
+          <span className="form-error" data-testid="error-register-phone">
+            {errors.phone}
+          </span>
         )}
       </div>
 
@@ -254,7 +272,9 @@ export function RegisterForm({
           </button>
         </div>
         {errors.password && touched.password && (
-          <span className="form-error" data-testid="error-register-password">{errors.password}</span>
+          <span className="form-error" data-testid="error-register-password">
+            {errors.password}
+          </span>
         )}
 
         {/* Complexity Helper Checkpoints */}
@@ -285,7 +305,8 @@ export function RegisterForm({
             data-testid="register-terms-checkbox"
           />
           <span>
-            I agree to the <a href="#terms">Terms of Service</a> & <a href="#privacy">Privacy Policy</a>
+            I agree to the <a href="#terms">Terms of Service</a> &{' '}
+            <a href="#privacy">Privacy Policy</a>
           </span>
         </label>
         {errors.agreeTerms && touched.agreeTerms && (

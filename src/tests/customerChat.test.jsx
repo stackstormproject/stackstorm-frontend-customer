@@ -92,10 +92,7 @@ describe('STORM-FE-021: Customer Floating Live Chat Widget with Automated FAQ / 
     });
 
     // Verify socketService.sendMessage was called or fallback generated
-    expect(socketService.sendMessage).toHaveBeenCalledWith(
-      'session-test-123',
-      'Return Policy'
-    );
+    expect(socketService.sendMessage).toHaveBeenCalledWith('session-test-123', 'Return Policy');
   });
 
   /* -------------------------------------------------------------------------- */

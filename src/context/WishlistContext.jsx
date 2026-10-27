@@ -11,7 +11,12 @@ import { FALLBACK_PRODUCTS } from '../api/product.api';
 
 const WishlistContext = createContext(null);
 
-export function WishlistProvider({ children, requireAuth = false, isAuthenticated = true, onShowAuthModal = null }) {
+export function WishlistProvider({
+  children,
+  requireAuth = false,
+  isAuthenticated = true,
+  onShowAuthModal = null,
+}) {
   const [wishlistItems, setWishlistItems] = useState(() => getFallbackWishlist());
   const [wishlistIds, setWishlistIds] = useState(() => {
     const fallback = getFallbackWishlist();
@@ -44,8 +49,8 @@ export function WishlistProvider({ children, requireAuth = false, isAuthenticate
                 prod.base_price !== undefined
                   ? Number(prod.base_price)
                   : prod.price !== undefined
-                  ? Number(prod.price)
-                  : 0,
+                    ? Number(prod.price)
+                    : 0,
               primary_image:
                 prod.primary_image ||
                 prod.primaryImage ||
@@ -67,7 +72,9 @@ export function WishlistProvider({ children, requireAuth = false, isAuthenticate
         const fallbackItems = getFallbackWishlist();
         setWishlistItems(fallbackItems);
         setLocalWishlistItems(fallbackItems);
-        const fids = fallbackItems.map((it) => it.product_id || it.product?.id || it.id).filter(Boolean);
+        const fids = fallbackItems
+          .map((it) => it.product_id || it.product?.id || it.id)
+          .filter(Boolean);
         setWishlistIds(fids);
         setLocalWishlistIds(fids);
       }
@@ -75,7 +82,9 @@ export function WishlistProvider({ children, requireAuth = false, isAuthenticate
       const fallbackItems = getFallbackWishlist();
       setWishlistItems(fallbackItems);
       setLocalWishlistItems(fallbackItems);
-      const fids = fallbackItems.map((it) => it.product_id || it.product?.id || it.id).filter(Boolean);
+      const fids = fallbackItems
+        .map((it) => it.product_id || it.product?.id || it.id)
+        .filter(Boolean);
       setWishlistIds(fids);
       setLocalWishlistIds(fids);
     } finally {
@@ -134,8 +143,8 @@ export function WishlistProvider({ children, requireAuth = false, isAuthenticate
             product.base_price !== undefined
               ? Number(product.base_price)
               : product.price !== undefined
-              ? Number(product.price)
-              : 0,
+                ? Number(product.price)
+                : 0,
           primary_image:
             product.primary_image ||
             product.primaryImage ||

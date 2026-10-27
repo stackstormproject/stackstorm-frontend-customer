@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import { X, RotateCcw, ArrowRightLeft, ShieldAlert, CheckCircle2, AlertCircle, Loader2, Package } from 'lucide-react';
+import {
+  X,
+  RotateCcw,
+  ArrowRightLeft,
+  ShieldAlert,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Package,
+} from 'lucide-react';
 import { isReturnEligible, returnApi } from '../../api/return.api';
 import './ReturnExchangeModal.css';
 
 /**
  * ReturnExchangeModal Component
- * 
+ *
  * Supports requesting a return for refund or a size/color exchange
  * within the strict 30-day window from order.delivered_at (AC1 & AC2).
  */
@@ -16,9 +25,7 @@ export function ReturnExchangeModal({
   item: initialItem = null,
   onSuccess,
 }) {
-  const [selectedItem, setSelectedItem] = useState(
-    initialItem || order?.items?.[0] || null
-  );
+  const [selectedItem, setSelectedItem] = useState(initialItem || order?.items?.[0] || null);
   const [requestType, setRequestType] = useState('return'); // 'return' | 'exchange'
   const [reason, setReason] = useState('Size Too Small / Tight');
   const [replacementSize, setReplacementSize] = useState('L');
@@ -117,13 +124,11 @@ export function ReturnExchangeModal({
             </div>
           </div>
         ) : (
-          <div
-            className="return-modal__eligible-banner"
-            data-testid="eligible-return-banner"
-          >
+          <div className="return-modal__eligible-banner" data-testid="eligible-return-banner">
             <CheckCircle2 size={18} />
             <span>
-              Eligible for return or exchange ({eligibility.daysRemaining} days remaining in 30-day window).
+              Eligible for return or exchange ({eligibility.daysRemaining} days remaining in 30-day
+              window).
             </span>
           </div>
         )}
@@ -132,14 +137,18 @@ export function ReturnExchangeModal({
         {currentItem && (
           <div className="return-modal__item-card" data-testid="return-item-preview">
             <img
-              src={currentItem.image_url || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=120&q=80'}
+              src={
+                currentItem.image_url ||
+                'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=120&q=80'
+              }
               alt={currentItem.title}
               className="return-item-thumb"
             />
             <div className="return-item-meta">
               <span className="return-item-title">{currentItem.title}</span>
               <span className="return-item-details">
-                Size: {currentItem.size || 'Standard'} • Color: {currentItem.color || 'Artisan Indigo'}
+                Size: {currentItem.size || 'Standard'} • Color:{' '}
+                {currentItem.color || 'Artisan Indigo'}
               </span>
               <span className="return-item-price">
                 LKR {(currentItem.total_price || currentItem.unit_price || 0).toLocaleString()}
@@ -253,7 +262,8 @@ export function ReturnExchangeModal({
           <div className="return-modal__policy-note">
             <Package size={14} />
             <span>
-              Garments must be unwashed, unworn, and have original Dickwella Fashion Corner tags intact.
+              Garments must be unwashed, unworn, and have original Dickwella Fashion Corner tags
+              intact.
             </span>
           </div>
 

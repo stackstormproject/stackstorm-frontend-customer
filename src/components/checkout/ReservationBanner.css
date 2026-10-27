@@ -118,20 +118,20 @@
 
 /* 1. Normal State (Sapphire & Gold) */
 .reservation-banner--normal {
-  background: linear-gradient(135deg, #0A192F 0%, #172A45 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #0a192f 0%, #172a45 100%);
+  color: #ffffff;
   border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .reservation-banner--normal .reservation-banner__badge {
   background: rgba(212, 175, 55, 0.18);
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
   border: 1px solid rgba(212, 175, 55, 0.4);
 }
 
 .reservation-banner--normal .reservation-banner__clock {
   background: rgba(212, 175, 55, 0.2);
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
 }
 
 .reservation-banner--normal .reservation-banner__trust {
@@ -143,50 +143,51 @@
 }
 
 .reservation-banner--normal .reservation-banner__progress-fill {
-  background: linear-gradient(90deg, #D4AF37, #F4E8C1);
+  background: linear-gradient(90deg, #d4af37, #f4e8c1);
 }
 
 /* 2. Urgent State (Amber Warning, <= 3 mins) */
 .reservation-banner--urgent {
-  background: #FFFBEB;
-  color: #92400E;
-  border: 1px solid #FDE68A;
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
 }
 
 .reservation-banner--urgent .reservation-banner__badge {
-  background: #FEF3C7;
-  color: #B45309;
-  border: 1px solid #FCD34D;
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fcd34d;
 }
 
 .reservation-banner--urgent .reservation-banner__clock {
-  background: #FEF3C7;
-  color: #92400E;
-  box-shadow: inset 0 0 0 1px #FCD34D;
+  background: #fef3c7;
+  color: #92400e;
+  box-shadow: inset 0 0 0 1px #fcd34d;
 }
 
 .reservation-banner--urgent .reservation-banner__trust {
-  color: #B45309;
+  color: #b45309;
 }
 
 .reservation-banner--urgent .reservation-banner__progress-bar {
-  background: #FEF3C7;
+  background: #fef3c7;
 }
 
 .reservation-banner--urgent .reservation-banner__progress-fill {
-  background: linear-gradient(90deg, #F59E0B, #D97706);
+  background: linear-gradient(90deg, #f59e0b, #d97706);
 }
 
 /* 3. Critical State (Crimson Warning, <= 1 min) */
 .reservation-banner--critical {
-  background: #FEF2F2;
-  color: #991B1B;
-  border: 1px solid #FECACA;
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
   animation: criticalFlash 2s infinite ease-in-out;
 }
 
 @keyframes criticalFlash {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.25);
   }
   50% {
@@ -195,26 +196,26 @@
 }
 
 .reservation-banner--critical .reservation-banner__badge {
-  background: #FEE2E2;
-  color: #DC2626;
-  border: 1px solid #FCA5A5;
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
 }
 
 .reservation-banner--critical .reservation-banner__clock {
-  background: #DC2626;
-  color: #FFFFFF;
+  background: #dc2626;
+  color: #ffffff;
 }
 
 .reservation-banner--critical .reservation-banner__trust {
-  color: #DC2626;
+  color: #dc2626;
 }
 
 .reservation-banner--critical .reservation-banner__progress-bar {
-  background: #FEE2E2;
+  background: #fee2e2;
 }
 
 .reservation-banner--critical .reservation-banner__progress-fill {
-  background: #EF4444;
+  background: #ef4444;
 }
 
 /* Responsive adjustments */
