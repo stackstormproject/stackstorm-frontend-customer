@@ -99,7 +99,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
-  const [addressChoice, setAddressChoice] = useState(NEW_ADDRESS);
+  const [pickedAddress, setAddressChoice] = useState(null); // null = use the default
   const [address, setAddress] = useState(EMPTY_ADDRESS);
   const [saveAddress, setSaveAddress] = useState(true);
   const [method, setMethod] = useState('standard');
@@ -116,11 +116,9 @@ export default function CheckoutPage() {
   );
   const savedAddresses = useMemo(() => saved.data || [], [saved.data]);
 
-  // Default to the customer's default saved address once it loads.
-  useEffect(() => {
-    const preferred = savedAddresses.find((a) => a.is_default) || savedAddresses[0];
-    if (preferred) setAddressChoice(String(preferred.id));
-  }, [savedAddresses]);
+  // Until the shopper picks, use their default saved address (derived, so there is no flicker).
+  const preferred = savedAddresses.find((a) => a.is_default) || savedAddresses[0];
+  const addressChoice = pickedAddress ?? (preferred ? String(preferred.id) : NEW_ADDRESS);
 
   useEffect(() => {
     document.title = 'Checkout | Dickwella Fashion Corner';
