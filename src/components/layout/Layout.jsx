@@ -1,11 +1,14 @@
+import { lazy, Suspense } from 'react';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { SiteHeader } from './SiteHeader';
 import { SiteFooter } from './SiteFooter';
 import { ToastViewport } from '../ui/ToastViewport';
-import ChatWidget from '../chat/ChatWidget';
 import { CartDrawer } from '../cart/CartDrawer';
 import { useAuth } from '../../state/AuthContext';
 import { getAccessToken } from '../../lib/session';
+
+// Live chat (and socket.io) loads in its own chunk after the page, not in the first bundle.
+const ChatWidget = lazy(() => import('../chat/ChatWidget'));
 
 /** Page frame shared by every route. */
 export function Layout({ children }) {
@@ -22,7 +25,9 @@ export function Layout({ children }) {
       <SiteFooter />
       {children}
       <CartDrawer />
-      <ChatWidget customer={customer} accessToken={customer ? getAccessToken() : null} />
+      <Suspense fallback={null}>
+        <ChatWidget customer={customer} accessToken={customer ? getAccessToken() : null} />
+      </Suspense>
       <ToastViewport />
       <ScrollRestoration />
     </>
