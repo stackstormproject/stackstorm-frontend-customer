@@ -26,15 +26,18 @@ export function CheckoutPage({
   onOrderCompleted,
   initialReservation = null,
 }) {
-  const { items, subtotal, discount, total, clearCart } = useCart();
+  const { items = [], subtotal = 0, discount = 0, discountAmount = 0, total = 0, clearCart } = useCart();
   const { toast } = useToast();
+
+  const effectiveDiscount = Number(discount || discountAmount || 0);
+  const safeSubtotal = Number(subtotal || 0);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [shippingAddress, setShippingAddress] = useState(null);
   const [shippingInfo, setShippingInfo] = useState({
     method: 'standard',
     methodTitle: 'Standard Island-Wide Courier',
-    cost: subtotal >= 10000 ? 0 : 450,
+    cost: safeSubtotal >= 10000 ? 0 : 450,
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -45,11 +48,11 @@ export function CheckoutPage({
   // Recalculate shipping cost if subtotal qualifies
   const actualShippingCost = shippingInfo.method === 'pickup'
     ? 0
-    : subtotal >= 10000 && shippingInfo.method === 'standard'
+    : safeSubtotal >= 10000 && shippingInfo.method === 'standard'
     ? 0
-    : shippingInfo.cost;
+    : (shippingInfo.cost || 0);
 
-  const finalOrderTotal = Math.max(0, subtotal - discount + actualShippingCost);
+  const finalOrderTotal = Math.max(0, safeSubtotal - effectiveDiscount + actualShippingCost);
 
   const formatLkr = (amount) => {
     return `LKR ${Number(amount || 0).toLocaleString('en-LK', {
@@ -100,8 +103,8 @@ export function CheckoutPage({
         order_number: `DFC-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`,
         id: `dfc-order-${Date.now()}`,
         items: [...items],
-        subtotal,
-        discount,
+        subtotal: safeSubtotal,
+        discount: effectiveDiscount,
         shippingFee: actualShippingCost,
         total_amount: finalOrderTotal,
         shippingAddress: { ...shippingAddress },
@@ -266,7 +269,7 @@ export function CheckoutPage({
                     </div>
                   </div>
                   <div className="order-summary-item__price">
-                    {formatLkr(item.price * item.quantity)}
+                    {formatLkr(Number(item.price ?? item.unit_price ?? 0) * (item.quantity || 1))}
                   </div>
                 </div>
               ))}
@@ -277,15 +280,15 @@ export function CheckoutPage({
               <div className="order-summary-card__row">
                 <span className="order-summary-card__label">Subtotal</span>
                 <span className="order-summary-card__val" data-testid="order-summary-subtotal">
-                  {formatLkr(subtotal)}
+                  {formatLkr(safeSubtotal)}
                 </span>
               </div>
 
-              {discount > 0 && (
+              {effectiveDiscount > 0 && (
                 <div className="order-summary-card__row order-summary-card__row--discount">
                   <span className="order-summary-card__label">Promotion Discount</span>
                   <span className="order-summary-card__val" data-testid="order-summary-discount">
-                    -{formatLkr(discount)}
+                    -{formatLkr(effectiveDiscount)}
                   </span>
                 </div>
               )}
