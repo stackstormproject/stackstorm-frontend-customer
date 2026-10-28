@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderApp } from '../renderApp';
+import { renderApp, apiError } from '../renderApp';
 import {
   filtersFromUrl,
   withParam,
@@ -20,6 +20,7 @@ vi.mock('../../api/catalog', async (importOriginal) => ({
   ...(await importOriginal()),
   listProducts: vi.fn(),
   listCategories: vi.fn(),
+  listBrands: vi.fn(),
 }));
 vi.mock('../../components/chat/ChatWidget', () => ({ default: () => null }));
 
@@ -240,27 +241,213 @@ describe('Catalog page (FR001, FR002, FR003)', () => {
   });
 });
 
-describe('Home page', () => {
+describe('Home page (#176)', () => {
+  const BRANDS = [
+    {
+      id: 1,
+      name: 'Dickwella Atelier',
+      slug: 'dickwella-atelier',
+      tagline: 'Our looms',
+      product_count: 7,
+    },
+    {
+      id: 2,
+      name: 'Loom Co',
+      slug: 'loom-co',
+      logo_url: '/api/v1/media/products/l.png',
+      product_count: 1,
+    },
+  ];
+
   beforeEach(() => {
     authApi.restoreSession.mockRejectedValue(new Error('guest'));
     cartApi.getCart.mockResolvedValue([]);
     wishlistApi.getWishlist.mockResolvedValue([]);
     catalogApi.listCategories.mockResolvedValue(TREE);
+    catalogApi.listBrands.mockResolvedValue(BRANDS);
   });
 
-  it('should feature the four newest products', async () => {
+  it('should show the new arrivals and popular products staff chose, and the brands', async () => {
+    catalogApi.listProducts.mockImplementation(async ({ section }) =>
+      section === 'new_arrivals'
+        ? page([1, 2, 3].map((id) => product(id, { is_new_arrival: true })))
+        : page([product(4), product(5)])
+    );
+    renderApp('/');
+
+    const fresh = await screen.findByRole('region', { name: 'New arrivals' });
+    await waitFor(() => expect(within(fresh).getAllByRole('article')).toHaveLength(3));
+    expect(within(fresh).getAllByText('New')).toHaveLength(3);
+    const popular = screen.getByRole('region', { name: 'Popular now' });
+    expect(within(popular).getAllByRole('article')).toHaveLength(2);
+    expect(catalogApi.listProducts).toHaveBeenCalledWith({ section: 'new_arrivals', limit: 8 });
+    expect(catalogApi.listProducts).toHaveBeenCalledWith({ section: 'popular', limit: 8 });
+
+    const brands = await screen.findByRole('region', { name: 'Our brands' });
+    expect(within(brands).getByRole('link', { name: /Dickwella Atelier/ })).toHaveAttribute(
+      'href',
+      '/shop?brand=dickwella-atelier'
+    );
+    expect(within(brands).getByText('7 products')).toBeInTheDocument();
+    expect(within(brands).getByText('1 product')).toBeInTheDocument();
+  });
+
+  it('should fall back to the newest products and hide an empty popular section', async () => {
+    catalogApi.listBrands.mockResolvedValue([]);
+    catalogApi.listProducts.mockImplementation(async ({ section }) =>
+      section ? page([]) : page([product(1), product(2)])
+    );
+    renderApp('/');
+
+    const fresh = await screen.findByRole('region', { name: 'New arrivals' });
+    await waitFor(() => expect(within(fresh).getAllByRole('article')).toHaveLength(2));
+    expect(catalogApi.listProducts).toHaveBeenCalledWith({ sort: 'newest', limit: 8 });
+    expect(screen.queryByRole('region', { name: 'Popular now' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Our brands' })).not.toBeInTheDocument();
+  });
+
+  it('should scroll a long section with its arrows', async () => {
     catalogApi.listProducts.mockResolvedValue(page([1, 2, 3, 4, 5].map((id) => product(id))));
     renderApp('/');
 
-    expect(await screen.findAllByRole('article')).toHaveLength(4);
-    expect(catalogApi.listProducts).toHaveBeenCalledWith({ sort: 'newest' });
+    const fresh = await screen.findByRole('region', { name: 'New arrivals' });
+    await waitFor(() => expect(within(fresh).getAllByRole('article')).toHaveLength(5));
+    const list = within(fresh).getByRole('list');
+    list.scrollBy = vi.fn();
+    await userEvent.click(
+      within(fresh).getByRole('button', { name: 'Scroll New arrivals forward' })
+    );
+    await userEvent.click(within(fresh).getByRole('button', { name: 'Scroll New arrivals back' }));
+    expect(list.scrollBy).toHaveBeenCalledTimes(2);
   });
 
   it('should show a retry when new arrivals fail to load', async () => {
     catalogApi.listProducts.mockRejectedValue(new Error('down'));
     renderApp('/');
 
-    expect(await screen.findByRole('button', { name: 'Try again' })).toBeInTheDocument();
+    expect((await screen.findAllByRole('button', { name: 'Try again' })).length).toBeGreaterThan(0);
+  });
+});
+
+describe('Quick buy on product cards (#176)', () => {
+  beforeEach(() => {
+    authApi.restoreSession.mockRejectedValue(new Error('guest'));
+    cartApi.getCart.mockResolvedValue([]);
+    cartApi.addCartItem.mockResolvedValue({});
+    wishlistApi.getWishlist.mockResolvedValue([]);
+    catalogApi.listCategories.mockResolvedValue(TREE);
+  });
+
+  it('should add a product with one size in stock straight to the bag', async () => {
+    catalogApi.listProducts.mockResolvedValue(page([product(1)]));
+    renderApp('/shop');
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Add Batik Shirt 1 to bag' }));
+
+    await waitFor(() => expect(cartApi.addCartItem).toHaveBeenCalledWith(10, 1));
+    expect(await screen.findByText('Added Batik Shirt 1 (M) to your bag')).toBeInTheDocument();
+  });
+
+  it('should ask for a size first and go to checkout on buy now', async () => {
+    catalogApi.listProducts.mockResolvedValue(
+      page([
+        product(2, {
+          variants: [
+            { id: 21, size: 'L', available_stock: 2 },
+            { id: 22, size: 'S', available_stock: 4 },
+          ],
+        }),
+      ])
+    );
+    const { router } = renderApp('/shop');
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Buy Batik Shirt 2 now' }));
+    const picker = screen.getByRole('group', { name: 'Choose a size to buy' });
+    expect(
+      within(picker)
+        .getAllByRole('button')
+        .map((b) => b.textContent)
+    ).toEqual(['S', 'L', 'Cancel']);
+    await userEvent.click(within(picker).getByRole('button', { name: 'L' }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe('/checkout'));
+    expect(cartApi.addCartItem).toHaveBeenCalledWith(21, 1);
+  });
+
+  it('should let the shopper cancel choosing a size', async () => {
+    catalogApi.listProducts.mockResolvedValue(
+      page([
+        product(3, {
+          variants: [
+            { id: 31, size: 'M', available_stock: 2 },
+            { id: 32, size: 'L', available_stock: 2 },
+          ],
+        }),
+      ])
+    );
+    renderApp('/shop');
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Add Batik Shirt 3 to bag' }));
+    expect(screen.getByRole('group', { name: 'Choose a size' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(screen.queryByRole('group', { name: 'Choose a size' })).not.toBeInTheDocument();
+    expect(cartApi.addCartItem).not.toHaveBeenCalled();
+  });
+
+  it('should explain when the size has just sold out', async () => {
+    cartApi.addCartItem.mockRejectedValue(apiError(409, 'INSUFFICIENT_STOCK', 'No stock'));
+    catalogApi.listProducts.mockResolvedValue(page([product(4)]));
+    renderApp('/shop');
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Add Batik Shirt 4 to bag' }));
+
+    expect(await screen.findByText('Batik Shirt 4 in M has just sold out.')).toBeInTheDocument();
+  });
+
+  it('should show other add-to-bag errors as they are', async () => {
+    cartApi.addCartItem.mockRejectedValue(apiError(500, 'X', 'Server is busy'));
+    catalogApi.listProducts.mockResolvedValue(page([product(5)]));
+    renderApp('/shop');
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Buy Batik Shirt 5 now' }));
+
+    expect(await screen.findByText('Server is busy')).toBeInTheDocument();
+  });
+
+  it('should say sold out instead of offering to buy', async () => {
+    catalogApi.listProducts.mockResolvedValue(
+      page([product(6, { variants: [{ id: 61, size: 'M', available_stock: 0 }] })])
+    );
+    renderApp('/shop');
+
+    expect(await screen.findByText('Sold out')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Buy Batik Shirt 6/ })).not.toBeInTheDocument();
+  });
+
+  it('should show a second photo and title the page after a brand', async () => {
+    catalogApi.listBrands.mockResolvedValue([
+      { id: 1, name: 'Dickwella Atelier', slug: 'dickwella-atelier', tagline: 'Our looms' },
+    ]);
+    catalogApi.listProducts.mockResolvedValue(
+      page([product(7, { gallery_images: ['https://img/7b.jpg'] })])
+    );
+    renderApp('/shop?brand=dickwella-atelier');
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Dickwella Atelier' })
+    ).toBeInTheDocument();
+    expect(screen.getByText('Our looms')).toBeInTheDocument();
+    await waitFor(() =>
+      expect(catalogApi.listProducts).toHaveBeenCalledWith(
+        expect.objectContaining({ brand: 'dickwella-atelier' })
+      )
+    );
+    const article = await screen.findByRole('article');
+    expect(article.querySelector('.product-card__alt')).toHaveAttribute(
+      'src',
+      'https://img/7b.jpg'
+    );
   });
 });
 

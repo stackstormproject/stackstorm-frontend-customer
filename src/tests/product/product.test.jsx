@@ -124,6 +124,17 @@ describe('Product page (FR003, FR004)', () => {
     expect(await screen.findByText('Added Indigo Batik Shirt (M) to your bag')).toBeInTheDocument();
   });
 
+  it('should buy now: add the chosen size and go straight to checkout (#176)', async () => {
+    cartApi.addCartItem.mockResolvedValue({});
+    const { router } = renderApp('/products/indigo-batik-shirt');
+
+    await userEvent.click(await screen.findByRole('button', { name: 'M' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Buy now' }));
+
+    expect(cartApi.addCartItem).toHaveBeenCalledWith(1, 1);
+    await waitFor(() => expect(router.state.location.pathname).toBe('/checkout'));
+  });
+
   it('should explain a stock conflict from the server', async () => {
     cartApi.addCartItem.mockRejectedValue(
       Object.assign(new Error('INSUFFICIENT_STOCK'), { status: 409 })
