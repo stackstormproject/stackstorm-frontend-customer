@@ -107,13 +107,8 @@ export function SiteHeader() {
               <NavLink to={`/shop/${category.slug}`}>{category.name}</NavLink>
             </li>
           ))}
-          <li className="category-nav__extra">
-            {/* A plain link: NavLink ignores the query, so it would look active on every /shop page */}
-            <Link to="/shop?sort=newest">New in</Link>
-          </li>
         </ul>
       </nav>
-      <div className="warp-stripe" aria-hidden="true" />
     </header>
   );
 }

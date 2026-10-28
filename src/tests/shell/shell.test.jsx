@@ -42,6 +42,9 @@ describe('App shell', () => {
     const nav = await screen.findByRole('navigation', { name: 'Shop by category' });
     await waitFor(() => expect(nav).toHaveTextContent('Men'));
     expect(nav).not.toHaveTextContent('Batik Shirts');
+    // #183: no "New in" link and no stripe between the header and the banner.
+    expect(nav).not.toHaveTextContent('New in');
+    expect(nav.closest('header').querySelector('.warp-stripe')).toBeNull();
   });
 
   it('should show the server cart count on the bag button', async () => {
@@ -188,6 +191,73 @@ describe('useResource', () => {
     expect(result.current.data).toEqual([1, 2]);
     act(() => result.current.setData([9]));
     expect(result.current.data).toEqual([9]);
+  });
+
+  describe('with refreshEvery (#183)', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+      Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+    });
+    const flush = () => act(async () => {});
+
+    it('should fetch again in the background without showing the loading state', async () => {
+      vi.useFakeTimers();
+      const loader = vi
+        .fn()
+        .mockResolvedValueOnce('placed')
+        .mockRejectedValueOnce(new Error('offline'))
+        .mockResolvedValue('shipped');
+      const { result } = renderHook(() => useResource(loader, [], { refreshEvery: 1000 }));
+      await flush();
+      expect(result.current.data).toBe('placed');
+
+      await act(async () => vi.advanceTimersByTime(1000));
+      expect(result.current).toMatchObject({ data: 'placed', error: null, loading: false });
+      await act(async () => vi.advanceTimersByTime(1000));
+      expect(result.current.data).toBe('shipped');
+      expect(loader).toHaveBeenCalledTimes(3);
+    });
+
+    it('should wait while the tab is hidden and refresh when the shopper comes back', async () => {
+      vi.useFakeTimers();
+      const loader = vi.fn().mockResolvedValueOnce('placed').mockResolvedValue('delivered');
+      const { result, unmount } = renderHook(() => useResource(loader, [], { refreshEvery: 1000 }));
+      await flush();
+
+      Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+      await act(async () => vi.advanceTimersByTime(5000));
+      expect(loader).toHaveBeenCalledTimes(1);
+
+      Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+      await act(async () => document.dispatchEvent(new Event('visibilitychange')));
+      expect(result.current.data).toBe('delivered');
+
+      unmount();
+      await act(async () => vi.advanceTimersByTime(5000));
+      expect(loader).toHaveBeenCalledTimes(2);
+    });
+
+    it('should drop a background answer that a full reload overtook', async () => {
+      vi.useFakeTimers();
+      let resolveSlow;
+      const loader = vi
+        .fn()
+        .mockResolvedValueOnce('first')
+        .mockReturnValueOnce(
+          new Promise((r) => {
+            resolveSlow = r;
+          })
+        )
+        .mockResolvedValue('reloaded');
+      const { result } = renderHook(() => useResource(loader, [], { refreshEvery: 1000 }));
+      await flush();
+
+      await act(async () => vi.advanceTimersByTime(1000));
+      act(() => result.current.reload());
+      await flush();
+      await act(async () => resolveSlow('stale'));
+      expect(result.current.data).toBe('reloaded');
+    });
   });
 });
 

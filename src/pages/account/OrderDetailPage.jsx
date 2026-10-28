@@ -4,7 +4,7 @@ import { getOrder, trackOrder } from '../../api/orders';
 import { listMyReturns } from '../../api/returns';
 import { useResource } from '../../hooks/useResource';
 import { useToast } from '../../state/ToastContext';
-import { formatDate, formatOrderStatus } from '../../lib/format';
+import { formatDate, formatOrderStatus, ORDER_REFRESH_MS } from '../../lib/format';
 import { returnEligibility } from '../../lib/returns';
 import { OrderItems } from '../../components/orders/OrderItems';
 import { OrderTotals } from '../../components/orders/OrderTotals';
@@ -28,7 +28,10 @@ const loadOrderView = async (orderId) => {
 export default function OrderDetailPage() {
   const { orderId } = useParams();
   const toast = useToast();
-  const view = useResource(() => loadOrderView(orderId), [orderId]);
+  // Status changes made in the admin console appear without a reload (#183).
+  const view = useResource(() => loadOrderView(orderId), [orderId], {
+    refreshEvery: ORDER_REFRESH_MS,
+  });
   const [returning, setReturning] = useState(null);
 
   if (view.loading) return <LoadingState label="Loading order" />;
