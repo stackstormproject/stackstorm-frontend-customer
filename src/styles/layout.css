@@ -241,17 +241,9 @@
   box-shadow: inset 0 -3px 0 var(--color-accent);
 }
 
-.category-nav__extra {
-  margin-left: auto;
-}
-
-.category-nav__extra a {
-  color: var(--color-accent);
-}
-
 /*
  * The one signature element: warp threads on a handloom. Uneven indigo, gold and undyed
- * stripes, used under the header and once in the hero. Nowhere else.
+ * stripes, used once at the foot of the hero and above the footer.
  */
 .warp-stripe {
   height: 6px;

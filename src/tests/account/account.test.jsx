@@ -1,7 +1,8 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderApp } from '../renderApp';
 import { returnEligibility } from '../../lib/returns';
+import { ORDER_REFRESH_MS } from '../../lib/format';
 import * as authApi from '../../api/auth';
 import * as cartApi from '../../api/cart';
 import * as catalogApi from '../../api/catalog';
@@ -222,6 +223,20 @@ describe('Orders (FR009, FR010)', () => {
       'href',
       '/products/sarong#reviews-heading'
     );
+  });
+
+  it('should show a status the shop changed without a reload (#183)', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    ordersApi.getOrder
+      .mockResolvedValueOnce({ ...ORDER, status: 'processing' })
+      .mockResolvedValue({ ...ORDER, status: 'shipped' });
+    ordersApi.trackOrder.mockResolvedValue(TRACKING);
+    renderApp('/account/orders/3');
+
+    expect(await screen.findByText(/· Being prepared/)).toBeInTheDocument();
+    await act(async () => vi.advanceTimersByTimeAsync(ORDER_REFRESH_MS));
+    expect(await screen.findByText(/· On its way/)).toBeInTheDocument();
+    vi.useRealTimers();
   });
 
   it('should explain an unpaid order and show expected delivery for open orders', async () => {

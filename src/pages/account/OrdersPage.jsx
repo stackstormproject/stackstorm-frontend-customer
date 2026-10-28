@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { listMyOrders } from '../../api/orders';
 import { listMyReturns } from '../../api/returns';
 import { useResource } from '../../hooks/useResource';
-import { formatDate, formatOrderStatus } from '../../lib/format';
+import { formatDate, formatOrderStatus, ORDER_REFRESH_MS } from '../../lib/format';
 import { Price } from '../../components/ui/Price';
 import { Pagination } from '../../components/catalog/Pagination';
 import { LoadingState, ErrorState, EmptyState } from '../../components/ui/States';
@@ -11,7 +11,7 @@ import { LoadingState, ErrorState, EmptyState } from '../../components/ui/States
 /** FR009 order history. */
 export default function OrdersPage() {
   const [page, setPage] = useState(1);
-  const orders = useResource(() => listMyOrders(page), [page]);
+  const orders = useResource(() => listMyOrders(page), [page], { refreshEvery: ORDER_REFRESH_MS });
   // Returns are shown on the order they belong to (#177); failing to load them hides only that.
   const returns = useResource(() => listMyReturns().catch(() => null), []);
   const returnsByOrder = (returns.data?.returns || []).reduce((map, r) => {

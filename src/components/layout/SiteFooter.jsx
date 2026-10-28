@@ -14,7 +14,6 @@ const SHOP_LINKS = [
   ['Women', '/shop/women'],
   ['Kids', '/shop/kids'],
   ['Accessories', '/shop/accessories'],
-  ['New in', '/shop?sort=newest'],
 ];
 
 const HELP_LINKS = [
