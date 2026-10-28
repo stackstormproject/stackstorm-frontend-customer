@@ -2,7 +2,10 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { OrderHistoryPage } from '../pages/OrderHistoryPage';
-import { DeliveryMilestoneStepper, calculateEstimatedDelivery } from '../components/orders/DeliveryMilestoneStepper';
+import {
+  DeliveryMilestoneStepper,
+  calculateEstimatedDelivery,
+} from '../components/orders/DeliveryMilestoneStepper';
 import { OrderCard } from '../components/orders/OrderCard';
 import orderApi from '../api/order.api';
 
@@ -199,12 +202,7 @@ describe('STORM-FE-015: Customer Order History & 4-Stage Delivery Milestone Step
 
     it('normalizes uppercase and mixed-case status strings to prevent inactive steps (Failure Recovery Matrix)', () => {
       // Must handle 'SHIPPED' or 'Shipped' correctly
-      render(
-        <DeliveryMilestoneStepper
-          status="SHIPPED"
-          orderDate="2026-10-04T08:30:00.000Z"
-        />
-      );
+      render(<DeliveryMilestoneStepper status="SHIPPED" orderDate="2026-10-04T08:30:00.000Z" />);
 
       const shippedStep = screen.getByTestId('milestone-step-shipped');
       expect(shippedStep).toHaveClass('stepper-step--current');
@@ -219,12 +217,7 @@ describe('STORM-FE-015: Customer Order History & 4-Stage Delivery Milestone Step
       expect(typeof estimated).toBe('string');
       expect(estimated.length).toBeGreaterThan(5);
 
-      render(
-        <DeliveryMilestoneStepper
-          status="placed"
-          orderDate="2026-10-02T10:00:00.000Z"
-        />
-      );
+      render(<DeliveryMilestoneStepper status="placed" orderDate="2026-10-02T10:00:00.000Z" />);
 
       expect(screen.getByTestId('estimated-delivery-date')).toHaveTextContent(estimated);
     });

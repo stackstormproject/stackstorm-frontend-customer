@@ -4,8 +4,8 @@
 
 .dk-breadcrumbs-nav {
   padding: var(--space-3, 0.75rem) 0;
-  border-bottom: 1px solid var(--color-border-subtle, #F1F5F9);
-  background-color: var(--color-surface, #FFFFFF);
+  border-bottom: 1px solid var(--color-border-subtle, #f1f5f9);
+  background-color: var(--color-surface, #ffffff);
 }
 
 .dk-breadcrumbs-list {
@@ -37,16 +37,16 @@
 }
 
 .dk-breadcrumbs-link:hover {
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
 }
 
 .dk-breadcrumbs-separator {
-  color: var(--color-text-subtle, #94A3B8);
+  color: var(--color-text-subtle, #94a3b8);
   display: flex;
   align-items: center;
 }
 
 .dk-breadcrumbs-current {
-  color: var(--color-primary, #0A192F);
+  color: var(--color-primary, #0a192f);
   font-weight: var(--font-semibold, 600);
 }

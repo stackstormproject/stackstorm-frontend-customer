@@ -88,7 +88,7 @@
   border-radius: var(--radius-md);
   margin-bottom: var(--space-6);
   font-size: var(--text-xs);
-  color: #78350F;
+  color: #78350f;
 }
 
 .wishlist-alert-banner strong {
@@ -110,7 +110,9 @@
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
   position: relative;
 }
 
@@ -161,7 +163,7 @@
 
 .wishlist-card__remove-btn:hover {
   background: var(--color-danger);
-  color: #FFFFFF;
+  color: #ffffff;
   border-color: var(--color-danger);
 }
 
@@ -273,9 +275,9 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #FFF1F2;
-  border: 1px solid #FDA4AF;
-  color: #E11D48;
+  background: #fff1f2;
+  border: 1px solid #fda4af;
+  color: #e11d48;
   display: flex;
   align-items: center;
   justify-content: center;

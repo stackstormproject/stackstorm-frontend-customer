@@ -167,10 +167,7 @@ describe('STORM-FE-014: Customer Profile Hub, Multi-Address Management & Loyalty
       const handleAddressesChange = vi.fn();
 
       render(
-        <AddressBook
-          addresses={mockCustomer.addresses}
-          onAddressesChange={handleAddressesChange}
-        />
+        <AddressBook addresses={mockCustomer.addresses} onAddressesChange={handleAddressesChange} />
       );
 
       const setDefaultBtn = screen.getByTestId('set-default-btn-addr-2');
@@ -187,10 +184,7 @@ describe('STORM-FE-014: Customer Profile Hub, Multi-Address Management & Loyalty
       const handleAddressesChange = vi.fn();
 
       render(
-        <AddressBook
-          addresses={mockCustomer.addresses}
-          onAddressesChange={handleAddressesChange}
-        />
+        <AddressBook addresses={mockCustomer.addresses} onAddressesChange={handleAddressesChange} />
       );
 
       const addBtn = screen.getByTestId('add-address-btn');
@@ -228,7 +222,9 @@ describe('STORM-FE-014: Customer Profile Hub, Multi-Address Management & Loyalty
       expect(screen.getByTestId('loyalty-card')).toBeInTheDocument();
       expect(screen.getByTestId('loyalty-tier-badge')).toHaveTextContent(/GOLD TIER/i);
       expect(screen.getByTestId('loyalty-points-balance')).toHaveTextContent('450');
-      expect(screen.getByTestId('loyalty-next-tier-label')).toHaveTextContent(/LKR 55,000 to Platinum/i);
+      expect(screen.getByTestId('loyalty-next-tier-label')).toHaveTextContent(
+        /LKR 55,000 to Platinum/i
+      );
       expect(screen.getByTestId('loyalty-policy-note')).toHaveTextContent(/12 months/i);
     });
 

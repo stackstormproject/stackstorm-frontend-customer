@@ -8,11 +8,7 @@ import './CartItemRow.css';
  * Represents a single apparel line item in the slide-over cart drawer with thumbnail,
  * size/color variant chips, unit price, debounced quantity stepper, and total.
  */
-export function CartItemRow({
-  item = {},
-  onUpdateQuantity = null,
-  onRemove = null,
-}) {
+export function CartItemRow({ item = {}, onUpdateQuantity = null, onRemove = null }) {
   const {
     id,
     title = 'Apparel Item',
@@ -54,8 +50,16 @@ export function CartItemRow({
 
         {/* Variant Badges */}
         <div className="cart-item-row__variants">
-          {size && <span className="cart-item-row__badge" data-testid={`cart-item-size-${id}`}>Size: {size}</span>}
-          {color && <span className="cart-item-row__badge" data-testid={`cart-item-color-${id}`}>Color: {color}</span>}
+          {size && (
+            <span className="cart-item-row__badge" data-testid={`cart-item-size-${id}`}>
+              Size: {size}
+            </span>
+          )}
+          {color && (
+            <span className="cart-item-row__badge" data-testid={`cart-item-color-${id}`}>
+              Color: {color}
+            </span>
+          )}
         </div>
 
         {/* Price & Quantity Controls */}
@@ -86,10 +90,7 @@ export function CartItemRow({
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-            <span
-              className="cart-item-row__total-price"
-              data-testid={`cart-item-total-${id}`}
-            >
+            <span className="cart-item-row__total-price" data-testid={`cart-item-total-${id}`}>
               {formatLKR(subtotal)}
             </span>
 

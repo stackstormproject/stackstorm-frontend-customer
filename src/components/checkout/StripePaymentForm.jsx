@@ -5,7 +5,9 @@ import { Lock, ShieldCheck, CreditCard, AlertCircle, ArrowLeft, Loader2 } from '
 import './StripePaymentForm.css';
 
 const STRIPE_PUBLIC_KEY =
-  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_STRIPE_PUBLIC_KEY) ||
+  (typeof import.meta !== 'undefined' &&
+    import.meta.env &&
+    import.meta.env.VITE_STRIPE_PUBLIC_KEY) ||
   'pk_test_51DFC_dickwella_mock_test_key_kelaniya';
 
 let stripePromiseCache = null;
@@ -159,7 +161,8 @@ function CardFormInner({
       </div>
 
       <p className="stripe-payment-form__subtitle">
-        Enter your debit or credit card details below. We accept Visa, Mastercard, and American Express.
+        Enter your debit or credit card details below. We accept Visa, Mastercard, and American
+        Express.
       </p>
 
       {/* Cardholder Name */}
@@ -191,7 +194,11 @@ function CardFormInner({
 
       {/* Error Alert Notice */}
       {errorMessage && (
-        <div className="stripe-payment-form__error-alert" role="alert" data-testid="payment-error-alert">
+        <div
+          className="stripe-payment-form__error-alert"
+          role="alert"
+          data-testid="payment-error-alert"
+        >
           <AlertCircle size={18} />
           <span>{errorMessage}</span>
         </div>
@@ -200,7 +207,10 @@ function CardFormInner({
       {/* Trust & Guarantee Micro-copy */}
       <div className="stripe-payment-form__guarantee">
         <Lock size={15} />
-        <span>Your card information is tokenized and transmitted directly to Stripe. Dickwella Fashion Corner never stores credit card details.</span>
+        <span>
+          Your card information is tokenized and transmitted directly to Stripe. Dickwella Fashion
+          Corner never stores credit card details.
+        </span>
       </div>
 
       {/* Actions */}

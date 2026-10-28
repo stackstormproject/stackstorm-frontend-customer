@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Package, Truck, Calendar, MapPin, ChevronDown, ChevronUp, FileText, RotateCcw, Sparkles } from 'lucide-react';
+import {
+  Package,
+  Truck,
+  Calendar,
+  MapPin,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  RotateCcw,
+  Sparkles,
+} from 'lucide-react';
 import { DeliveryMilestoneStepper } from './DeliveryMilestoneStepper';
 import './OrderCard.css';
 
@@ -27,16 +37,11 @@ function formatDate(dateStr) {
 
 /**
  * OrderCard Component
- * 
+ *
  * Displays individual order summary with status badge, thumbnails, total in LKR,
  * and expandable 4-stage delivery milestone stepper (AC2 & AC3).
  */
-export function OrderCard({
-  order,
-  onViewInvoice,
-  onReturnRequest,
-  className = '',
-}) {
+export function OrderCard({ order, onViewInvoice, onReturnRequest, className = '' }) {
   const [isTrackingExpanded, setIsTrackingExpanded] = useState(
     order?.status?.toLowerCase() === 'shipped' || order?.status?.toLowerCase() === 'processing'
   );
@@ -91,7 +96,10 @@ export function OrderCard({
             <div key={item.id || idx} className="order-item-chip" data-testid="order-item-chip">
               <div className="order-item-thumb-wrapper">
                 <img
-                  src={item.image_url || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=120&q=80'}
+                  src={
+                    item.image_url ||
+                    'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=120&q=80'
+                  }
                   alt={item.title}
                   className="order-item-thumb"
                   data-testid="item-thumbnail"
@@ -106,7 +114,9 @@ export function OrderCard({
                   {item.size ? `Size: ${item.size}` : ''}
                   {item.color ? ` • ${item.color}` : ''}
                 </span>
-                <span className="order-item-price">{formatLKR(item.total_price || item.unit_price)}</span>
+                <span className="order-item-price">
+                  {formatLKR(item.total_price || item.unit_price)}
+                </span>
               </div>
             </div>
           ))}

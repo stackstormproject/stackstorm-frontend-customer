@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  X,
-  ShoppingBag,
-  ArrowRight,
-  Truck,
-  ShieldCheck,
-  Tag,
-  CheckCircle2,
-} from 'lucide-react';
+import { X, ShoppingBag, ArrowRight, Truck, ShieldCheck, Tag, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { CartItemRow } from './CartItemRow';
 import { formatLKR } from '../../utils/formatters';
@@ -35,14 +27,14 @@ export function CartDrawer({
     // Graceful fallback for standalone unit testing without CartProvider
   }
 
-  const isOpen = propIsOpen !== undefined ? propIsOpen : (cart?.isOpen || false);
+  const isOpen = propIsOpen !== undefined ? propIsOpen : cart?.isOpen || false;
   const handleClose = propOnClose || cart?.closeCart;
   const items = propItems || cart?.items || [];
   const handleUpdateQty = propOnUpdateQuantity || cart?.updateQuantity;
   const handleRemove = propOnRemoveItem || cart?.removeItem;
 
   const totalItems = items.reduce((sum, it) => sum + (it.quantity || 1), 0);
-  const subtotal = items.reduce((sum, it) => sum + (it.unit_price * (it.quantity || 1)), 0);
+  const subtotal = items.reduce((sum, it) => sum + it.unit_price * (it.quantity || 1), 0);
   const discountRate = cart?.promoDiscountRate || 0;
   const discountAmount = Math.round(subtotal * discountRate);
   const discountedSubtotal = subtotal - discountAmount;
@@ -131,7 +123,8 @@ export function CartDrawer({
               </div>
               <h4 className="cart-drawer__empty-title">Your Cart is Empty</h4>
               <p className="cart-drawer__empty-desc">
-                Looks like you haven't added any authentic Sri Lankan batik or handloom garments yet.
+                Looks like you haven't added any authentic Sri Lankan batik or handloom garments
+                yet.
               </p>
               <button
                 type="button"
@@ -176,7 +169,9 @@ export function CartDrawer({
               </button>
             </form>
             {couponMsg && (
-              <div style={{ fontSize: '0.75rem', color: discountAmount > 0 ? '#10B981' : '#EF4444' }}>
+              <div
+                style={{ fontSize: '0.75rem', color: discountAmount > 0 ? '#10B981' : '#EF4444' }}
+              >
                 {couponMsg}
               </div>
             )}
@@ -226,14 +221,16 @@ export function CartDrawer({
               <ArrowRight size={16} />
             </button>
 
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              fontSize: '0.7rem',
-              color: 'var(--color-text-subtle)'
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                fontSize: '0.7rem',
+                color: 'var(--color-text-subtle)',
+              }}
+            >
               <ShieldCheck size={13} color="#D4AF37" />
               <span>15-Minute Temporary Stock Lock Guaranteed</span>
             </div>

@@ -5,7 +5,12 @@ import './DeliveryMilestoneStepper.css';
 // 4 Canonical Stages (SDS §10.2)
 const STAGES = [
   { id: 'placed', label: 'Order Placed', icon: Clock, desc: 'Confirmed & stock locked' },
-  { id: 'processing', label: 'Artisan Tailoring', icon: Package, desc: 'Boutique inspection & packing' },
+  {
+    id: 'processing',
+    label: 'Artisan Tailoring',
+    icon: Package,
+    desc: 'Boutique inspection & packing',
+  },
   { id: 'shipped', label: 'Dispatched', icon: Truck, desc: 'In transit with Southern Express' },
   { id: 'delivered', label: 'Delivered', icon: Home, desc: 'Signed & safely delivered' },
 ];
@@ -34,7 +39,7 @@ export function calculateEstimatedDelivery(orderDate) {
 
 /**
  * DeliveryMilestoneStepper Component
- * 
+ *
  * Visual 4-stage delivery timeline with real-time status updates (AC3).
  * Normalizes status strings (.toLowerCase()) to prevent casing mismatch bugs per Failure Recovery Matrix.
  */

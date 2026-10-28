@@ -22,7 +22,9 @@ export const Breadcrumbs = ({ items = [], onHomeClick }) => {
       position: index + 1,
       name: item.label,
       item: item.href
-        ? (item.href.startsWith('http') ? item.href : `https://dickwellafashion.lk${item.href}`)
+        ? item.href.startsWith('http')
+          ? item.href
+          : `https://dickwellafashion.lk${item.href}`
         : undefined,
     }));
 

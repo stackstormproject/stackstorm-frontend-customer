@@ -58,7 +58,8 @@ export const ToastItem = ({ toast, onDismiss }) => {
   };
 
   const role = type === 'error' || type === 'warning' ? 'alert' : 'status';
-  const progressPercent = duration > 0 ? Math.max(0, Math.min(100, (remainingTime / duration) * 100)) : 0;
+  const progressPercent =
+    duration > 0 ? Math.max(0, Math.min(100, (remainingTime / duration) * 100)) : 0;
 
   return (
     <div

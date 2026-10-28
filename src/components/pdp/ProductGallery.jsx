@@ -13,9 +13,17 @@ import './ProductGallery.css';
  */
 export function ProductGallery({ images = [], title = 'Product', badge = null }) {
   // Ensure we always have at least one fallback image
-  const displayImages = images.length > 0
-    ? images
-    : [{ id: 'default', image_url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80', alt_text: title }];
+  const displayImages =
+    images.length > 0
+      ? images
+      : [
+          {
+            id: 'default',
+            image_url:
+              'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
+            alt_text: title,
+          },
+        ];
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isZoomOpen, setIsZoomOpen] = useState(false);

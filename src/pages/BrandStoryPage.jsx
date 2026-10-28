@@ -47,8 +47,7 @@ export function BrandStoryPage({ onBackToCatalog }) {
               <span>The Living Atelier of Southern Sri Lanka</span>
             </div>
             <h1 className="brand-story__hero-title">
-              Woven in the Coastal Breeze of{' '}
-              <span className="gold-gradient-text">Dickwella</span>
+              Woven in the Coastal Breeze of <span className="gold-gradient-text">Dickwella</span>
             </h1>
             <p className="brand-story__hero-subtitle">
               Every thread tells a story of ocean tides, ancient wooden looms, and hot beeswax drawn
@@ -101,17 +100,19 @@ export function BrandStoryPage({ onBackToCatalog }) {
           <div className="narrative-chapter">
             <div className="narrative-chapter__content">
               <div className="narrative-chapter__tag">Chapter 01</div>
-              <h2 className="narrative-chapter__title">The Wooden Loom & The Rhythms of the South</h2>
+              <h2 className="narrative-chapter__title">
+                The Wooden Loom & The Rhythms of the South
+              </h2>
               <p>
-                Before dawn breaks over Dickwella’s golden beaches, the gentle clatter of wooden shuttles
-                echoes through our family-run workshops. Unlike mass-manufactured fast fashion, true Sri Lankan
-                handloom is a slow, meditative art where the rhythm of the artisan’s foot pedal dictates
-                the tension and softness of each weave.
+                Before dawn breaks over Dickwella’s golden beaches, the gentle clatter of wooden
+                shuttles echoes through our family-run workshops. Unlike mass-manufactured fast
+                fashion, true Sri Lankan handloom is a slow, meditative art where the rhythm of the
+                artisan’s foot pedal dictates the tension and softness of each weave.
               </p>
               <p>
-                Our weavers use pure combed cotton and sustainable linen fibers, spinning them with balanced
-                tension that breathes effortlessly in tropical heat while preserving its heirloom durability for
-                decades.
+                Our weavers use pure combed cotton and sustainable linen fibers, spinning them with
+                balanced tension that breathes effortlessly in tropical heat while preserving its
+                heirloom durability for decades.
               </p>
               <div className="narrative-highlight">
                 <CheckCircle size={18} color="#D4AF37" />
@@ -123,8 +124,8 @@ export function BrandStoryPage({ onBackToCatalog }) {
                 <Layers size={48} color="#D4AF37" />
                 <h3>Traditional Pit & Frame Looms</h3>
                 <p>
-                  Each handloom saree and sarong requires up to 72 hours of uninterrupted craftsmanship
-                  on heritage Southern Sri Lankan looms.
+                  Each handloom saree and sarong requires up to 72 hours of uninterrupted
+                  craftsmanship on heritage Southern Sri Lankan looms.
                 </p>
               </div>
             </div>
@@ -136,15 +137,16 @@ export function BrandStoryPage({ onBackToCatalog }) {
               <div className="narrative-chapter__tag">Chapter 02</div>
               <h2 className="narrative-chapter__title">The Alchemy of Wax-Resist Batik</h2>
               <p>
-                Our signature batik collections represent a centuries-old dialogue between flame, wax, and dye.
-                Each shirt, tunic, and drape begins with raw unbleached fabric pinned taut across wooden frames.
-                Using a <em>tjanting</em> copper pen and heated natural beeswax, master artisans trace intricate
-                geometric and island flora motifs directly onto the cloth.
+                Our signature batik collections represent a centuries-old dialogue between flame,
+                wax, and dye. Each shirt, tunic, and drape begins with raw unbleached fabric pinned
+                taut across wooden frames. Using a <em>tjanting</em> copper pen and heated natural
+                beeswax, master artisans trace intricate geometric and island flora motifs directly
+                onto the cloth.
               </p>
               <p>
-                Immersed in cold-water dye baths and cured under the Southern sun, the waxed patterns resist the dye,
-                creating the distinctive crackled veins and vibrant color saturations that make every single garment
-                an unrepeatable work of art.
+                Immersed in cold-water dye baths and cured under the Southern sun, the waxed
+                patterns resist the dye, creating the distinctive crackled veins and vibrant color
+                saturations that make every single garment an unrepeatable work of art.
               </p>
               <div className="narrative-highlight">
                 <CheckCircle size={18} color="#D4AF37" />
@@ -156,8 +158,8 @@ export function BrandStoryPage({ onBackToCatalog }) {
                 <Sun size={48} color="#D4AF37" />
                 <h3>Sun-Cured Under the Dickwella Sky</h3>
                 <p>
-                  Natural sea breezes and southern sunlight naturally fix our pigments, yielding vibrant hues
-                  of ocean cobalt, turmeric gold, and deep charcoal.
+                  Natural sea breezes and southern sunlight naturally fix our pigments, yielding
+                  vibrant hues of ocean cobalt, turmeric gold, and deep charcoal.
                 </p>
               </div>
             </div>
@@ -169,13 +171,15 @@ export function BrandStoryPage({ onBackToCatalog }) {
               <div className="narrative-chapter__tag">Chapter 03</div>
               <h2 className="narrative-chapter__title">Empowering Local Weaving Families</h2>
               <p>
-                Dickwella Fashion Corner was founded on a simple promise: that modern e-commerce should uplift,
-                not displace, traditional artisans. Through the StackStorm digital platform, we connect our
-                Southern Province ateliers directly with customers across Sri Lanka and the global diaspora.
+                Dickwella Fashion Corner was founded on a simple promise: that modern e-commerce
+                should uplift, not displace, traditional artisans. Through the StackStorm digital
+                platform, we connect our Southern Province ateliers directly with customers across
+                Sri Lanka and the global diaspora.
               </p>
               <p>
-                More than 70% of our master weavers and batik craftswomen are women running home ateliers, earning
-                fair living wages that support rural households, university education, and community well-being.
+                More than 70% of our master weavers and batik craftswomen are women running home
+                ateliers, earning fair living wages that support rural households, university
+                education, and community well-being.
               </p>
               <div className="narrative-highlight">
                 <CheckCircle size={18} color="#D4AF37" />
@@ -187,8 +191,8 @@ export function BrandStoryPage({ onBackToCatalog }) {
                 <Heart size={48} color="#E11D48" />
                 <h3>Fair-Trade Social Impact</h3>
                 <p>
-                  Every purchase directly funds artisan apprenticeships, keeping Sri Lanka’s UNESCO-recognized
-                  craft heritage vibrant for the next generation.
+                  Every purchase directly funds artisan apprenticeships, keeping Sri Lanka’s
+                  UNESCO-recognized craft heritage vibrant for the next generation.
                 </p>
               </div>
             </div>
@@ -210,22 +214,31 @@ export function BrandStoryPage({ onBackToCatalog }) {
             <div className="brand-process-step">
               <div className="step-number">01</div>
               <h4>Organic Fiber Selection</h4>
-              <p>Sourcing combed natural cotton and linen grown without synthetic micro-plastics.</p>
+              <p>
+                Sourcing combed natural cotton and linen grown without synthetic micro-plastics.
+              </p>
             </div>
             <div className="brand-process-step">
               <div className="step-number">02</div>
               <h4>Heritage Hand Looming</h4>
-              <p>Woven thread-by-thread on traditional wooden frame looms by Dickwella craft masters.</p>
+              <p>
+                Woven thread-by-thread on traditional wooden frame looms by Dickwella craft masters.
+              </p>
             </div>
             <div className="brand-process-step">
               <div className="step-number">03</div>
               <h4>Wax Batik & Cold Dyeing</h4>
-              <p>Intricate wax drawing with copper pens followed by multi-layered natural pigment baths.</p>
+              <p>
+                Intricate wax drawing with copper pens followed by multi-layered natural pigment
+                baths.
+              </p>
             </div>
             <div className="brand-process-step">
               <div className="step-number">04</div>
               <h4>Sun Curing & Tailoring</h4>
-              <p>Solar-dried by the Indian Ocean breeze and tailored into modern luxury resort wear.</p>
+              <p>
+                Solar-dried by the Indian Ocean breeze and tailored into modern luxury resort wear.
+              </p>
             </div>
           </div>
         </div>
@@ -237,8 +250,8 @@ export function BrandStoryPage({ onBackToCatalog }) {
           <div className="brand-cta-box">
             <h2>Wear the Heritage of Sri Lanka</h2>
             <p>
-              Explore our handcrafted collections of men’s batik shirts, pure handloom sarees, and breathable
-              organic linen apparel.
+              Explore our handcrafted collections of men’s batik shirts, pure handloom sarees, and
+              breathable organic linen apparel.
             </p>
             <button
               type="button"

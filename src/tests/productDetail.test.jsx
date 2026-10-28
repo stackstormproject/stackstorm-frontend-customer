@@ -21,13 +21,15 @@ describe('STORM-FE-007: Product Detail Page (PDP), Image Gallery & Variant Matri
     images: [
       {
         id: 'img-1',
-        image_url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
+        image_url:
+          'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
         alt_text: 'Front View',
         is_primary: true,
       },
       {
         id: 'img-2',
-        image_url: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
+        image_url:
+          'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
         alt_text: 'Fabric Detail',
         is_primary: false,
       },
@@ -74,7 +76,13 @@ describe('STORM-FE-007: Product Detail Page (PDP), Image Gallery & Variant Matri
 
   // Test 1: Image Gallery thumbnail switching & click-to-zoom modal view (AC2)
   it('AC2: should switch active image on thumbnail click and toggle zoom modal view', () => {
-    render(<ProductGallery images={mockProduct.images} title={mockProduct.title} badge={mockProduct.badge} />);
+    render(
+      <ProductGallery
+        images={mockProduct.images}
+        title={mockProduct.title}
+        badge={mockProduct.badge}
+      />
+    );
 
     const mainImage = screen.getByTestId('pdp-main-image');
     expect(mainImage.getAttribute('src')).toBe(mockProduct.images[0].image_url);
@@ -102,8 +110,12 @@ describe('STORM-FE-007: Product Detail Page (PDP), Image Gallery & Variant Matri
   it('AC3: should resolve discrete SKU, dynamic stock status and price override on variant change', () => {
     let selectedColor = 'Ocean Blue';
     let selectedSize = 'M';
-    const onSelectSize = vi.fn((size) => { selectedSize = size; });
-    const onSelectColor = vi.fn((color) => { selectedColor = color; });
+    const onSelectSize = vi.fn((size) => {
+      selectedSize = size;
+    });
+    const onSelectColor = vi.fn((color) => {
+      selectedColor = color;
+    });
 
     const { rerender } = render(
       <VariantSelector

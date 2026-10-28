@@ -5,7 +5,7 @@ import './LoginForm.css';
 
 /**
  * LoginForm Component
- * 
+ *
  * Supports customer authentication with password visibility toggle,
  * remember me, and active 15-minute lockout countdown banner (AC2 & AC4).
  */
@@ -85,14 +85,11 @@ export function LoginForm({
       if (status === 423) {
         const retryHeader = err.response?.headers?.['retry-after'];
         const retrySeconds =
-          parseInt(retryHeader, 10) ||
-          data?.errors?.[0]?.retryAfterSeconds ||
-          900; // default 15 mins
+          parseInt(retryHeader, 10) || data?.errors?.[0]?.retryAfterSeconds || 900; // default 15 mins
 
         setLockoutSeconds(retrySeconds);
         setErrorMessage(
-          data?.message ||
-            `Account temporarily locked due to 5 consecutive failed login attempts.`
+          data?.message || `Account temporarily locked due to 5 consecutive failed login attempts.`
         );
       } else {
         const msg =
@@ -142,11 +139,7 @@ export function LoginForm({
 
       {/* General Error Notice */}
       {errorMessage && !isLocked && (
-        <div
-          className="login-form__error-banner"
-          role="alert"
-          data-testid="login-error-banner"
-        >
+        <div className="login-form__error-banner" role="alert" data-testid="login-error-banner">
           <AlertCircle size={18} />
           <span>{errorMessage}</span>
         </div>

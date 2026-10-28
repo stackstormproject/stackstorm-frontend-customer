@@ -28,14 +28,16 @@
 
 .reservation-expired-modal {
   position: relative;
-  background: var(--color-surface, #FFFFFF);
-  border: 1px solid var(--color-border, #E2E8F0);
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-lg, 12px);
   padding: 2.25rem 2rem;
   max-width: 480px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.2),
+    0 10px 10px -5px rgba(0, 0, 0, 0.1);
   animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   font-family: var(--font-body);
 }
@@ -56,19 +58,19 @@
   height: 64px;
   margin: 0 auto 1.25rem;
   border-radius: 50%;
-  background: var(--color-danger-bg, #FEF2F2);
-  color: var(--color-danger, #EF4444);
+  background: var(--color-danger-bg, #fef2f2);
+  color: var(--color-danger, #ef4444);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #FECACA;
+  border: 1px solid #fecaca;
 }
 
 .reservation-expired-modal__title {
   font-family: var(--font-heading);
   font-size: 1.35rem;
   font-weight: 700;
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
   margin: 0 0 0.75rem 0;
 }
 
@@ -80,8 +82,8 @@
 }
 
 .reservation-expired-modal__notice {
-  background: var(--color-surface-subtle, #F8FAFC);
-  border: 1px dashed var(--color-border, #E2E8F0);
+  background: var(--color-surface-subtle, #f8fafc);
+  border: 1px dashed var(--color-border, #e2e8f0);
   border-radius: var(--radius-md, 8px);
   padding: 0.75rem 1rem;
   font-size: var(--text-xs, 0.75rem);
@@ -103,8 +105,8 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.85rem 1.5rem;
-  background: var(--color-primary, #0A192F);
-  color: #FFFFFF;
+  background: var(--color-primary, #0a192f);
+  color: #ffffff;
   border: 1px solid transparent;
   border-radius: var(--radius-md, 8px);
   font-weight: 600;
@@ -114,7 +116,7 @@
 }
 
 .reservation-expired-modal__btn-primary:hover {
-  background: var(--color-primary-light, #172A45);
+  background: var(--color-primary-light, #172a45);
   box-shadow: 0 4px 12px rgba(10, 25, 47, 0.15);
 }
 
@@ -126,8 +128,8 @@
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   background: transparent;
-  color: var(--color-text-main, #0F172A);
-  border: 1px solid var(--color-border, #E2E8F0);
+  color: var(--color-text-main, #0f172a);
+  border: 1px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-md, 8px);
   font-weight: 500;
   font-size: var(--text-sm, 0.875rem);
@@ -136,6 +138,6 @@
 }
 
 .reservation-expired-modal__btn-secondary:hover {
-  background: var(--color-surface-subtle, #F8FAFC);
-  border-color: var(--color-text-subtle, #94A3B8);
+  background: var(--color-surface-subtle, #f8fafc);
+  border-color: var(--color-text-subtle, #94a3b8);
 }
