@@ -1,11 +1,30 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
-import { Heart, Search, ShoppingBag, User } from 'lucide-react';
+import { Heart, MapPin, Search, ShoppingBag, Truck, User } from 'lucide-react';
 import { listCategories } from '../../api/catalog';
 import { useResource } from '../../hooks/useResource';
 import { useAuth } from '../../state/AuthContext';
 import { useCart } from '../../state/CartContext';
 import { useWishlist } from '../../state/WishlistContext';
+import { BrandMark } from './BrandMark';
+
+/** Shop promises and the shop's address, above the sticky header. */
+export function UtilityBar() {
+  return (
+    <div className="utility-bar">
+      <div className="container utility-bar__inner">
+        <p>
+          <Truck size={15} aria-hidden="true" />
+          Free islandwide delivery over LKR 10,000
+        </p>
+        <p className="utility-bar__visit">
+          <MapPin size={15} aria-hidden="true" />
+          Visit us on Main Street, Dickwella, open daily 9 am to 8 pm
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export function SiteHeader() {
   const navigate = useNavigate();
@@ -27,8 +46,11 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="site-header__bar container">
         <Link to="/" className="brand" aria-label="Dickwella Fashion Corner, home">
-          <span className="brand__name">Dickwella</span>
-          <span className="brand__sub">Fashion Corner</span>
+          <BrandMark />
+          <span className="brand__text">
+            <span className="brand__name">Dickwella</span>
+            <span className="brand__sub">Fashion Corner</span>
+          </span>
         </Link>
 
         <form className="search" role="search" onSubmit={submitSearch}>
@@ -62,11 +84,12 @@ export function SiteHeader() {
           </Link>
           <button
             type="button"
-            className="header-action"
+            className="header-action header-action--bag"
             onClick={openCart}
             aria-label={`Shopping bag, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
           >
             <ShoppingBag size={20} aria-hidden="true" />
+            <span className="header-action__label">Bag</span>
             {itemCount > 0 && <span className="count">{itemCount}</span>}
           </button>
         </nav>
@@ -84,6 +107,9 @@ export function SiteHeader() {
               <NavLink to={`/shop/${category.slug}`}>{category.name}</NavLink>
             </li>
           ))}
+          <li className="category-nav__extra">
+            <NavLink to="/shop?sort=newest">New in</NavLink>
+          </li>
         </ul>
       </nav>
       <div className="warp-stripe" aria-hidden="true" />
