@@ -8,6 +8,14 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import RegisterPage from './pages/RegisterPage';
 import HelpPage from './pages/HelpPage';
+import { RequireAuth } from './components/layout/RequireAuth';
+import AccountLayout from './pages/account/AccountLayout';
+import AccountOverviewPage from './pages/account/AccountOverviewPage';
+import OrdersPage from './pages/account/OrdersPage';
+import OrderDetailPage from './pages/account/OrderDetailPage';
+import ReturnsPage from './pages/account/ReturnsPage';
+import AddressesPage from './pages/account/AddressesPage';
+import WishlistPage from './pages/account/WishlistPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 /**
@@ -27,6 +35,22 @@ export const routes = [
       { path: 'orders/:orderId/confirmation', element: <OrderConfirmationPage /> },
       { path: 'sign-in', element: <SignInPage /> },
       { path: 'register', element: <RegisterPage /> },
+      {
+        path: 'account',
+        element: (
+          <RequireAuth>
+            <AccountLayout />
+          </RequireAuth>
+        ),
+        children: [
+          { index: true, element: <AccountOverviewPage /> },
+          { path: 'orders', element: <OrdersPage /> },
+          { path: 'orders/:orderId', element: <OrderDetailPage /> },
+          { path: 'returns', element: <ReturnsPage /> },
+          { path: 'addresses', element: <AddressesPage /> },
+          { path: 'wishlist', element: <WishlistPage /> },
+        ],
+      },
       { path: 'help/:topic', element: <HelpPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
