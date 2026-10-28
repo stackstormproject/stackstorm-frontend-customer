@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { MapPin, Plus, Check, Trash2, Edit3, ShieldCheck, Phone, X, AlertCircle, Loader2 } from 'lucide-react';
+import {
+  MapPin,
+  Plus,
+  Check,
+  Trash2,
+  Edit3,
+  ShieldCheck,
+  Phone,
+  X,
+  AlertCircle,
+  Loader2,
+} from 'lucide-react';
 import userApi from '../../api/user.api';
 import './AddressBook.css';
 
@@ -33,15 +44,11 @@ const SRI_LANKA_DISTRICT_LIST = [
 
 /**
  * AddressBook Component
- * 
+ *
  * Manages customer's saved shipping addresses with Set as Default,
  * Add Address modal, and Delete actions (AC2).
  */
-export function AddressBook({
-  addresses = [],
-  onAddressesChange,
-  className = '',
-}) {
+export function AddressBook({ addresses = [], onAddressesChange, className = '' }) {
   const [addressList, setAddressList] = useState(addresses);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
@@ -230,11 +237,7 @@ export function AddressBook({
           <MapPin size={36} className="empty-icon" />
           <h4>No Saved Addresses Yet</h4>
           <p>Add your home or office address in Sri Lanka for expedited handloom delivery.</p>
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={handleOpenAddModal}
-          >
+          <button type="button" className="btn-secondary" onClick={handleOpenAddModal}>
             <Plus size={16} />
             <span>Add First Address</span>
           </button>

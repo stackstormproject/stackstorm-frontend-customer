@@ -2,7 +2,7 @@ import apiClient from './client';
 
 /**
  * Return & Exchange Eligibility Calculator
- * 
+ *
  * Enforces 30 calendar day cutoff anchored STRICTLY to order.delivered_at
  * (Failure Recovery Matrix: avoids calculating from order creation date).
  * Enforces final sale non-returnable policy.
@@ -28,7 +28,9 @@ export function isReturnEligible(order, item) {
   }
 
   // Anchor strictly to order.delivered_at timestamp
-  const deliveredDate = order.delivered_at ? new Date(order.delivered_at) : new Date(order.created_at);
+  const deliveredDate = order.delivered_at
+    ? new Date(order.delivered_at)
+    : new Date(order.created_at);
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - deliveredDate.getTime());
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));

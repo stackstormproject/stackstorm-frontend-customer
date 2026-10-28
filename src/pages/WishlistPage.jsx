@@ -78,7 +78,8 @@ export function WishlistPage({
           <div className="wishlist-alert-banner">
             <AlertCircle size={18} />
             <div>
-              <strong>Inventory Notice:</strong> Items saved to your wishlist are not reserved until checkout. Grab your favorite sizes before they sell out!
+              <strong>Inventory Notice:</strong> Items saved to your wishlist are not reserved until
+              checkout. Grab your favorite sizes before they sell out!
             </div>
           </div>
         )}
@@ -122,8 +123,8 @@ export function WishlistPage({
                 product.base_price !== undefined
                   ? Number(product.base_price)
                   : product.price !== undefined
-                  ? Number(product.price)
-                  : 0;
+                    ? Number(product.price)
+                    : 0;
               const title = product.title || product.name || 'Artisan Handloom Garment';
               const imgUrl =
                 product.primary_image ||
@@ -132,11 +133,17 @@ export function WishlistPage({
                 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
               const categoryName =
                 product.category_name ||
-                (typeof product.category === 'string' ? product.category : product.category?.name) ||
+                (typeof product.category === 'string'
+                  ? product.category
+                  : product.category?.name) ||
                 'Handloom Apparel';
 
               return (
-                <div key={productId} className="wishlist-card" data-testid={`wishlist-card-${productId}`}>
+                <div
+                  key={productId}
+                  className="wishlist-card"
+                  data-testid={`wishlist-card-${productId}`}
+                >
                   {/* Image container */}
                   <div
                     className="wishlist-card__image-container"

@@ -15,7 +15,7 @@ import './OrderSuccessPage.css';
 
 /**
  * OrderSuccessPage Component
- * 
+ *
  * Displays authenticated order confirmation receipt with printable Web/PDF invoice (AC3 & AC4).
  */
 export function OrderSuccessPage({
@@ -24,7 +24,8 @@ export function OrderSuccessPage({
   onTrackOrder = null,
   className = '',
 }) {
-  const orderNumber = order?.order_number || `DFC-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-8821`;
+  const orderNumber =
+    order?.order_number || `DFC-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-8821`;
   const orderDate = new Date().toLocaleDateString('en-LK', {
     year: 'numeric',
     month: 'long',
@@ -39,14 +40,16 @@ export function OrderSuccessPage({
       color: 'Sapphire Navy',
       price: 5500,
       quantity: 1,
-      image_url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=300&q=80',
+      image_url:
+        'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=300&q=80',
     },
   ];
 
-  const subtotal = order?.subtotal ?? items.reduce((acc, it) => acc + (it.price * it.quantity), 0);
+  const subtotal = order?.subtotal ?? items.reduce((acc, it) => acc + it.price * it.quantity, 0);
   const shippingFee = order?.shippingFee ?? (subtotal >= 10000 ? 0 : 450);
   const discount = order?.discount ?? 0;
-  const grandTotal = order?.total_amount || order?.total || Math.max(0, subtotal - discount + shippingFee);
+  const grandTotal =
+    order?.total_amount || order?.total || Math.max(0, subtotal - discount + shippingFee);
 
   const address = order?.shippingAddress || {
     fullName: 'Kasun Kalhara',
@@ -90,7 +93,8 @@ export function OrderSuccessPage({
         <span className="order-success-header__tag">Payment Succeeded</span>
         <h1 className="order-success-header__title">Thank You For Your Order!</h1>
         <p className="order-success-header__desc">
-          Your order has been confirmed and locked with the Dickwella Central Atelier. An email receipt and SMS delivery confirmation have been dispatched.
+          Your order has been confirmed and locked with the Dickwella Central Atelier. An email
+          receipt and SMS delivery confirmation have been dispatched.
         </p>
       </div>
 
@@ -100,7 +104,9 @@ export function OrderSuccessPage({
         <div className="order-invoice-card__brand-row">
           <div className="order-invoice-card__brand">
             <span className="order-invoice-card__logo-text">Dickwella Fashion Corner</span>
-            <span className="order-invoice-card__location">Central Atelier • Matara District, Sri Lanka</span>
+            <span className="order-invoice-card__location">
+              Central Atelier • Matara District, Sri Lanka
+            </span>
           </div>
           <div className="order-invoice-card__badge-paid" data-testid="paid-status-badge">
             <PackageCheck size={16} />
@@ -112,7 +118,9 @@ export function OrderSuccessPage({
         <div className="order-invoice-meta-grid">
           <div className="order-meta-box">
             <span className="order-meta-box__label">Order Reference</span>
-            <strong className="order-meta-box__val" data-testid="order-number-display">{orderNumber}</strong>
+            <strong className="order-meta-box__val" data-testid="order-number-display">
+              {orderNumber}
+            </strong>
           </div>
           <div className="order-meta-box">
             <span className="order-meta-box__label">Order Date</span>
@@ -121,7 +129,9 @@ export function OrderSuccessPage({
           <div className="order-meta-box">
             <span className="order-meta-box__label">Payment Method</span>
             <span className="order-meta-box__val">
-              {paymentDetails.brand ? `${paymentDetails.brand.toUpperCase()} ending in •••• ${paymentDetails.last4}` : 'Credit / Debit Card'}
+              {paymentDetails.brand
+                ? `${paymentDetails.brand.toUpperCase()} ending in •••• ${paymentDetails.last4}`
+                : 'Credit / Debit Card'}
             </span>
           </div>
           <div className="order-meta-box">
@@ -139,9 +149,16 @@ export function OrderSuccessPage({
             </div>
             <div className="order-address-col__body" data-testid="delivery-address-snapshot">
               <strong>{address.fullName}</strong>
-              <div>{address.phone} • {address.email}</div>
-              <div>{address.line1}{address.line2 ? `, ${address.line2}` : ''}</div>
-              <div>{address.city}, {address.district || 'Matara'}, {address.postalCode}</div>
+              <div>
+                {address.phone} • {address.email}
+              </div>
+              <div>
+                {address.line1}
+                {address.line2 ? `, ${address.line2}` : ''}
+              </div>
+              <div>
+                {address.city}, {address.district || 'Matara'}, {address.postalCode}
+              </div>
               <div className="text-muted">Sri Lanka</div>
             </div>
           </div>
@@ -187,11 +204,15 @@ export function OrderSuccessPage({
                     </div>
                   </td>
                   <td>
-                    <span className="variant-tag">{it.size || 'Standard'} / {it.color || 'Batik'}</span>
+                    <span className="variant-tag">
+                      {it.size || 'Standard'} / {it.color || 'Batik'}
+                    </span>
                   </td>
                   <td className="text-center">{it.quantity}</td>
                   <td className="text-right">{formatLkr(it.price)}</td>
-                  <td className="text-right"><strong>{formatLkr(it.price * it.quantity)}</strong></td>
+                  <td className="text-right">
+                    <strong>{formatLkr(it.price * it.quantity)}</strong>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -224,8 +245,9 @@ export function OrderSuccessPage({
         {/* Official Footer Note */}
         <div className="order-invoice-footer">
           <p>
-            Thank you for purchasing authentic southern coastal garments handcrafted by the artisans of Dickwella Fashion Corner.
-            For delivery questions or exchanges within 30 days, please contact our Matara atelier at support@dickwellafashion.lk or call 041-225-8890.
+            Thank you for purchasing authentic southern coastal garments handcrafted by the artisans
+            of Dickwella Fashion Corner. For delivery questions or exchanges within 30 days, please
+            contact our Matara atelier at support@dickwellafashion.lk or call 041-225-8890.
           </p>
         </div>
       </div>

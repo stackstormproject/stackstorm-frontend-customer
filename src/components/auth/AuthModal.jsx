@@ -6,16 +6,11 @@ import './AuthModal.css';
 
 /**
  * AuthModal Component
- * 
+ *
  * Accessible dialog supporting smooth switching between Customer Sign In
  * and Registration tabs (AC1).
  */
-export function AuthModal({
-  isOpen = false,
-  initialTab = 'login',
-  onClose,
-  onSuccess,
-}) {
+export function AuthModal({ isOpen = false, initialTab = 'login', onClose, onSuccess }) {
   const [activeTab, setActiveTab] = useState(initialTab);
 
   useEffect(() => {
@@ -80,7 +75,8 @@ export function AuthModal({
             Dickwella Fashion Corner
           </h2>
           <p className="auth-modal__subtitle">
-            Sign in to synchronize your curated wishlists, track Southern Province deliveries, and access Ceylon handloom benefits.
+            Sign in to synchronize your curated wishlists, track Southern Province deliveries, and
+            access Ceylon handloom benefits.
           </p>
         </div>
 
@@ -117,10 +113,7 @@ export function AuthModal({
               onSwitchToRegister={() => setActiveTab('register')}
             />
           ) : (
-            <RegisterForm
-              onSuccess={handleSuccess}
-              onSwitchToLogin={() => setActiveTab('login')}
-            />
+            <RegisterForm onSuccess={handleSuccess} onSwitchToLogin={() => setActiveTab('login')} />
           )}
         </div>
 

@@ -32,7 +32,10 @@ export default function ChatMessageList({
       {messages.map((msg, index) => {
         const isUser = msg.senderRole === 'customer' || msg.senderRole === 'user';
         const isBot = msg.senderRole === 'bot';
-        const isAgent = msg.senderRole === 'support_agent' || msg.senderRole === 'agent' || msg.senderRole === 'admin';
+        const isAgent =
+          msg.senderRole === 'support_agent' ||
+          msg.senderRole === 'agent' ||
+          msg.senderRole === 'admin';
 
         return (
           <div
@@ -50,10 +53,16 @@ export default function ChatMessageList({
             {/* Bubble */}
             <div className="message-content-group">
               <div className="message-sender-name">
-                {isUser ? 'You' : isAgent ? (msg.senderName || 'Live Support Agent') : 'Dickwella Virtual Assistant'}
+                {isUser
+                  ? 'You'
+                  : isAgent
+                    ? msg.senderName || 'Live Support Agent'
+                    : 'Dickwella Virtual Assistant'}
               </div>
 
-              <div className={`message-bubble ${isUser ? 'user-bubble' : isAgent ? 'agent-bubble' : 'bot-bubble'}`}>
+              <div
+                className={`message-bubble ${isUser ? 'user-bubble' : isAgent ? 'agent-bubble' : 'bot-bubble'}`}
+              >
                 <p className="message-text">{msg.message}</p>
 
                 {/* If message includes structured order tracking embed */}
@@ -64,7 +73,9 @@ export default function ChatMessageList({
                       <span className="order-card-number font-bold font-mono">
                         {msg.orderData.order_number || msg.orderData.orderNumber}
                       </span>
-                      <span className={`order-status-pill status-${(msg.orderData.status || 'processing').toLowerCase()}`}>
+                      <span
+                        className={`order-status-pill status-${(msg.orderData.status || 'processing').toLowerCase()}`}
+                      >
                         {(msg.orderData.status || 'PROCESSING').toUpperCase()}
                       </span>
                     </div>
@@ -79,13 +90,17 @@ export default function ChatMessageList({
                       {msg.orderData.tracking_number && (
                         <div className="order-detail-item">
                           <span className="detail-label">Waybill:</span>
-                          <span className="detail-value font-mono">{msg.orderData.tracking_number}</span>
+                          <span className="detail-value font-mono">
+                            {msg.orderData.tracking_number}
+                          </span>
                         </div>
                       )}
                       {msg.orderData.total_amount_formatted && (
                         <div className="order-detail-item">
                           <span className="detail-label">Total:</span>
-                          <span className="detail-value font-mono font-bold">{msg.orderData.total_amount_formatted}</span>
+                          <span className="detail-value font-mono font-bold">
+                            {msg.orderData.total_amount_formatted}
+                          </span>
                         </div>
                       )}
                     </div>

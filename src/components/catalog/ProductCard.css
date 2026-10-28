@@ -6,9 +6,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--color-surface, #FFFFFF);
+  background: var(--color-surface, #ffffff);
   border-radius: var(--radius-xl, 24px);
-  border: 1px solid var(--color-border, #E2E8F0);
+  border: 1px solid var(--color-border, #e2e8f0);
   overflow: hidden;
   box-shadow: var(--shadow-sm, 0 1px 3px 0 rgba(0, 0, 0, 0.1));
   transition: all var(--transition-normal, 300ms ease);
@@ -16,7 +16,8 @@
 
 .dk-product-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1)), var(--shadow-gold, 0 4px 20px rgba(212, 175, 55, 0.25));
+  box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1)),
+    var(--shadow-gold, 0 4px 20px rgba(212, 175, 55, 0.25));
   border-color: rgba(212, 175, 55, 0.4);
 }
 
@@ -25,7 +26,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 5;
-  background-color: var(--color-surface-subtle, #F8FAFC);
+  background-color: var(--color-surface-subtle, #f8fafc);
   overflow: hidden;
   cursor: pointer;
 }
@@ -36,7 +37,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-slow, 500ms ease), opacity var(--transition-normal, 300ms ease);
+  transition:
+    transform var(--transition-slow, 500ms ease),
+    opacity var(--transition-normal, 300ms ease);
 }
 
 .dk-card-img--primary {
@@ -64,8 +67,8 @@
   left: var(--space-3, 0.75rem);
   z-index: 3;
   padding: 3px 10px;
-  background-color: var(--color-accent, #D4AF37);
-  color: var(--color-primary-dark, #020C1B);
+  background-color: var(--color-accent, #d4af37);
+  color: var(--color-primary-dark, #020c1b);
   font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: var(--text-xs, 0.75rem);
   font-weight: var(--font-bold, 700);
@@ -90,19 +93,19 @@
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(226, 232, 240, 0.8);
-  color: var(--color-text-subtle, #94A3B8);
+  color: var(--color-text-subtle, #94a3b8);
   cursor: pointer;
   transition: all var(--transition-fast, 150ms ease);
 }
 
 .dk-card-wishlist-btn:hover {
   transform: scale(1.1);
-  color: var(--color-danger, #EF4444);
-  background: #FFFFFF;
+  color: var(--color-danger, #ef4444);
+  background: #ffffff;
 }
 
 .dk-card-wishlist-btn.active {
-  color: var(--color-danger, #EF4444);
+  color: var(--color-danger, #ef4444);
 }
 
 /* Card Body Content */
@@ -125,7 +128,7 @@
   font-size: 0.7rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
   font-weight: var(--font-bold, 700);
 }
 
@@ -142,7 +145,7 @@
   font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: var(--text-base, 1rem);
   font-weight: var(--font-bold, 700);
-  color: var(--color-primary, #0A192F);
+  color: var(--color-primary, #0a192f);
   line-height: 1.35;
   margin: 0 0 var(--space-2, 0.5rem) 0;
   cursor: pointer;
@@ -150,7 +153,7 @@
 }
 
 .dk-card-title:hover {
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
 }
 
 .dk-card-footer {
@@ -159,7 +162,7 @@
   justify-content: space-between;
   margin-top: auto;
   padding-top: var(--space-3, 0.75rem);
-  border-top: 1px solid var(--color-border-subtle, #F1F5F9);
+  border-top: 1px solid var(--color-border-subtle, #f1f5f9);
 }
 
 .dk-card-price-group {
@@ -171,13 +174,13 @@
   font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: var(--text-lg, 1.125rem);
   font-weight: var(--font-bold, 700);
-  color: var(--color-primary, #0A192F);
+  color: var(--color-primary, #0a192f);
   letter-spacing: -0.01em;
 }
 
 .dk-card-stock-hint {
   font-size: 0.65rem;
-  color: var(--color-success, #10B981);
+  color: var(--color-success, #10b981);
   font-weight: var(--font-medium, 500);
 }
 
@@ -188,9 +191,9 @@
   gap: var(--space-1, 0.25rem);
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
   border-radius: var(--radius-md, 10px);
-  background: var(--color-surface-subtle, #F8FAFC);
-  border: 1px solid var(--color-border, #E2E8F0);
-  color: var(--color-primary, #0A192F);
+  background: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border, #e2e8f0);
+  color: var(--color-primary, #0a192f);
   font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: var(--text-xs, 0.75rem);
   font-weight: var(--font-semibold, 600);
@@ -199,9 +202,9 @@
 }
 
 .dk-card-quick-add:hover {
-  background: var(--color-primary, #0A192F);
-  color: #FFFFFF;
-  border-color: var(--color-primary, #0A192F);
+  background: var(--color-primary, #0a192f);
+  color: #ffffff;
+  border-color: var(--color-primary, #0a192f);
   box-shadow: var(--shadow-sm);
   transform: translateY(-1px);
 }

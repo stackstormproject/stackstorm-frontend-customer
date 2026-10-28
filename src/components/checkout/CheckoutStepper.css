@@ -63,41 +63,41 @@
 
 /* 1. Upcoming Step */
 .checkout-stepper__item--upcoming .checkout-stepper__indicator {
-  background: #F1F5F9;
-  color: #94A3B8;
-  border: 2px solid #E2E8F0;
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 2px solid #e2e8f0;
 }
 
 .checkout-stepper__item--upcoming .checkout-stepper__label {
-  color: #94A3B8;
+  color: #94a3b8;
 }
 
 /* 2. Active Step */
 .checkout-stepper__item--active .checkout-stepper__indicator {
-  background: var(--color-primary, #0A192F);
-  color: var(--color-accent, #D4AF37);
-  border: 2px solid var(--color-accent, #D4AF37);
+  background: var(--color-primary, #0a192f);
+  color: var(--color-accent, #d4af37);
+  border: 2px solid var(--color-accent, #d4af37);
   box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.18);
 }
 
 .checkout-stepper__item--active .checkout-stepper__title {
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
   font-weight: 700;
 }
 
 .checkout-stepper__item--active .checkout-stepper__step-prefix {
-  color: var(--color-accent, #D4AF37);
+  color: var(--color-accent, #d4af37);
 }
 
 /* 3. Completed Step */
 .checkout-stepper__item--completed .checkout-stepper__indicator {
-  background: #10B981;
-  color: #FFFFFF;
-  border: 2px solid #10B981;
+  background: #10b981;
+  color: #ffffff;
+  border: 2px solid #10b981;
 }
 
 .checkout-stepper__item--completed .checkout-stepper__label {
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
 }
 
 .checkout-stepper__label {
@@ -110,7 +110,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-text-subtle, #94A3B8);
+  color: var(--color-text-subtle, #94a3b8);
 }
 
 .checkout-stepper__title {
@@ -123,13 +123,13 @@
 .checkout-stepper__connector {
   flex: 1;
   height: 2px;
-  background: #E2E8F0;
+  background: #e2e8f0;
   margin: 0 1rem;
   transition: background 0.3s ease;
 }
 
 .checkout-stepper__connector--completed {
-  background: #10B981;
+  background: #10b981;
 }
 
 @media (max-width: 768px) {

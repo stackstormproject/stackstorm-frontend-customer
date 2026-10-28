@@ -1,4 +1,4 @@
-import apiClient, { setAccessToken, clearAccessToken } from './client'
+import apiClient, { setAccessToken, clearAccessToken } from './client';
 
 /**
  * Authentication API Service
@@ -9,38 +9,38 @@ export const authApi = {
    * Log in customer with email and password
    */
   async login(email, password) {
-    const res = await apiClient.post('/auth/login', { email, password })
-    const payload = res?.data || res
-    const token = payload?.token || payload?.accessToken
+    const res = await apiClient.post('/auth/login', { email, password });
+    const payload = res?.data || res;
+    const token = payload?.token || payload?.accessToken;
     if (token) {
-      setAccessToken(token)
+      setAccessToken(token);
       try {
-        localStorage.setItem('token', token)
-        localStorage.setItem('stackstorm_token', token)
+        localStorage.setItem('token', token);
+        localStorage.setItem('stackstorm_token', token);
       } catch (e) {
         // Ignore localStorage quota errors in private browsing
       }
     }
-    return payload
+    return payload;
   },
 
   /**
    * Register a new customer
    */
   async register(userData) {
-    const res = await apiClient.post('/auth/register', userData)
-    const payload = res?.data || res
-    const token = payload?.token || payload?.accessToken
+    const res = await apiClient.post('/auth/register', userData);
+    const payload = res?.data || res;
+    const token = payload?.token || payload?.accessToken;
     if (token) {
-      setAccessToken(token)
+      setAccessToken(token);
       try {
-        localStorage.setItem('token', token)
-        localStorage.setItem('stackstorm_token', token)
+        localStorage.setItem('token', token);
+        localStorage.setItem('stackstorm_token', token);
       } catch (e) {
         // Ignore localStorage quota errors
       }
     }
-    return payload
+    return payload;
   },
 
   /**
@@ -48,9 +48,9 @@ export const authApi = {
    */
   async logout() {
     try {
-      await apiClient.post('/auth/logout')
+      await apiClient.post('/auth/logout');
     } finally {
-      clearAccessToken()
+      clearAccessToken();
     }
   },
 
@@ -58,20 +58,20 @@ export const authApi = {
    * Explicitly trigger refresh token rotation
    */
   async refreshToken() {
-    const res = await apiClient.post('/auth/refresh-token')
-    const token = res.data?.token || res.data?.accessToken
+    const res = await apiClient.post('/auth/refresh-token');
+    const token = res.data?.token || res.data?.accessToken;
     if (token) {
-      setAccessToken(token)
+      setAccessToken(token);
     }
-    return res
+    return res;
   },
 
   /**
    * Fetch authenticated customer profile
    */
   async getProfile() {
-    return apiClient.get('/users/profile')
+    return apiClient.get('/users/profile');
   },
-}
+};
 
-export default authApi
+export default authApi;

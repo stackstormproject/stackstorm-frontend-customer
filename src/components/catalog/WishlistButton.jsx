@@ -48,7 +48,9 @@ export function WishlistButton({
         color={isWishlisted ? '#E11D48' : 'currentColor'}
       />
       {showLabel && (
-        <span style={{ marginLeft: 6, fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)' }}>
+        <span
+          style={{ marginLeft: 6, fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)' }}
+        >
           {isWishlisted ? 'Wishlisted' : 'Save'}
         </span>
       )}

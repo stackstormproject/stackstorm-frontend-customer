@@ -4,15 +4,11 @@ import './ReservationExpiredModal.css';
 
 /**
  * ReservationExpiredModal Component
- * 
+ *
  * Informs customer that the 15-minute temporary hold has lapsed and stock
  * has been released back to public inventory (FR-011, SDS §8.2).
  */
-export function ReservationExpiredModal({
-  isOpen = true,
-  onReturnToCart,
-  onBrowseProducts,
-}) {
+export function ReservationExpiredModal({ isOpen = true, onReturnToCart, onBrowseProducts }) {
   // Prevent background scrolling while modal is open
   useEffect(() => {
     if (isOpen) {
@@ -66,11 +62,15 @@ export function ReservationExpiredModal({
         </h2>
 
         <p id="reservation-expired-desc" className="reservation-expired-modal__description">
-          Your 15-minute temporary stock reservation window has expired. The apparel items held for your checkout session have been automatically released back to our inventory.
+          Your 15-minute temporary stock reservation window has expired. The apparel items held for
+          your checkout session have been automatically released back to our inventory.
         </p>
 
         <div className="reservation-expired-modal__notice">
-          <span>Items may still be available if other shoppers have not purchased them. Please review your cart to re-verify availability.</span>
+          <span>
+            Items may still be available if other shoppers have not purchased them. Please review
+            your cart to re-verify availability.
+          </span>
         </div>
 
         <div className="reservation-expired-modal__actions">

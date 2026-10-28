@@ -34,7 +34,9 @@ describe('STORM-FE-006: Product Catalog Grid, Multi-Faceted Filters & Dynamic So
 
       expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
       expect(screen.getByText(mockProduct.category_name)).toBeInTheDocument();
-      expect(screen.getByTestId('card-formatted-price')).toHaveTextContent(formatLKR(mockProduct.base_price));
+      expect(screen.getByTestId('card-formatted-price')).toHaveTextContent(
+        formatLKR(mockProduct.base_price)
+      );
       expect(screen.getByText(/4\.9/)).toBeInTheDocument();
       expect(screen.getByRole('img', { name: mockProduct.title })).toHaveAttribute(
         'src',
@@ -140,9 +142,7 @@ describe('STORM-FE-006: Product Catalog Grid, Multi-Faceted Filters & Dynamic So
       );
 
       expect(screen.getByTestId('catalog-empty-state')).toBeInTheDocument();
-      expect(
-        screen.getByText('No apparel matches your filter criteria')
-      ).toBeInTheDocument();
+      expect(screen.getByText('No apparel matches your filter criteria')).toBeInTheDocument();
 
       const clearBtn = screen.getByTestId('empty-clear-filters-btn');
       fireEvent.click(clearBtn);

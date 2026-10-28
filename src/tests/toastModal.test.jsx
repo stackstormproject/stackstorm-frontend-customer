@@ -23,16 +23,10 @@ const TestToastConsumer = () => {
       >
         Trigger Error
       </button>
-      <button
-        onClick={() => toast.warning('Low stock warning')}
-        data-testid="btn-warning"
-      >
+      <button onClick={() => toast.warning('Low stock warning')} data-testid="btn-warning">
         Trigger Warning
       </button>
-      <button
-        onClick={() => toast.info('New collection available')}
-        data-testid="btn-info"
-      >
+      <button onClick={() => toast.info('New collection available')} data-testid="btn-info">
         Trigger Info
       </button>
     </div>

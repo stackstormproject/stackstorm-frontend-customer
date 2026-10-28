@@ -17,8 +17,12 @@
 }
 
 @keyframes dk-backdrop-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .dk-modal-dialog {
@@ -27,10 +31,11 @@
   flex-direction: column;
   width: 100%;
   max-height: calc(100vh - 3rem);
-  background: var(--color-surface, #FFFFFF);
+  background: var(--color-surface, #ffffff);
   border-radius: var(--radius-xl, 24px);
-  border: 1px solid var(--color-border, #E2E8F0);
-  box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1)), var(--shadow-glass, 0 8px 32px 0 rgba(10, 25, 47, 0.08));
+  border: 1px solid var(--color-border, #e2e8f0);
+  box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1)),
+    var(--shadow-glass, 0 8px 32px 0 rgba(10, 25, 47, 0.08));
   overflow: hidden;
   animation: dk-modal-scale-up 240ms cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
@@ -48,10 +53,18 @@
 }
 
 /* Modal Sizes */
-.dk-modal-dialog--sm { max-width: 400px; }
-.dk-modal-dialog--md { max-width: 540px; }
-.dk-modal-dialog--lg { max-width: 720px; }
-.dk-modal-dialog--xl { max-width: 960px; }
+.dk-modal-dialog--sm {
+  max-width: 400px;
+}
+.dk-modal-dialog--md {
+  max-width: 540px;
+}
+.dk-modal-dialog--lg {
+  max-width: 720px;
+}
+.dk-modal-dialog--xl {
+  max-width: 960px;
+}
 .dk-modal-dialog--full {
   max-width: calc(100vw - 2rem);
   height: calc(100vh - 2rem);
@@ -63,8 +76,8 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
-  border-bottom: 1px solid var(--color-border-subtle, #F1F5F9);
-  background: var(--color-surface, #FFFFFF);
+  border-bottom: 1px solid var(--color-border-subtle, #f1f5f9);
+  background: var(--color-surface, #ffffff);
 }
 
 .dk-modal-header-text {
@@ -76,7 +89,7 @@
   font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: var(--text-xl, 1.25rem);
   font-weight: var(--font-bold, 700);
-  color: var(--color-primary, #0A192F);
+  color: var(--color-primary, #0a192f);
   line-height: 1.3;
   margin: 0;
 }
@@ -97,15 +110,15 @@
   height: 34px;
   padding: 0;
   border-radius: var(--radius-md, 10px);
-  color: var(--color-text-subtle, #94A3B8);
+  color: var(--color-text-subtle, #94a3b8);
   background: transparent;
   cursor: pointer;
   transition: all var(--transition-fast, 150ms ease);
 }
 
 .dk-modal-close-btn:hover {
-  color: var(--color-primary, #0A192F);
-  background-color: var(--color-surface-muted, #F1F5F9);
+  color: var(--color-primary, #0a192f);
+  background-color: var(--color-surface-muted, #f1f5f9);
   transform: rotate(90deg);
 }
 
@@ -114,7 +127,7 @@
   padding: var(--space-6, 1.5rem);
   overflow-y: auto;
   font-family: var(--font-body, 'Inter', sans-serif);
-  color: var(--color-text-main, #0F172A);
+  color: var(--color-text-main, #0f172a);
   font-size: var(--text-base, 1rem);
   line-height: 1.6;
 }
@@ -126,8 +139,8 @@
   justify-content: flex-end;
   gap: var(--space-3, 0.75rem);
   padding: var(--space-4, 1rem) var(--space-6, 1.5rem);
-  border-top: 1px solid var(--color-border-subtle, #F1F5F9);
-  background-color: var(--color-surface-subtle, #F8FAFC);
+  border-top: 1px solid var(--color-border-subtle, #f1f5f9);
+  background-color: var(--color-surface-subtle, #f8fafc);
 }
 
 /* Base Modal Action Buttons */
@@ -146,19 +159,19 @@
 
 .dk-modal-btn--secondary {
   color: var(--color-text-muted, #475569);
-  background: var(--color-surface, #FFFFFF);
-  border: 1px solid var(--color-border, #E2E8F0);
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
 }
 
 .dk-modal-btn--secondary:hover {
-  background-color: var(--color-surface-muted, #F1F5F9);
-  color: var(--color-text-main, #0F172A);
+  background-color: var(--color-surface-muted, #f1f5f9);
+  color: var(--color-text-main, #0f172a);
 }
 
 .dk-modal-btn--primary {
-  color: var(--color-primary-dark, #020C1B);
-  background: linear-gradient(135deg, var(--color-accent, #D4AF37) 0%, #E6C86E 100%);
-  border: 1px solid var(--color-accent, #D4AF37);
+  color: var(--color-primary-dark, #020c1b);
+  background: linear-gradient(135deg, var(--color-accent, #d4af37) 0%, #e6c86e 100%);
+  border: 1px solid var(--color-accent, #d4af37);
   box-shadow: var(--shadow-sm);
 }
 
@@ -168,12 +181,12 @@
 }
 
 .dk-modal-btn--danger {
-  color: #FFFFFF;
-  background: var(--color-danger, #EF4444);
-  border: 1px solid var(--color-danger, #EF4444);
+  color: #ffffff;
+  background: var(--color-danger, #ef4444);
+  border: 1px solid var(--color-danger, #ef4444);
 }
 
 .dk-modal-btn--danger:hover {
-  background: #DC2626;
+  background: #dc2626;
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }

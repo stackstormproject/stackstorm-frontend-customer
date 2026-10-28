@@ -298,7 +298,8 @@ function StorefrontContent() {
     setIsReservationModalOpen(false);
     try {
       const res = await inventoryApi.reserveStock({ variant_id: 1, quantity: 1 });
-      const expiresAt = res?.data?.expires_at || new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const expiresAt =
+        res?.data?.expires_at || new Date(Date.now() + 15 * 60 * 1000).toISOString();
       const reservationId = res?.data?.reservation_id || `res-${Date.now()}`;
 
       sessionStorage.setItem('stackstorm_reservation_id', reservationId);
@@ -474,239 +475,250 @@ function StorefrontContent() {
 
       {/* Main View: Order Success Receipt, Checkout, Profile Hub, Dedicated Wishlist, PDP, or Catalog */}
       <main id="main-content" tabIndex="-1">
-      {completedOrder ? (
-        <OrderSuccessPage
-          order={completedOrder}
-          onContinueShopping={() => {
-            setCompletedOrder(null);
-            setIsCheckoutView(false);
-            setIsProfileView(false);
-            setSelectedProduct(null);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-        />
-      ) : isCheckoutView ? (
-        <CheckoutPage
-          onBackToCatalog={() => {
-            setIsCheckoutView(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onOrderCompleted={(order) => {
-            setCompletedOrder(order);
-            setIsCheckoutView(false);
-            setIsProfileView(false);
-            setSelectedProduct(null);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          initialReservation={activeReservation}
-        />
-      ) : isOrderHistoryView ? (
-        <OrderHistoryPage
-          onBackToCatalog={() => {
-            setIsOrderHistoryView(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onViewInvoice={(ord) => {
-            setCompletedOrder(ord);
-            setIsOrderHistoryView(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-        />
-      ) : isProfileView ? (
-        <CustomerProfilePage
-          initialProfile={currentUser}
-          onBackToCatalog={() => {
-            setIsProfileView(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onProfileUpdated={(updated) => {
-            setCurrentUser(updated);
-          }}
-          onLogout={handleCustomerLogout}
-        />
-      ) : isWishlistView ? (
-        <WishlistPage
-          items={wishlistItems}
-          onRemoveItem={(id) => {
-            removeFromWishlist(id);
-            toast.info('Item removed from wishlist.', { title: 'Wishlist' });
-          }}
-          onMoveToCart={(product) => {
-            handleAddToCart(product);
-            removeFromWishlist(product.id);
-            toast.success(`Moved ${product.title} to shopping cart!`, { title: 'Cart Updated' });
-          }}
-          onClearWishlist={() => {
-            clearWishlist();
-            toast.info('All wishlist items cleared.', { title: 'Wishlist' });
-          }}
-          onViewDetails={handleViewDetails}
-          onExploreCatalog={handleBackToCatalog}
-        />
-      ) : isBrandStoryView ? (
-        <BrandStoryPage onBackToCatalog={handleBackToCatalog} />
-      ) : selectedProduct ? (
-        <ProductDetailPage
-          productSlug={selectedProduct.slug}
-          initialProduct={selectedProduct}
-          onBack={handleBackToCatalog}
-          onAddToCart={handlePdpAddToCart}
-          onReserveStock={handlePdpReserveStock}
-          onToggleWishlist={handleToggleWishlist}
-          isWishlisted={wishlistIds.includes(selectedProduct.id)}
-          onNotifyMe={handlePdpNotifyMe}
-        />
-      ) : (
-        <>
-          {/* 2. Dynamic Breadcrumbs with Schema.org JSON-LD (STORM-FE-005) */}
-          <Breadcrumbs items={breadcrumbTrail} onHomeClick={handleBackToCatalog} />
-
-          {/* 3. Hero Section */}
-          <section className="hero-section">
-        <div className="hero-bg-accent" />
-        <div className="container hero-grid">
-          <div className="hero-content">
-            <div className="hero-badge">
-              <span className="pulse-dot" />
-              <span>Southern Province Heritage Craft</span>
-            </div>
-            <h1 className="hero-title">
-              Authentic Sri Lankan <span className="gold-gradient-text">Handlooms & Batik</span>
-            </h1>
-            <p className="hero-description">
-              Handcrafted in Dickwella with organic linen and heritage artisan wax-resist dyes.
-              Engineered for tropical breathability, everyday comfort, and timeless island elegance.
-            </p>
-            <div className="hero-actions">
-              <a href="#catalog" className="btn-primary">
-                <span>Explore Catalog</span>
-                <ArrowRight size={18} />
-              </a>
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => {
-                  setIsBrandStoryView(true);
-                  setIsProfileView(false);
-                  setIsWishlistView(false);
-                  setIsCheckoutView(false);
-                  setIsOrderHistoryView(false);
-                  setSelectedProduct(null);
-                  setCompletedOrder(null);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                data-testid="hero-brand-story-btn"
-              >
-                <Sparkles size={18} color="#D4AF37" />
-                <span>Our Heritage Story</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Hero Showcase Card */}
-          <div className="glass-panel-dark hero-card">
-            <div className="hero-card-header">
-              <span className="hero-card-title">Live Atelier Telemetry</span>
-              <span className="hero-card-tag">Open Today</span>
-            </div>
-            <div className="hero-stats-grid">
-              <div className="hero-stat-box">
-                <div className="hero-stat-value">500+</div>
-                <div className="hero-stat-label">Artisan Batik Patterns</div>
-              </div>
-              <div className="hero-stat-box">
-                <div className="hero-stat-value">100%</div>
-                <div className="hero-stat-label">Natural Organic Linen</div>
-              </div>
-              <div className="hero-stat-box">
-                <div className="hero-stat-value">30-Day</div>
-                <div className="hero-stat-label">Delivery Guarantee</div>
-              </div>
-              <div className="hero-stat-box">
-                <div className="hero-stat-value">LKR</div>
-                <div className="hero-stat-label">Sri Lankan Currency</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Value Propositions (4-Pillars) */}
-      <section className="value-props-section">
-        <div className="container value-props-grid">
-          <div className="prop-card">
-            <div className="prop-icon">
-              <Truck size={22} />
-            </div>
-            <div>
-              <h2 className="prop-title">Islandwide Delivery</h2>
-              <p className="prop-desc">Express delivery across all 25 districts. Free over LKR 10,000.</p>
-            </div>
-          </div>
-
-          <div className="prop-card">
-            <div className="prop-icon">
-              <Sparkles size={22} />
-            </div>
-            <div>
-              <h2 className="prop-title">100% Artisan Craft</h2>
-              <p className="prop-desc">Woven by traditional handloom masters in Dickwella, Matara.</p>
-            </div>
-          </div>
-
-          <div className="prop-card">
-            <div className="prop-icon">
-              <ShieldCheck size={22} />
-            </div>
-            <div>
-              <h2 className="prop-title">30-Day Return Policy</h2>
-              <p className="prop-desc">Hassle-free returns or exchanges within 30 days of delivery.</p>
-            </div>
-          </div>
-
-          <div className="prop-card">
-            <div className="prop-icon">
-              <Award size={22} />
-            </div>
-            <div>
-              <h2 className="prop-title">Loyalty Rewards</h2>
-              <p className="prop-desc">Earn 1–2 points per LKR 100 spent. Silver, Gold & Platinum perks.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Dynamic Product Catalog Grid with Multi-Faceted Filters (STORM-FE-006) */}
-      <section className="collections-section" id="catalog">
-        <div className="container">
-          <div className="section-header">
-            <div>
-              <h2 className="section-title">Signature Collections</h2>
-              <p className="section-subtitle">
-                Filter and sort authentic Sri Lankan handloom sarees, bespoke batik shirts, and tailored linen apparel.
-              </p>
-            </div>
-            <a href="#catalog" className="explore-pill" onClick={handleClearFilters}>
-              <span>Reset Filters</span>
-              <ChevronRight size={16} />
-            </a>
-          </div>
-
-          <ProductGrid
-            products={products}
-            isLoading={isLoadingProducts}
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onClearFilters={handleClearFilters}
-            onAddToCart={handleAddToCart}
-            onToggleWishlist={handleToggleWishlist}
-            onViewDetails={handleViewDetails}
-            wishlistIds={wishlistIds}
+        {completedOrder ? (
+          <OrderSuccessPage
+            order={completedOrder}
+            onContinueShopping={() => {
+              setCompletedOrder(null);
+              setIsCheckoutView(false);
+              setIsProfileView(false);
+              setSelectedProduct(null);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
-        </div>
-      </section>
-        </>
-      )}
+        ) : isCheckoutView ? (
+          <CheckoutPage
+            onBackToCatalog={() => {
+              setIsCheckoutView(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOrderCompleted={(order) => {
+              setCompletedOrder(order);
+              setIsCheckoutView(false);
+              setIsProfileView(false);
+              setSelectedProduct(null);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            initialReservation={activeReservation}
+          />
+        ) : isOrderHistoryView ? (
+          <OrderHistoryPage
+            onBackToCatalog={() => {
+              setIsOrderHistoryView(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onViewInvoice={(ord) => {
+              setCompletedOrder(ord);
+              setIsOrderHistoryView(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : isProfileView ? (
+          <CustomerProfilePage
+            initialProfile={currentUser}
+            onBackToCatalog={() => {
+              setIsProfileView(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onProfileUpdated={(updated) => {
+              setCurrentUser(updated);
+            }}
+            onLogout={handleCustomerLogout}
+          />
+        ) : isWishlistView ? (
+          <WishlistPage
+            items={wishlistItems}
+            onRemoveItem={(id) => {
+              removeFromWishlist(id);
+              toast.info('Item removed from wishlist.', { title: 'Wishlist' });
+            }}
+            onMoveToCart={(product) => {
+              handleAddToCart(product);
+              removeFromWishlist(product.id);
+              toast.success(`Moved ${product.title} to shopping cart!`, { title: 'Cart Updated' });
+            }}
+            onClearWishlist={() => {
+              clearWishlist();
+              toast.info('All wishlist items cleared.', { title: 'Wishlist' });
+            }}
+            onViewDetails={handleViewDetails}
+            onExploreCatalog={handleBackToCatalog}
+          />
+        ) : isBrandStoryView ? (
+          <BrandStoryPage onBackToCatalog={handleBackToCatalog} />
+        ) : selectedProduct ? (
+          <ProductDetailPage
+            productSlug={selectedProduct.slug}
+            initialProduct={selectedProduct}
+            onBack={handleBackToCatalog}
+            onAddToCart={handlePdpAddToCart}
+            onReserveStock={handlePdpReserveStock}
+            onToggleWishlist={handleToggleWishlist}
+            isWishlisted={wishlistIds.includes(selectedProduct.id)}
+            onNotifyMe={handlePdpNotifyMe}
+          />
+        ) : (
+          <>
+            {/* 2. Dynamic Breadcrumbs with Schema.org JSON-LD (STORM-FE-005) */}
+            <Breadcrumbs items={breadcrumbTrail} onHomeClick={handleBackToCatalog} />
+
+            {/* 3. Hero Section */}
+            <section className="hero-section">
+              <div className="hero-bg-accent" />
+              <div className="container hero-grid">
+                <div className="hero-content">
+                  <div className="hero-badge">
+                    <span className="pulse-dot" />
+                    <span>Southern Province Heritage Craft</span>
+                  </div>
+                  <h1 className="hero-title">
+                    Authentic Sri Lankan{' '}
+                    <span className="gold-gradient-text">Handlooms & Batik</span>
+                  </h1>
+                  <p className="hero-description">
+                    Handcrafted in Dickwella with organic linen and heritage artisan wax-resist
+                    dyes. Engineered for tropical breathability, everyday comfort, and timeless
+                    island elegance.
+                  </p>
+                  <div className="hero-actions">
+                    <a href="#catalog" className="btn-primary">
+                      <span>Explore Catalog</span>
+                      <ArrowRight size={18} />
+                    </a>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => {
+                        setIsBrandStoryView(true);
+                        setIsProfileView(false);
+                        setIsWishlistView(false);
+                        setIsCheckoutView(false);
+                        setIsOrderHistoryView(false);
+                        setSelectedProduct(null);
+                        setCompletedOrder(null);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      data-testid="hero-brand-story-btn"
+                    >
+                      <Sparkles size={18} color="#D4AF37" />
+                      <span>Our Heritage Story</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Hero Showcase Card */}
+                <div className="glass-panel-dark hero-card">
+                  <div className="hero-card-header">
+                    <span className="hero-card-title">Live Atelier Telemetry</span>
+                    <span className="hero-card-tag">Open Today</span>
+                  </div>
+                  <div className="hero-stats-grid">
+                    <div className="hero-stat-box">
+                      <div className="hero-stat-value">500+</div>
+                      <div className="hero-stat-label">Artisan Batik Patterns</div>
+                    </div>
+                    <div className="hero-stat-box">
+                      <div className="hero-stat-value">100%</div>
+                      <div className="hero-stat-label">Natural Organic Linen</div>
+                    </div>
+                    <div className="hero-stat-box">
+                      <div className="hero-stat-value">30-Day</div>
+                      <div className="hero-stat-label">Delivery Guarantee</div>
+                    </div>
+                    <div className="hero-stat-box">
+                      <div className="hero-stat-value">LKR</div>
+                      <div className="hero-stat-label">Sri Lankan Currency</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 4. Value Propositions (4-Pillars) */}
+            <section className="value-props-section">
+              <div className="container value-props-grid">
+                <div className="prop-card">
+                  <div className="prop-icon">
+                    <Truck size={22} />
+                  </div>
+                  <div>
+                    <h2 className="prop-title">Islandwide Delivery</h2>
+                    <p className="prop-desc">
+                      Express delivery across all 25 districts. Free over LKR 10,000.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="prop-card">
+                  <div className="prop-icon">
+                    <Sparkles size={22} />
+                  </div>
+                  <div>
+                    <h2 className="prop-title">100% Artisan Craft</h2>
+                    <p className="prop-desc">
+                      Woven by traditional handloom masters in Dickwella, Matara.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="prop-card">
+                  <div className="prop-icon">
+                    <ShieldCheck size={22} />
+                  </div>
+                  <div>
+                    <h2 className="prop-title">30-Day Return Policy</h2>
+                    <p className="prop-desc">
+                      Hassle-free returns or exchanges within 30 days of delivery.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="prop-card">
+                  <div className="prop-icon">
+                    <Award size={22} />
+                  </div>
+                  <div>
+                    <h2 className="prop-title">Loyalty Rewards</h2>
+                    <p className="prop-desc">
+                      Earn 1–2 points per LKR 100 spent. Silver, Gold & Platinum perks.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 5. Dynamic Product Catalog Grid with Multi-Faceted Filters (STORM-FE-006) */}
+            <section className="collections-section" id="catalog">
+              <div className="container">
+                <div className="section-header">
+                  <div>
+                    <h2 className="section-title">Signature Collections</h2>
+                    <p className="section-subtitle">
+                      Filter and sort authentic Sri Lankan handloom sarees, bespoke batik shirts,
+                      and tailored linen apparel.
+                    </p>
+                  </div>
+                  <a href="#catalog" className="explore-pill" onClick={handleClearFilters}>
+                    <span>Reset Filters</span>
+                    <ChevronRight size={16} />
+                  </a>
+                </div>
+
+                <ProductGrid
+                  products={products}
+                  isLoading={isLoadingProducts}
+                  filters={filters}
+                  onFilterChange={handleFilterChange}
+                  onClearFilters={handleClearFilters}
+                  onAddToCart={handleAddToCart}
+                  onToggleWishlist={handleToggleWishlist}
+                  onViewDetails={handleViewDetails}
+                  wishlistIds={wishlistIds}
+                />
+              </div>
+            </section>
+          </>
+        )}
       </main>
 
       {/* 6. Bottom Service Announcement Bar (Relocated from Top Bar) */}
@@ -718,7 +730,9 @@ function StorefrontContent() {
           </div>
           <div className="bottom-bar-item bottom-bar-item--highlight">
             <Truck size={13} color="#D4AF37" />
-            <span>Islandwide Courier Delivery Across Sri Lanka • Free Shipping Over LKR 10,000</span>
+            <span>
+              Islandwide Courier Delivery Across Sri Lanka • Free Shipping Over LKR 10,000
+            </span>
           </div>
         </div>
       </div>
@@ -730,8 +744,8 @@ function StorefrontContent() {
             <div>
               <h4 className="footer-col-title">Dickwella Fashion Corner</h4>
               <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-inverse-muted)' }}>
-                Purveyors of fine Sri Lankan handloom textiles, bespoke batik shirts, and tropical linen wear.
-                Rooted in the coastal heritage of Dickwella, Matara.
+                Purveyors of fine Sri Lankan handloom textiles, bespoke batik shirts, and tropical
+                linen wear. Rooted in the coastal heritage of Dickwella, Matara.
               </p>
               <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-accent)' }}>
                 Main Street, Dickwella, Southern Province, Sri Lanka (Postal Code: 81100)
@@ -789,29 +803,67 @@ function StorefrontContent() {
                     Track Delivery Order
                   </a>
                 </li>
-                <li><a href="#returns" className="footer-link">30-Day Return & Exchange Policy</a></li>
-                <li><a href="#shipping" className="footer-link">Islandwide Courier Rates</a></li>
-                <li><a href="#loyalty" className="footer-link">Loyalty Tier Benefits</a></li>
-                <li><a href="#support" className="footer-link">Live Support Chat</a></li>
+                <li>
+                  <a href="#returns" className="footer-link">
+                    30-Day Return & Exchange Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#shipping" className="footer-link">
+                    Islandwide Courier Rates
+                  </a>
+                </li>
+                <li>
+                  <a href="#loyalty" className="footer-link">
+                    Loyalty Tier Benefits
+                  </a>
+                </li>
+                <li>
+                  <a href="#support" className="footer-link">
+                    Live Support Chat
+                  </a>
+                </li>
               </ul>
             </div>
 
             <div>
               <h4 className="footer-col-title">Apparel Categories</h4>
               <ul className="footer-links">
-                <li><a href="#mens-batik" className="footer-link">Men's Batik Shirts</a></li>
-                <li><a href="#womens-sarees" className="footer-link">Handloom Sarees</a></li>
-                <li><a href="#sarongs" className="footer-link">Traditional Sarongs</a></li>
-                <li><a href="#linen-collection" className="footer-link">Pure Linen Kurtas</a></li>
-                <li><a href="#kids" className="footer-link">Kids Batik Wear</a></li>
+                <li>
+                  <a href="#mens-batik" className="footer-link">
+                    Men's Batik Shirts
+                  </a>
+                </li>
+                <li>
+                  <a href="#womens-sarees" className="footer-link">
+                    Handloom Sarees
+                  </a>
+                </li>
+                <li>
+                  <a href="#sarongs" className="footer-link">
+                    Traditional Sarongs
+                  </a>
+                </li>
+                <li>
+                  <a href="#linen-collection" className="footer-link">
+                    Pure Linen Kurtas
+                  </a>
+                </li>
+                <li>
+                  <a href="#kids" className="footer-link">
+                    Kids Batik Wear
+                  </a>
+                </li>
               </ul>
             </div>
 
             <div>
               <h4 className="footer-col-title">Academic Attribution</h4>
               <p style={{ fontSize: 'var(--text-xs)' }}>
-                Department of Software Engineering<br />
-                Faculty of Science, University of Kelaniya<br />
+                Department of Software Engineering
+                <br />
+                Faculty of Science, University of Kelaniya
+                <br />
                 Course Module: SENG 31242 (2026)
               </p>
               <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-accent)' }}>
@@ -853,22 +905,27 @@ function StorefrontContent() {
         }
       >
         <p style={{ margin: '0 0 var(--space-3) 0' }}>
-          You are requesting a <strong>15-minute temporary inventory reservation hold</strong> for item{' '}
-          <code>BATIK-MEN-M-001</code>.
+          You are requesting a <strong>15-minute temporary inventory reservation hold</strong> for
+          item <code>BATIK-MEN-M-001</code>.
         </p>
-        <div style={{
-          background: 'var(--color-surface-subtle)',
-          padding: 'var(--space-4)',
-          borderRadius: 'var(--radius-md)',
-          border: '1px solid var(--color-border)',
-          fontSize: 'var(--text-sm)',
-          color: 'var(--color-text-muted)'
-        }}>
+        <div
+          style={{
+            background: 'var(--color-surface-subtle)',
+            padding: 'var(--space-4)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)',
+            fontSize: 'var(--text-sm)',
+            color: 'var(--color-text-muted)',
+          }}
+        >
           <p style={{ margin: '0 0 var(--space-2) 0' }}>
-            🔒 <strong>Atomic Guarantee:</strong> The SKU will be locked in Redis with a 900-second TTL. Other customers cannot check out this specific piece until your session expires or order completes.
+            🔒 <strong>Atomic Guarantee:</strong> The SKU will be locked in Redis with a 900-second
+            TTL. Other customers cannot check out this specific piece until your session expires or
+            order completes.
           </p>
           <p style={{ margin: 0 }}>
-            ⏱ <strong>Auto-Release Sync:</strong> If checkout is not completed within 15 minutes, the reservation expires automatically and restores stock to the public pool.
+            ⏱ <strong>Auto-Release Sync:</strong> If checkout is not completed within 15 minutes,
+            the reservation expires automatically and restores stock to the public pool.
           </p>
         </div>
       </Modal>

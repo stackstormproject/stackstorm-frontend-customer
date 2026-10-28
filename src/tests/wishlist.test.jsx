@@ -19,11 +19,7 @@ describe('STORM-FE-008: Customer Wishlist UI, Real-Time Heart Toggle & Stock Ale
     const handleToggle = vi.fn();
 
     const { rerender } = render(
-      <WishlistButton
-        product={mockProduct}
-        isWishlisted={false}
-        onToggle={handleToggle}
-      />
+      <WishlistButton product={mockProduct} isWishlisted={false} onToggle={handleToggle} />
     );
 
     const btn = screen.getByRole('button', { name: /save to wishlist/i });
@@ -35,13 +31,7 @@ describe('STORM-FE-008: Customer Wishlist UI, Real-Time Heart Toggle & Stock Ale
     expect(handleToggle).toHaveBeenCalledWith(mockProduct);
 
     // Rerender as wishlisted
-    rerender(
-      <WishlistButton
-        product={mockProduct}
-        isWishlisted={true}
-        onToggle={handleToggle}
-      />
-    );
+    rerender(<WishlistButton product={mockProduct} isWishlisted={true} onToggle={handleToggle} />);
 
     const activeBtn = screen.getByRole('button', { name: /remove from wishlist/i });
     expect(activeBtn.classList.contains('is-active')).toBe(true);
@@ -98,11 +88,7 @@ describe('STORM-FE-008: Customer Wishlist UI, Real-Time Heart Toggle & Stock Ale
     ];
 
     render(
-      <WishlistPage
-        items={mockItems}
-        onMoveToCart={handleMoveToCart}
-        onRemoveItem={handleRemove}
-      />
+      <WishlistPage items={mockItems} onMoveToCart={handleMoveToCart} onRemoveItem={handleRemove} />
     );
 
     expect(screen.getByTestId('wishlist-grid')).toBeInTheDocument();

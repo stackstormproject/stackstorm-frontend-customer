@@ -109,13 +109,7 @@ describe('STORM-FE-016: 30-Day Return Modal & Verified Review with Photo Upload'
     };
 
     it('toggles between Return for Refund and Size Exchange', () => {
-      render(
-        <ReturnExchangeModal
-          isOpen={true}
-          order={deliveredOrder}
-          onClose={vi.fn()}
-        />
-      );
+      render(<ReturnExchangeModal isOpen={true} order={deliveredOrder} onClose={vi.fn()} />);
 
       expect(screen.getByTestId('eligible-return-banner')).toBeInTheDocument();
       expect(screen.queryByTestId('exchange-variant-group')).not.toBeInTheDocument();
@@ -250,7 +244,9 @@ describe('STORM-FE-016: 30-Day Return Modal & Verified Review with Photo Upload'
 
       fireEvent.change(titleInput, { target: { value: 'Incredible handloom craft' } });
       fireEvent.change(commentInput, {
-        target: { value: 'The breathable linen fabric is truly second to none. Fits like a glove!' },
+        target: {
+          value: 'The breathable linen fabric is truly second to none. Fits like a glove!',
+        },
       });
 
       fireEvent.click(submitBtn);

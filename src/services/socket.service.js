@@ -19,7 +19,8 @@ class SocketService {
    * Attaches JWT authentication token from localStorage if present.
    */
   connect(token = null) {
-    const authToken = token || localStorage.getItem('token') || localStorage.getItem('stackstorm_token');
+    const authToken =
+      token || localStorage.getItem('token') || localStorage.getItem('stackstorm_token');
 
     if (this.socket) {
       if (this.socket.connected && this.currentAuthToken === authToken) {
@@ -93,7 +94,12 @@ class SocketService {
   /**
    * Joins or resumes a customer live chat session.
    */
-  joinChat(subject = 'Customer General Support', callback, existingSessionId = null, customerMeta = null) {
+  joinChat(
+    subject = 'Customer General Support',
+    callback,
+    existingSessionId = null,
+    customerMeta = null
+  ) {
     if (!this.socket) this.connect();
     const payload = {
       subject,

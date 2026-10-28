@@ -17,16 +17,19 @@ import './CheckoutPage.css';
 
 /**
  * CheckoutPage Component
- * 
+ *
  * Master multi-step checkout coordinator supporting Sri Lankan address capture,
  * shipping calculation, live reservation countdown, and sticky financial summary.
  */
-export function CheckoutPage({
-  onBackToCatalog,
-  onOrderCompleted,
-  initialReservation = null,
-}) {
-  const { items = [], subtotal = 0, discount = 0, discountAmount = 0, total = 0, clearCart } = useCart();
+export function CheckoutPage({ onBackToCatalog, onOrderCompleted, initialReservation = null }) {
+  const {
+    items = [],
+    subtotal = 0,
+    discount = 0,
+    discountAmount = 0,
+    total = 0,
+    clearCart,
+  } = useCart();
   const { toast } = useToast();
 
   const effectiveDiscount = Number(discount || discountAmount || 0);
@@ -46,11 +49,12 @@ export function CheckoutPage({
   const [isExpiredModalOpen, setIsExpiredModalOpen] = useState(false);
 
   // Recalculate shipping cost if subtotal qualifies
-  const actualShippingCost = shippingInfo.method === 'pickup'
-    ? 0
-    : safeSubtotal >= 10000 && shippingInfo.method === 'standard'
-    ? 0
-    : (shippingInfo.cost || 0);
+  const actualShippingCost =
+    shippingInfo.method === 'pickup'
+      ? 0
+      : safeSubtotal >= 10000 && shippingInfo.method === 'standard'
+        ? 0
+        : shippingInfo.cost || 0;
 
   const finalOrderTotal = Math.max(0, safeSubtotal - effectiveDiscount + actualShippingCost);
 
@@ -192,10 +196,7 @@ export function CheckoutPage({
       </div>
 
       {/* 3-Step Wizard Navigation */}
-      <CheckoutStepper
-        currentStep={currentStep}
-        onStepClick={(stepId) => setCurrentStep(stepId)}
-      />
+      <CheckoutStepper currentStep={currentStep} onStepClick={(stepId) => setCurrentStep(stepId)} />
 
       <div className="checkout-page__grid">
         {/* Main Step View */}
@@ -246,13 +247,18 @@ export function CheckoutPage({
         <aside className="checkout-page__sidebar" data-testid="checkout-order-summary">
           <div className="order-summary-card">
             <h2 className="order-summary-card__title">
-              <ShoppingBag size={18} /> Order Summary ({items.length} {items.length === 1 ? 'item' : 'items'})
+              <ShoppingBag size={18} /> Order Summary ({items.length}{' '}
+              {items.length === 1 ? 'item' : 'items'})
             </h2>
 
             {/* Thumbnail Line Items */}
             <div className="order-summary-card__items">
               {items.map((item) => (
-                <div key={item.id} className="order-summary-item" data-testid={`summary-item-${item.id}`}>
+                <div
+                  key={item.id}
+                  className="order-summary-item"
+                  data-testid={`summary-item-${item.id}`}
+                >
                   <div className="order-summary-item__image-wrap">
                     <img
                       src={item.image_url || '/placeholder.jpg'}
