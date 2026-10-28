@@ -2,6 +2,8 @@ import { Layout } from './components/layout/Layout';
 import HomePage from './pages/HomePage';
 import CatalogPage from './pages/CatalogPage';
 import ProductPage from './pages/ProductPage';
+import SignInPage from './pages/SignInPage';
+import RegisterPage from './pages/RegisterPage';
 import HelpPage from './pages/HelpPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -17,6 +19,8 @@ export const routes = [
       { path: 'shop', element: <CatalogPage /> },
       { path: 'shop/:category', element: <CatalogPage /> },
       { path: 'products/:slug', element: <ProductPage /> },
+      { path: 'sign-in', element: <SignInPage /> },
+      { path: 'register', element: <RegisterPage /> },
       { path: 'help/:topic', element: <HelpPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

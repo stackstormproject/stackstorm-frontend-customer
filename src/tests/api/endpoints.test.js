@@ -6,6 +6,8 @@ import {
   clearAccessToken,
   getAccessToken,
   rememberGuestOrder,
+  setSessionHint,
+  hasSessionHint,
 } from '../../lib/session';
 import * as catalog from '../../api/catalog';
 import * as auth from '../../api/auth';
@@ -104,16 +106,41 @@ describe('API contract', () => {
       expect(getAccessToken()).toBeNull();
     });
 
-    it('should restore the session from the refresh cookie', async () => {
+    it('should restore the session from the refresh cookie after a previous sign-in', async () => {
+      setSessionHint(true);
       raw.onPost('/api/v1/auth/refresh').reply(200, { accessToken: 'r', customer: { id: 3 } });
 
       await expect(auth.restoreSession()).resolves.toEqual({ id: 3 });
     });
 
+    it('should not call refresh for a browser that never signed in', async () => {
+      await expect(auth.restoreSession()).resolves.toBeNull();
+      expect(raw.history.post).toHaveLength(0);
+    });
+
+    it('should forget the hint when the refresh is rejected', async () => {
+      setSessionHint(true);
+      raw.onPost('/api/v1/auth/refresh').reply(401, { error: 'REFRESH_TOKEN_EXPIRED' });
+
+      await expect(auth.restoreSession()).rejects.toMatchObject({ code: 'REFRESH_TOKEN_EXPIRED' });
+      expect(hasSessionHint()).toBe(false);
+    });
+
     it('should return null when the refresh response has no customer', async () => {
+      setSessionHint(true);
       raw.onPost('/api/v1/auth/refresh').reply(200, { accessToken: 'r' });
 
       await expect(auth.restoreSession()).resolves.toBeNull();
+    });
+
+    it('should set the hint on login and clear it on logout', async () => {
+      api.onPost('/auth/login').reply(200, { customer: { id: 4 }, accessToken: 'tok' });
+      api.onPost('/auth/logout').reply(204);
+
+      await auth.login({ email: 'a@b.lk', password: 'p' });
+      expect(hasSessionHint()).toBe(true);
+      await auth.logout();
+      expect(hasSessionHint()).toBe(false);
     });
   });
 
