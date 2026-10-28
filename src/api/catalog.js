@@ -18,7 +18,8 @@ const compact = (params) =>
 /**
  * GET /products - server-side filtering, sorting and pagination (FR001, FR002).
  * @param {{category?: string, search?: string, size?: string, color?: string,
- *   minPrice?: number, maxPrice?: number, sort?: string, page?: number}} filters
+ *   minPrice?: number, maxPrice?: number, sort?: string, page?: number,
+ *   section?: 'new_arrivals'|'popular', brand?: string, limit?: number}} filters
  */
 export const listProducts = (filters = {}) =>
   http.get('/products', {
@@ -30,10 +31,15 @@ export const listProducts = (filters = {}) =>
       min_price: filters.minPrice,
       max_price: filters.maxPrice,
       sort: filters.sort,
+      section: filters.section,
+      brand: filters.brand,
       page: filters.page || 1,
-      limit: PAGE_SIZE,
+      limit: filters.limit || PAGE_SIZE,
     }),
   });
+
+/** GET /brands - featured brands with products on sale, for "Our brands" (#176). */
+export const listBrands = () => http.get('/brands');
 
 /** GET /products/:slug - full product with variants, images and review summary (FR003, FR004). */
 export const getProduct = (slug) => http.get(`/products/${encodeURIComponent(slug)}`);

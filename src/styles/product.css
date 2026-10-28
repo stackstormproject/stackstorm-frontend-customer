@@ -130,11 +130,13 @@
 
 .buy-box__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-3);
 }
 
-.buy-box__add {
-  flex: 1;
+.buy-box__add,
+.buy-box__buy {
+  flex: 1 1 140px;
 }
 
 .buy-box__soldout {

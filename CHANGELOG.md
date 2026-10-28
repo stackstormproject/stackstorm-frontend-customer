@@ -24,6 +24,9 @@ All notable changes to the customer storefront. Format:
 - Storefront header with a delivery bar and shop mark, three animated home banners that
   pause on hover, focus or reduced motion, collection banners, and a navy footer with the
   shop's promises (#175)
+- Home page sections chosen in the admin console (new arrivals, popular) with a fallback to
+  the newest products, "Our brands" linking to each brand's products, and Add to bag / Buy
+  now on every product card and product page (#176)
 
 ### Changed
 

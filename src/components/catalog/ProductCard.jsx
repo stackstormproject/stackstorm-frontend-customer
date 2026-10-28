@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Price } from '../ui/Price';
 import { StockBadge } from '../ui/StockBadge';
 import { WishlistButton } from './WishlistButton';
+import { QuickBuy } from './QuickBuy';
 import { productAvailability } from '../../lib/stock';
 import { sortSizes } from '../../lib/catalogQuery';
 
@@ -24,6 +25,16 @@ export function ProductCard({ product }) {
               event.currentTarget.src = PLACEHOLDER_IMAGE;
             }}
           />
+          {product.gallery_images?.[0] && (
+            <img
+              className="product-card__alt"
+              src={product.gallery_images[0]}
+              alt=""
+              loading="lazy"
+              onError={(event) => event.currentTarget.remove()}
+            />
+          )}
+          {product.is_new_arrival && <span className="product-card__badge">New</span>}
         </div>
         <h3 className="product-card__name">{product.name}</h3>
       </Link>
@@ -32,6 +43,7 @@ export function ProductCard({ product }) {
         <StockBadge available={available} />
       </div>
       {sizes.length > 0 && <p className="product-card__sizes">{sizes.join(', ')}</p>}
+      <QuickBuy product={product} />
       <WishlistButton productId={product.id} productName={product.name} />
     </article>
   );
