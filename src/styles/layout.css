@@ -281,7 +281,7 @@
 
 /* Footer: promises band, then the navy footer under a warp stripe */
 .site-footer {
-  margin-top: var(--space-16);
+  margin-top: var(--space-12);
   font-size: var(--text-sm);
 }
 

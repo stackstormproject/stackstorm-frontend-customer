@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Price } from '../ui/Price';
 import { StockBadge } from '../ui/StockBadge';
 import { QuantityStepper } from './QuantityStepper';
@@ -15,6 +16,7 @@ const MAX_PER_LINE = 10; // reservation.service MAX_QUANTITY_PER_ITEM
  * variant, stock label and add to bag. Sold-out sizes stay visible but cannot be chosen.
  */
 export function BuyBox({ product }) {
+  const navigate = useNavigate();
   const { addItem, openCart } = useCart();
   const toast = useToast();
   const variants = product.variants || [];
@@ -26,7 +28,7 @@ export function BuyBox({ product }) {
   const onlyOne = inColor.length === 1 ? inColor[0] : null;
   const [size, setSize] = useState(onlyOne && availableOf(onlyOne) > 0 ? onlyOne.size : null);
   const [quantity, setQuantity] = useState(1);
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useState(null); // 'add' | 'buy' while the request runs
   const [error, setError] = useState(null);
 
   const selected = useMemo(() => inColor.find((v) => v.size === size) || null, [inColor, size]);
@@ -40,15 +42,20 @@ export function BuyBox({ product }) {
     setError(null);
   };
 
-  const add = async () => {
+  /** Adds the chosen size; "buy" then goes straight to checkout (#176). */
+  const add = async (mode = 'add') => {
     if (!selected) {
       setError('Choose a size first.');
       return;
     }
-    setAdding(true);
+    setAdding(mode);
     setError(null);
     try {
       await addItem(selected.id, quantity);
+      if (mode === 'buy') {
+        navigate('/checkout');
+        return;
+      }
       toast.success(`Added ${product.name} (${selected.size}) to your bag`);
       openCart();
     } catch (err) {
@@ -58,7 +65,7 @@ export function BuyBox({ product }) {
           : err.message
       );
     } finally {
-      setAdding(false);
+      setAdding(null);
     }
   };
 
@@ -132,11 +139,19 @@ export function BuyBox({ product }) {
           />
           <button
             type="button"
-            className="btn btn--primary buy-box__add"
-            onClick={add}
-            disabled={adding}
+            className="btn btn--secondary buy-box__add"
+            onClick={() => add('add')}
+            disabled={Boolean(adding)}
           >
-            {adding ? 'Adding…' : 'Add to bag'}
+            {adding === 'add' ? 'Adding…' : 'Add to bag'}
+          </button>
+          <button
+            type="button"
+            className="btn btn--primary buy-box__buy"
+            onClick={() => add('buy')}
+            disabled={Boolean(adding)}
+          >
+            {adding === 'buy' ? 'Going to checkout…' : 'Buy now'}
           </button>
         </div>
       )}

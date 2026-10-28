@@ -108,7 +108,8 @@ export function SiteHeader() {
             </li>
           ))}
           <li className="category-nav__extra">
-            <NavLink to="/shop?sort=newest">New in</NavLink>
+            {/* A plain link: NavLink ignores the query, so it would look active on every /shop page */}
+            <Link to="/shop?sort=newest">New in</Link>
           </li>
         </ul>
       </nav>

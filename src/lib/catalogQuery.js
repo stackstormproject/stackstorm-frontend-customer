@@ -34,6 +34,7 @@ export const filtersFromUrl = (category, searchParams) => {
     category: category || undefined,
     search: searchParams.get('search') || undefined,
     size: searchParams.get('size') || undefined,
+    brand: searchParams.get('brand') || undefined,
     minPrice: band?.min,
     maxPrice: band?.max,
     sort: searchParams.get('sort') || DEFAULT_SORT,
@@ -55,4 +56,4 @@ export const withParam = (searchParams, key, value) => {
 };
 
 export const activeFilterCount = (searchParams) =>
-  ['size', 'price', 'search'].filter((key) => searchParams.get(key)).length;
+  ['size', 'price', 'search', 'brand'].filter((key) => searchParams.get(key)).length;
