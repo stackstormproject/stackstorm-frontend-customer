@@ -39,3 +39,33 @@ export const confirmPayment = (orderId, paymentIntentId) =>
     { order_id: orderId, payment_intent_id: paymentIntentId },
     guestHeaders(orderId)
   );
+
+/**
+ * POST /payments/checkout-session -> { provider: 'stripe'|'mock', sessionId, url, amount } (#182).
+ * The browser then goes to the hosted payment page (Stripe Checkout, or the test gateway).
+ */
+export const createCheckoutSession = (orderId) =>
+  http.post('/payments/checkout-session', { order_id: orderId }, guestHeaders(orderId));
+
+/** POST /payments/confirm-session - back from the payment page; the server verifies it. */
+export const confirmCheckoutSession = (orderId, sessionId) =>
+  http.post(
+    '/payments/confirm-session',
+    { order_id: orderId, session_id: sessionId },
+    guestHeaders(orderId)
+  );
+
+/**
+ * Where to send the shopper for a session. The test gateway is part of this app, so it is
+ * opened as a route here whatever host the backend thinks the shop is on.
+ */
+export const paymentPageFor = (orderId, session) =>
+  session.provider === 'mock'
+    ? {
+        route: `/checkout/test-gateway?${new URLSearchParams({
+          order: String(orderId),
+          session_id: session.sessionId,
+          amount: String(session.amount),
+        })}`,
+      }
+    : { href: session.url };
