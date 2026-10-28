@@ -33,6 +33,8 @@ All notable changes to the customer storefront. Format:
 - "Continue to payment" opens the hosted payment page (Stripe Checkout, or a labelled test
   gateway without a Stripe key) and returns to `/checkout/complete`, which verifies the
   payment and opens the order confirmation (#182)
+- Order list and order pages fetch the status again every 30 seconds and when the shopper
+  returns to the tab, so a status set in the admin console shows without a reload (#183)
 
 ### Changed
 
@@ -45,6 +47,8 @@ All notable changes to the customer storefront. Format:
 - Hard-coded fallback products, fake "saved locally" successes and the client-only cart (#110)
 - Chat replies that invented order statuses and agents while offline (#111)
 - In-page card form (Stripe Elements), the hold timer and `VITE_STRIPE_PUBLISHABLE_KEY` (#182)
+- "New in" link in the category bar and footer, and the stripe between the header and the
+  banner (#183)
 
 ### Security
 
