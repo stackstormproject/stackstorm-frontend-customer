@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
-import { SiteHeader } from './SiteHeader';
+import { SiteHeader, UtilityBar } from './SiteHeader';
 import { SiteFooter } from './SiteFooter';
 import { ToastViewport } from '../ui/ToastViewport';
 import { CartDrawer } from '../cart/CartDrawer';
@@ -18,6 +18,7 @@ export function Layout({ children }) {
       <a href="#main" className="skip-link">
         Skip to content
       </a>
+      <UtilityBar />
       <SiteHeader />
       <main id="main" tabIndex={-1} className="site-main">
         <Outlet />
