@@ -1,0 +1,286 @@
+/* Header, category nav, footer and the warp stripe. */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header__bar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 64px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.brand__name {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+}
+
+.brand__sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.search {
+  display: flex;
+  max-width: 460px;
+  width: 100%;
+  justify-self: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  padding: 0 var(--space-4);
+  min-height: 40px;
+  font: inherit;
+  background: transparent;
+}
+
+.search input:focus {
+  outline: none;
+}
+
+.search:focus-within {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.search__button {
+  border: 0;
+  background: none;
+  padding: 0 var(--space-3);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.header-action {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
+  padding: 0 var(--space-2);
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.header-action .count {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: var(--color-primary-dark);
+  font-size: 11px;
+  font-weight: var(--font-bold);
+  line-height: 18px;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .site-header__bar {
+    grid-template-columns: auto auto;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+
+  .search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    max-width: none;
+  }
+
+  .header-action span:not(.count) {
+    display: none;
+  }
+}
+
+.category-nav ul {
+  display: flex;
+  gap: var(--space-6);
+  list-style: none;
+  margin: 0 auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.category-nav a {
+  display: inline-block;
+  padding: var(--space-3) 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+}
+
+.category-nav a:hover,
+.category-nav a.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-accent);
+}
+
+/*
+ * The one signature element: warp threads on a handloom. Uneven indigo, gold and undyed
+ * stripes, used under the header and once in the hero. Nowhere else.
+ */
+.warp-stripe {
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-primary) 0 14px,
+    var(--color-surface) 14px 16px,
+    var(--color-primary-lighter) 16px 22px,
+    var(--color-accent) 22px 25px,
+    var(--color-surface) 25px 27px,
+    var(--color-primary) 27px 46px,
+    #e9dfc4 46px 49px
+  );
+}
+
+.warp-stripe--wide {
+  height: 28px;
+}
+
+.site-main {
+  min-height: 60vh;
+}
+
+.site-main:focus {
+  outline: none;
+}
+
+/* Home hero */
+.hero {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.hero__inner {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-12);
+  max-width: var(--container-max-width);
+}
+
+.hero__title {
+  color: var(--color-text-inverse);
+  max-width: 16ch;
+  font-size: clamp(2.25rem, 1.4rem + 3.6vw, 4rem);
+  font-weight: var(--font-semibold);
+}
+
+.hero__lede {
+  max-width: 52ch;
+  color: #cbd5e1;
+  font-size: var(--text-lg);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.hero .btn--primary {
+  background: var(--color-accent);
+  color: var(--color-primary-dark);
+}
+
+.hero .btn--primary:hover {
+  background: var(--color-accent-light);
+}
+
+.hero .btn--ghost {
+  color: var(--color-text-inverse);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Footer */
+.site-footer {
+  margin-top: var(--space-16);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface-subtle);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.site-footer__grid {
+  display: grid;
+  gap: var(--space-8);
+  padding-top: var(--space-10);
+  padding-bottom: var(--space-8);
+}
+
+@media (min-width: 720px) {
+  .site-footer__grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.site-footer__brand {
+  font-family: var(--font-heading);
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+}
+
+.site-footer__heading {
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  margin-bottom: var(--space-2);
+}
+
+.site-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.site-footer a {
+  color: var(--color-text-muted);
+}
+
+.site-footer__legal {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}

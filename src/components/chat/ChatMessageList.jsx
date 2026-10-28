@@ -1,6 +1,17 @@
-import React, { useEffect, useRef } from 'react';
-import { Bot, User, ShieldCheck, Package, Clock, ExternalLink } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { Bot, User, ShieldCheck, Package } from 'lucide-react';
 import './ChatMessageList.css';
+
+const bubbleClass = (isUser, isAgent) => {
+  if (isUser) return 'user-bubble';
+  return isAgent ? 'agent-bubble' : 'bot-bubble';
+};
+
+const senderLabel = (msg, isUser, isAgent) => {
+  if (isUser) return 'You';
+  if (isAgent) return msg.senderName || 'Live Support Agent';
+  return 'Dickwella Virtual Assistant';
+};
 
 export default function ChatMessageList({
   messages = [],
@@ -31,7 +42,6 @@ export default function ChatMessageList({
     <div className="chat-messages-container" data-testid="chat-message-list">
       {messages.map((msg, index) => {
         const isUser = msg.senderRole === 'customer' || msg.senderRole === 'user';
-        const isBot = msg.senderRole === 'bot';
         const isAgent =
           msg.senderRole === 'support_agent' ||
           msg.senderRole === 'agent' ||
@@ -52,17 +62,9 @@ export default function ChatMessageList({
 
             {/* Bubble */}
             <div className="message-content-group">
-              <div className="message-sender-name">
-                {isUser
-                  ? 'You'
-                  : isAgent
-                    ? msg.senderName || 'Live Support Agent'
-                    : 'Dickwella Virtual Assistant'}
-              </div>
+              <div className="message-sender-name">{senderLabel(msg, isUser, isAgent)}</div>
 
-              <div
-                className={`message-bubble ${isUser ? 'user-bubble' : isAgent ? 'agent-bubble' : 'bot-bubble'}`}
-              >
+              <div className={`message-bubble ${bubbleClass(isUser, isAgent)}`}>
                 <p className="message-text">{msg.message}</p>
 
                 {/* If message includes structured order tracking embed */}
@@ -147,7 +149,7 @@ export default function ChatMessageList({
           <div className="quick-chips-list">
             {quickReplies.map((chip, idx) => (
               <button
-                key={idx}
+                key={chip}
                 type="button"
                 className="quick-chip-btn"
                 onClick={() => onSelectQuickReply && onSelectQuickReply(chip)}

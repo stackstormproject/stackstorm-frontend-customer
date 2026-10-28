@@ -20,7 +20,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never' }],
     'no-console': ['error', { allow: ['warn', 'error'] }],
-    'jsx-a11y/label-has-associated-control': ['error', { assert: 'either' }],
+    'jsx-a11y/label-has-associated-control': ['error', { assert: 'either', depth: 3 }],
   },
   overrides: [
     {
@@ -37,6 +37,15 @@ module.exports = {
         afterAll: 'readonly',
       },
       rules: { 'import/no-extraneous-dependencies': ['error', { devDependencies: true }] },
+    },
+    {
+      files: ['e2e/**/*.js', 'playwright.config.js'],
+      env: { node: true },
+      rules: {
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+        'no-await-in-loop': 'off', // e2e steps are sequential by design
+        'no-restricted-syntax': 'off',
+      },
     },
     {
       files: ['vite.config.js'],

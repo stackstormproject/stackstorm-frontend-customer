@@ -1,38 +1,25 @@
-# ==============================================================================
-# Multi-Stage Dockerfile — Customer Storefront SPA
-# StackStorm E-Commerce Platform — Dickwella Fashion Corner
-# Stage 1: Build & Compile React 18 + Vite App
-# Stage 2: Serve High-Performance Static Bundle with Nginx Alpine
-# ==============================================================================
+# Customer storefront: build the static bundle, serve it with nginx.
+# Vite inlines VITE_* variables at build time, so pass them as build args:
+#   docker build --build-arg VITE_STRIPE_PUBLISHABLE_KEY=pk_test_... -t stackstorm-customer .
 
-# Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
-
-# Install dependencies
-COPY package*.json ./
-RUN npm install
-
-# Build static bundle
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
 COPY . .
+ARG VITE_API_BASE_URL=/api/v1
+ARG VITE_STRIPE_PUBLISHABLE_KEY=
+ARG VITE_SOCKET_URL=
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL \
+    VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY \
+    VITE_SOCKET_URL=$VITE_SOCKET_URL
 RUN npm run build
 
-# Stage 2: Serve
 FROM nginx:1.27-alpine AS runner
-
-# Remove default nginx static site
 RUN rm -rf /usr/share/nginx/html/*
-
-# Copy compiled production bundle from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy custom Nginx configuration with SPA fallback routing
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-  CMD wget -qO- http://localhost:80/ || exit 1
-
+COPY security-headers.conf /etc/nginx/snippets/security-headers.conf
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD wget -qO- http://localhost/ >/dev/null || exit 1
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
