@@ -227,6 +227,22 @@ describe('API contract', () => {
     });
   });
 
+  describe('brands and sections (#176)', () => {
+    it('should list brands and pass section, brand and limit filters', async () => {
+      api.onGet('/brands').reply(...ok([]));
+      api.onGet('/products').reply(...ok({ products: [] }));
+
+      await catalog.listBrands();
+      await catalog.listProducts({ section: 'popular', brand: 'atelier', limit: 8 });
+
+      expect(api.history.get[1].params).toMatchObject({
+        section: 'popular',
+        brand: 'atelier',
+        limit: 8,
+      });
+    });
+  });
+
   describe('orders', () => {
     it('should list, read and track orders', async () => {
       rememberGuestOrder(5, 'g5');
@@ -239,6 +255,22 @@ describe('API contract', () => {
       expect(api.history.get[0].params).toEqual({ page: 2 });
       expect(api.history.get[1].headers['X-Guest-Token']).toBe('g5');
       expect(api.history.get[2].url).toBe('/orders/5/track');
+    });
+
+    it('should download the invoice as a PDF blob with the guest token (#177)', async () => {
+      rememberGuestOrder(6, 'g6');
+      api.onGet('/orders/6/invoice').reply(200, 'PDF');
+      api.onGet('/orders/7/invoice').reply(200, 'PDF');
+
+      await orders.getInvoice(6);
+      await orders.getInvoice(7);
+
+      expect(api.history.get[0]).toMatchObject({ responseType: 'blob' });
+      expect(api.history.get[0].headers).toMatchObject({
+        Accept: 'application/pdf',
+        'X-Guest-Token': 'g6',
+      });
+      expect(api.history.get[1].headers['X-Guest-Token']).toBeUndefined();
     });
   });
 

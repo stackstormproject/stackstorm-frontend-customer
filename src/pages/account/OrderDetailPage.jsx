@@ -10,6 +10,8 @@ import { OrderItems } from '../../components/orders/OrderItems';
 import { OrderTotals } from '../../components/orders/OrderTotals';
 import { TrackingTimeline } from '../../components/account/TrackingTimeline';
 import { ReturnDialog } from '../../components/account/ReturnDialog';
+import { ReturnProgress } from '../../components/account/ReturnProgress';
+import { InvoiceButton } from '../../components/orders/InvoiceButton';
 import { formatAddressLines } from '../../components/checkout/AddressFields';
 import { LoadingState, ErrorState } from '../../components/ui/States';
 import NotFoundPage from '../NotFoundPage';
@@ -38,14 +40,16 @@ export default function OrderDetailPage() {
 
   const renderAction = (item) => {
     const { eligible, reason } = returnEligibility(order, item, returns);
+    const request = returns.find((r) => r.order_item_id === item.id);
     return (
       <div className="order-item__actions">
+        {request && <ReturnProgress request={request} />}
         {eligible && (
           <button type="button" className="btn--link" onClick={() => setReturning(item)}>
             Return or exchange
           </button>
         )}
-        {reason && <span className="muted">{reason}</span>}
+        {reason && !request && <span className="muted">{reason}</span>}
         {delivered && item.product_slug && (
           <Link to={`/products/${item.product_slug}#reviews-heading`}>Write a review</Link>
         )}
@@ -59,9 +63,12 @@ export default function OrderDetailPage() {
         <Link to="/account/orders">All orders</Link>
       </p>
       <h2 id="order-heading">Order {order.invoice_number}</h2>
-      <p className="muted">
-        Placed {formatDate(order.order_date)} · {formatOrderStatus(order.status)}
-      </p>
+      <div className="order-detail__head">
+        <p className="muted">
+          Placed {formatDate(order.order_date)} · {formatOrderStatus(order.status)}
+        </p>
+        <InvoiceButton order={order} />
+      </div>
       {order.status === 'payment_pending' && (
         <p className="form-error">
           This order was not paid, so it will not be sent. Place a new order to buy these items.
