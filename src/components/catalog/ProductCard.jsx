@@ -1,144 +1,38 @@
-import { Star, ShoppingBag } from 'lucide-react';
-import { formatLKR, formatRating } from '../../utils/formatters';
+import { Link } from 'react-router-dom';
+import { Price } from '../ui/Price';
+import { StockBadge } from '../ui/StockBadge';
 import { WishlistButton } from './WishlistButton';
-import './ProductCard.css';
+import { productAvailability } from '../../lib/stock';
+import { sortSizes } from '../../lib/catalogQuery';
 
-export const ProductCard = ({
-  product,
-  onAddToCart,
-  onToggleWishlist,
-  onViewDetails,
-  isWishlisted = false,
-}) => {
-  if (!product) return null;
+const PLACEHOLDER_IMAGE =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><rect width="4" height="5" fill="%23e2e8f0"/></svg>';
 
-  const {
-    id,
-    title,
-    base_price,
-    category_name,
-    primary_image,
-    secondary_image,
-    rating = 4.8,
-    review_count = 35,
-    badge,
-    availableStock,
-  } = product;
-
-  const isLowStock = availableStock && availableStock <= 15;
-
-  const handleCardClick = () => {
-    if (onViewDetails) {
-      onViewDetails(product);
-    }
-  };
-
-  const handleAddToCartClick = (e) => {
-    e.stopPropagation();
-    if (onAddToCart) {
-      onAddToCart(product);
-    }
-  };
-
-  const handleWishlistClick = (e) => {
-    e.stopPropagation();
-    if (onToggleWishlist) {
-      onToggleWishlist(product);
-    }
-  };
-
+export function ProductCard({ product }) {
+  const available = productAvailability(product);
+  const sizes = sortSizes((product.variants || []).map((v) => v.size));
   return (
-    <div
-      className="dk-product-card"
-      data-testid={`product-card-${id || product.slug}`}
-      onClick={handleCardClick}
-    >
-      {/* Media container with secondary image hover */}
-      <div className="dk-card-media">
-        {badge && <span className="dk-card-badge">{badge}</span>}
-
-        <WishlistButton
-          product={product}
-          isWishlisted={isWishlisted}
-          onToggle={onToggleWishlist}
-          size={16}
-          className="dk-card-wishlist-btn"
-          dataTestId="card-wishlist-btn"
-        />
-
-        <img
-          src={
-            primary_image ||
-            'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80'
-          }
-          alt={title}
-          className="dk-card-img dk-card-img--primary"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src =
-              'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
-          }}
-        />
-
-        {secondary_image && secondary_image !== primary_image && (
+    <article className="product-card">
+      <Link to={`/products/${product.slug}`} className="product-card__link">
+        <div className="product-card__media">
           <img
-            src={secondary_image}
-            alt={`${title} alternate view`}
-            className="dk-card-img dk-card-img--secondary"
+            src={product.primary_image || PLACEHOLDER_IMAGE}
+            alt=""
             loading="lazy"
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src =
-                'https://images.unsplash.com/photo-1620012253295-c15c429f66bf?auto=format&fit=crop&w=800&q=80';
+            onError={(event) => {
+              // eslint-disable-next-line no-param-reassign
+              event.currentTarget.src = PLACEHOLDER_IMAGE;
             }}
           />
-        )}
-      </div>
-
-      {/* Card Content Details */}
-      <div className="dk-card-body">
-        <div className="dk-card-meta">
-          <span className="dk-card-category">{category_name}</span>
-          <div className="dk-card-rating" aria-label={`Rating ${rating} stars`}>
-            <Star size={13} fill="#D4AF37" color="#D4AF37" />
-            <span>
-              {formatRating(rating)} ({review_count})
-            </span>
-          </div>
         </div>
-
-        <h3 className="dk-card-title" title={title}>
-          {title}
-        </h3>
-
-        <div className="dk-card-footer">
-          <div className="dk-card-price-group">
-            <span className="dk-card-price" data-testid="card-formatted-price">
-              {formatLKR(base_price)}
-            </span>
-            <span
-              className="dk-card-stock-hint"
-              style={{ color: isLowStock ? 'var(--color-warning)' : 'var(--color-success)' }}
-            >
-              {isLowStock ? `Only ${availableStock} left!` : 'In Stock • Ready to dispatch'}
-            </span>
-          </div>
-
-          <button
-            type="button"
-            className="dk-card-quick-add"
-            onClick={handleAddToCartClick}
-            aria-label={`Quick add ${title} to cart`}
-            data-testid="card-quick-add-btn"
-          >
-            <ShoppingBag size={14} />
-            <span>Quick Add</span>
-          </button>
-        </div>
+        <h3 className="product-card__name">{product.name}</h3>
+      </Link>
+      <div className="product-card__meta">
+        <Price amount={product.price} />
+        <StockBadge available={available} />
       </div>
-    </div>
+      {sizes.length > 0 && <p className="product-card__sizes">{sizes.join(', ')}</p>}
+      <WishlistButton productId={product.id} productName={product.name} />
+    </article>
   );
-};
-
-export default ProductCard;
+}

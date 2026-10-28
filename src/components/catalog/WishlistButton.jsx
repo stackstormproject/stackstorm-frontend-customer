@@ -1,61 +1,47 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Heart } from 'lucide-react';
-import './WishlistButton.css';
+import { useWishlist } from '../../state/WishlistContext';
+import { useToast } from '../../state/ToastContext';
 
-/**
- * WishlistButton Component (STORM-FE-008)
- * Animated heart toggle with optimistic UI update, heart pop scale micro-animation,
- * and stopPropagation protection for card/PDP container nesting.
- */
-export function WishlistButton({
-  product = {},
-  isWishlisted = false,
-  onToggle = null,
-  size = 18,
-  className = '',
-  showLabel = false,
-  dataTestId = null,
-}) {
-  const [isAnimating, setIsAnimating] = useState(false);
+export function WishlistButton({ productId, productName, variant = 'icon' }) {
+  const { isSaved, toggle } = useWishlist();
+  const toast = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [busy, setBusy] = useState(false);
+  const saved = isSaved(productId);
 
-  const handleClick = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 500);
-
-    if (onToggle) {
-      onToggle(product);
+  const onClick = async () => {
+    setBusy(true);
+    try {
+      const nowSaved = await toggle(productId);
+      toast.success(
+        nowSaved ? `Saved ${productName}` : `Removed ${productName} from your wishlist`
+      );
+    } catch (error) {
+      if (error.code === 'AUTH_REQUIRED') {
+        toast.info('Sign in to save items to your wishlist.');
+        navigate(`/sign-in?next=${encodeURIComponent(location.pathname + location.search)}`);
+      } else {
+        toast.error(error.message);
+      }
+    } finally {
+      setBusy(false);
     }
   };
-
-  const label = isWishlisted ? 'Remove from wishlist' : 'Save to wishlist';
 
   return (
     <button
       type="button"
-      className={`wishlist-heart-btn ${isWishlisted ? 'is-active' : ''} ${isAnimating ? 'is-animating' : ''} ${className}`}
-      onClick={handleClick}
-      aria-label={label}
-      title={label}
-      data-testid={dataTestId || `wishlist-btn-${product.id || 'default'}`}
+      className={`wishlist-button wishlist-button--${variant} ${saved ? 'is-saved' : ''}`}
+      aria-pressed={saved}
+      aria-label={saved ? `Remove ${productName} from wishlist` : `Save ${productName} to wishlist`}
+      onClick={onClick}
+      disabled={busy}
     >
-      <Heart
-        size={size}
-        className="wishlist-heart-icon"
-        fill={isWishlisted ? '#E11D48' : 'none'}
-        color={isWishlisted ? '#E11D48' : 'currentColor'}
-      />
-      {showLabel && (
-        <span
-          style={{ marginLeft: 6, fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)' }}
-        >
-          {isWishlisted ? 'Wishlisted' : 'Save'}
-        </span>
-      )}
+      <Heart size={18} aria-hidden="true" fill={saved ? 'currentColor' : 'none'} />
+      {variant === 'text' && <span>{saved ? 'Saved' : 'Save'}</span>}
     </button>
   );
 }
-
-export default WishlistButton;

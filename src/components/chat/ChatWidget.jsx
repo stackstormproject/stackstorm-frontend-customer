@@ -1,16 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  MessageSquare,
-  X,
-  Send,
-  Bot,
-  ShieldCheck,
-  Minimize2,
-  RefreshCw,
-  Sparkles,
-} from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { MessageSquare, X, Send, Bot, Minimize2 } from 'lucide-react';
 import ChatMessageList from './ChatMessageList';
-import socketService from '../../services/socket.service';
+import { socketService } from '../../services/socket.service';
 import './ChatWidget.css';
 
 const DEFAULT_QUICK_REPLIES = ['Track My Order', 'Return Policy', 'Speak to an Agent'];
@@ -24,21 +15,35 @@ const INITIAL_WELCOME_MESSAGE = {
   createdAt: new Date().toISOString(),
 };
 
-// Client-side rule fallback in case server socket is in local dev offline mode
+const OFFLINE_ORDER_REPLY =
+  'You can see the live status of every order under Account > Your orders. Live chat is offline right now, so I cannot look up an order here.';
+const OFFLINE_DEFAULT_REPLY =
+  'Live chat is offline right now. Your message is noted here; for order questions see Account > Your orders, and for returns see Help > Returns.';
+
+// Static answers used only while the chat server is unreachable. They must stay true:
+// no order data, no agent names.
 const FALLBACK_FAQ_ANSWERS = {
   'return policy':
     'Dickwella Fashion Corner accepts returns and exchanges within 30 days of delivery. Items must be unworn with original tags attached. Final sale and clearance items are non-returnable.',
-  'track my order':
-    'To track your order, please provide your DFC order number (for example: DFC-2026-104 or #1001).',
   'speak to an agent':
-    'Connecting you to a live Dickwella Fashion Corner support agent... Please hold while we route your session.',
+    'Live chat with our team is offline right now. Call the shop or send a message and we will reply when an agent is back.',
   'store location':
     'Our retail store is located at Main Street, Dickwella, Southern Province, Sri Lanka.',
-  'store hours':
-    'Dickwella Fashion Corner is open Monday through Saturday from 9:00 AM to 8:00 PM, and Sunday from 10:00 AM to 6:00 PM.',
+  'store hours': 'The Dickwella shop on Main Street is open every day from 9 am to 8 pm.',
 };
 
-export default function ChatWidget() {
+/** Display name for an incoming message; agents keep their own name. */
+const senderNameFor = (role, data) => {
+  if (role === 'support_agent') return data.senderName || 'Support agent';
+  if (role === 'customer') return 'You';
+  return 'Dickwella Virtual Assistant';
+};
+
+/**
+ * Live support (FR032) with chatbot fallback (FR033).
+ * @param {{ customer?: object|null, accessToken?: string|null }} props
+ */
+export default function ChatWidget({ customer = null, accessToken = null }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([INITIAL_WELCOME_MESSAGE]);
   const [inputText, setInputText] = useState('');
@@ -52,19 +57,19 @@ export default function ChatWidget() {
   const [isTyping, setIsTyping] = useState(false);
   const [typingAuthor, setTypingAuthor] = useState('Assistant');
   const [hasUnread, setHasUnread] = useState(true);
-  const [quickReplies, setQuickReplies] = useState(DEFAULT_QUICK_REPLIES);
+  const quickReplies = DEFAULT_QUICK_REPLIES;
   const [connectionStatus, setConnectionStatus] = useState('standby'); // 'connected' | 'connecting' | 'standby'
 
   const typingTimeoutRef = useRef(null);
 
   // Initialize socket on open
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) return undefined;
 
     setHasUnread(false);
     setConnectionStatus('connecting');
 
-    const socket = socketService.connect();
+    socketService.connect(accessToken);
 
     const handleConnect = () => {
       setConnectionStatus('connected');
@@ -75,17 +80,7 @@ export default function ChatWidget() {
         // ignore
       }
 
-      const rawUser = (() => {
-        try {
-          const raw =
-            localStorage.getItem('stackstorm_user') ||
-            localStorage.getItem('stackstorm_auth_user') ||
-            localStorage.getItem('user');
-          return raw ? JSON.parse(raw) : null;
-        } catch {
-          return null;
-        }
-      })();
+      const rawUser = customer;
 
       const customerMeta = rawUser
         ? {
@@ -153,13 +148,10 @@ export default function ChatWidget() {
             data.senderType === 'customer' ||
             data.sender === 'customer');
 
-        const normalizedRole = isFromAgent ? 'support_agent' : isFromCustomer ? 'customer' : 'bot';
-
-        const normalizedName = isFromAgent
-          ? data.senderName || 'Alex (Support Agent)'
-          : isFromCustomer
-            ? 'You'
-            : 'Dickwella Virtual Assistant';
+        let normalizedRole = 'bot';
+        if (isFromAgent) normalizedRole = 'support_agent';
+        else if (isFromCustomer) normalizedRole = 'customer';
+        const normalizedName = senderNameFor(normalizedRole, data);
 
         return [
           ...prev,
@@ -203,7 +195,7 @@ export default function ChatWidget() {
       unsubMsg();
       unsubTyping();
     };
-  }, [isOpen]);
+  }, [isOpen, accessToken, customer]);
 
   const toggleOpen = () => {
     setIsOpen((prev) => !prev);
@@ -249,6 +241,18 @@ export default function ChatWidget() {
 
     // Client-side fallback rule simulation
     // Triggered immediately if socket is offline, or as a safety net if server socket does not reply
+    const addBotReply = (message) =>
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          senderRole: 'bot',
+          senderName: 'Dickwella Virtual Assistant',
+          message,
+          createdAt: new Date().toISOString(),
+        },
+      ]);
+
     const triggerLocalFallback = () => {
       setIsTyping(true);
       setTypingAuthor('Assistant');
@@ -258,69 +262,18 @@ export default function ChatWidget() {
 
         const lower = cleanText.toLowerCase();
 
-        // Check order tracking intent (AC4)
-        const orderMatch = cleanText.match(/(?:dfc-\d{4}-|#)?(\d+)/i);
-        if (orderMatch || lower.includes('where is my order') || lower.includes('track')) {
-          const orderNum = orderMatch ? orderMatch[1] : '1';
-          const botReply = {
-            id: `bot-${Date.now()}`,
-            senderRole: 'bot',
-            senderName: 'Dickwella Virtual Assistant',
-            message: `Checking order status for #${orderNum}... Your package is confirmed and in transit with Sri Lanka Post EMS.`,
-            createdAt: new Date().toISOString(),
-            orderData: {
-              order_number: `DFC-2026-${orderNum}`,
-              status: 'shipped',
-              courier: 'Sri Lanka Post EMS',
-              tracking_number: `SLPOST-${orderNum}00-LK`,
-              total_amount_formatted: 'LKR 8,500.00',
-            },
-          };
-          setMessages((prev) => {
-            if (
-              prev.some(
-                (m) => m.senderRole === 'bot' && Date.now() - new Date(m.createdAt).getTime() < 3000
-              )
-            ) {
-              return prev;
-            }
-            return [...prev, botReply];
-          });
+        // Offline we cannot see any order, so never invent a status: point to real tracking.
+        if (/\b(track|order|where is my)\b/.test(lower)) {
+          addBotReply(OFFLINE_ORDER_REPLY);
           return;
         }
 
         // Check FAQ rules
-        let replyText =
+        const replyText =
           FALLBACK_FAQ_ANSWERS[lower] ||
           FALLBACK_FAQ_ANSWERS[Object.keys(FALLBACK_FAQ_ANSWERS).find((k) => lower.includes(k))];
 
-        if (!replyText) {
-          replyText =
-            "Thank you for contacting Dickwella Fashion Corner! We've routed your query to our customer service desk. An agent will respond shortly.";
-        }
-
-        const botReply = {
-          id: `bot-${Date.now()}`,
-          senderRole: lower.includes('agent') ? 'support_agent' : 'bot',
-          senderName: lower.includes('agent')
-            ? 'Live Support Agent'
-            : 'Dickwella Virtual Assistant',
-          message: replyText,
-          createdAt: new Date().toISOString(),
-        };
-
-        setMessages((prev) => {
-          if (
-            prev.some(
-              (m) =>
-                (m.senderRole === 'bot' || m.senderRole === 'support_agent') &&
-                Date.now() - new Date(m.createdAt).getTime() < 3000
-            )
-          ) {
-            return prev;
-          }
-          return [...prev, botReply];
-        });
+        addBotReply(replyText || OFFLINE_DEFAULT_REPLY);
       }, 700);
     };
 
@@ -342,6 +295,7 @@ export default function ChatWidget() {
     <div className="chat-widget-wrapper" data-testid="chat-widget-wrapper">
       {/* Floating Chat Bubble (AC1) */}
       <button
+        type="button"
         className={`floating-chat-bubble ${isOpen ? 'active' : ''}`}
         onClick={toggleOpen}
         aria-label={isOpen ? 'Close Live Support Chat' : 'Open Live Support Chat'}
@@ -380,6 +334,7 @@ export default function ChatWidget() {
 
             <div className="chat-header-actions">
               <button
+                type="button"
                 className="header-icon-btn"
                 onClick={toggleOpen}
                 aria-label="Minimize Chat"
@@ -388,6 +343,7 @@ export default function ChatWidget() {
                 <Minimize2 size={16} />
               </button>
               <button
+                type="button"
                 className="header-icon-btn"
                 onClick={toggleOpen}
                 aria-label="Close Chat"
@@ -416,7 +372,7 @@ export default function ChatWidget() {
               onChange={handleInputChange}
               className="chat-text-input"
               data-testid="chat-input-field"
-              autoFocus
+              aria-label="Message"
             />
             <button
               type="submit"

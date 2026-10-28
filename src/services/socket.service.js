@@ -5,7 +5,8 @@
  */
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+// Same origin by default: nginx (and the Vite dev proxy) forward /socket.io to the API.
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || undefined;
 
 class SocketService {
   constructor() {
@@ -16,11 +17,10 @@ class SocketService {
 
   /**
    * Initializes or reuses the Socket.IO connection.
-   * Attaches JWT authentication token from localStorage if present.
+   * Attaches the in-memory access token when the shopper is signed in.
    */
   connect(token = null) {
-    const authToken =
-      token || localStorage.getItem('token') || localStorage.getItem('stackstorm_token');
+    const authToken = token || null;
 
     if (this.socket) {
       if (this.socket.connected && this.currentAuthToken === authToken) {
@@ -49,16 +49,16 @@ class SocketService {
 
     this.socket.on('connect', () => {
       this.isConnected = true;
-      this._emitLocal('connect', { socketId: this.socket.id });
+      this.emitLocal('connect', { socketId: this.socket.id });
     });
 
     this.socket.on('disconnect', (reason) => {
       this.isConnected = false;
-      this._emitLocal('disconnect', { reason });
+      this.emitLocal('disconnect', { reason });
     });
 
     this.socket.on('connect_error', (error) => {
-      this._emitLocal('connect_error', error);
+      this.emitLocal('connect_error', error);
     });
 
     // Register forwarded backend chat events
@@ -73,7 +73,7 @@ class SocketService {
 
     chatEvents.forEach((eventName) => {
       this.socket.on(eventName, (data) => {
-        this._emitLocal(eventName, data);
+        this.emitLocal(eventName, data);
       });
     });
 
@@ -94,17 +94,12 @@ class SocketService {
   /**
    * Joins or resumes a customer live chat session.
    */
-  joinChat(
-    subject = 'Customer General Support',
-    callback,
-    existingSessionId = null,
-    customerMeta = null
-  ) {
+  joinChat(subject, callback, existingSessionId = null, customerMeta = null) {
     if (!this.socket) this.connect();
     const payload = {
-      subject,
+      subject: subject || 'Customer General Support',
       ...(existingSessionId ? { sessionId: existingSessionId } : {}),
-      ...(customerMeta ? customerMeta : {}),
+      ...(customerMeta || {}),
     };
     this.socket.emit('chat:join', payload, (response) => {
       if (typeof callback === 'function') callback(response);
@@ -179,7 +174,7 @@ class SocketService {
     }
   }
 
-  _emitLocal(event, data) {
+  emitLocal(event, data) {
     if (this.listeners.has(event)) {
       this.listeners.get(event).forEach((handler) => {
         try {
@@ -193,4 +188,3 @@ class SocketService {
 }
 
 export const socketService = new SocketService();
-export default socketService;
