@@ -42,20 +42,19 @@ export async function fillAddress(page) {
 }
 
 /**
- * Pays on the payment step. Uses the test-mode button when the environment has no Stripe
- * key; with Stripe it enters the 4242 test card inside the Stripe iframe.
+ * Pays on the hosted payment page (#182): the storefront's test gateway when the environment
+ * has no Stripe key, otherwise Stripe Checkout with the 4242 test card. Both send the shopper
+ * back to the shop, which opens the order confirmation.
  */
 export async function pay(page) {
-  // Wait until the payment step has decided which provider it shows.
-  await expect(page.getByRole('button', { name: /Place test order|^Pay LKR/ })).toBeVisible();
-  const testButton = page.getByRole('button', { name: /Place test order/ });
-  if (await testButton.isVisible()) {
-    await testButton.click();
+  await page.waitForURL(/\/checkout\/test-gateway|checkout\.stripe\.com/);
+  if (page.url().includes('/checkout/test-gateway')) {
+    await page.getByRole('button', { name: /^Pay LKR/ }).click();
     return;
   }
-  const card = page.frameLocator('iframe[name^="__privateStripeFrame"]').first();
-  await card.getByPlaceholder('Card number').fill('4242 4242 4242 4242');
-  await card.getByPlaceholder('MM / YY').fill('12 / 34');
-  await card.getByPlaceholder('CVC').fill('123');
-  await page.getByRole('button', { name: /^Pay LKR/ }).click();
+  await page.getByLabel('Card number').fill('4242 4242 4242 4242');
+  await page.getByLabel('Expiration').fill('12 / 34');
+  await page.getByLabel('CVC').fill('123');
+  await page.getByLabel('Cardholder name').fill('Test Shopper');
+  await page.getByRole('button', { name: /^Pay/ }).click();
 }

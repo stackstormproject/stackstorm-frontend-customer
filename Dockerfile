@@ -1,6 +1,6 @@
 # Customer storefront: build the static bundle, serve it with nginx.
 # Vite inlines VITE_* variables at build time, so pass them as build args:
-#   docker build --build-arg VITE_STRIPE_PUBLISHABLE_KEY=pk_test_... -t stackstorm-customer .
+#   docker build --build-arg VITE_SOCKET_URL=https://... -t stackstorm-customer .
 
 FROM node:24-alpine AS builder
 WORKDIR /app
@@ -8,10 +8,8 @@ COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
 ARG VITE_API_BASE_URL=/api/v1
-ARG VITE_STRIPE_PUBLISHABLE_KEY=
 ARG VITE_SOCKET_URL=
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL \
-    VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY \
     VITE_SOCKET_URL=$VITE_SOCKET_URL
 RUN npm run build
 
