@@ -27,6 +27,9 @@ All notable changes to the customer storefront. Format:
 - Home page sections chosen in the admin console (new arrivals, popular) with a fallback to
   the newest products, "Our brands" linking to each brand's products, and Add to bag / Buy
   now on every product card and product page (#176)
+- Product gallery with the main photo and up to three more, arrows and a photo counter;
+  "Order placed" page with next steps and a PDF invoice download, also on each paid order;
+  return and exchange progress under the item it is for, and on the order list (#177)
 
 ### Changed
 

@@ -19,3 +19,38 @@ export const returnEligibility = (order, item, existingReturns = [], now = new D
   }
   return { eligible: true, reason: null };
 };
+
+/** Shopper-facing words for a return's status (#177). */
+export const RETURN_STATUS_LABELS = {
+  requested: 'Waiting for review',
+  approved: 'Approved: send the item back',
+  rejected: 'Not accepted',
+  completed: 'Completed',
+};
+
+/**
+ * Steps of a return for a progress line: requested -> approved -> completed, or a final
+ * "Not accepted" step when the shop rejects it (at review or after inspecting the parcel).
+ * @returns {{ label: string, state: 'done'|'current'|'todo'|'rejected' }[]}
+ */
+export const returnSteps = (status, type = 'return') => {
+  const finalLabel = type === 'exchange' ? 'New size sent' : 'Refunded';
+  if (status === 'rejected') {
+    return [
+      { label: 'Requested', state: 'done' },
+      { label: 'Not accepted', state: 'rejected' },
+    ];
+  }
+  const order = ['requested', 'approved', 'completed'];
+  const reached = Math.max(0, order.indexOf(status));
+  return [
+    { label: 'Requested', key: 'requested' },
+    { label: 'Approved, item on its way back', key: 'approved' },
+    { label: finalLabel, key: 'completed' },
+  ].map((step, i) => {
+    let state = 'todo';
+    if (i < reached || (i === reached && status === 'completed')) state = 'done';
+    else if (i === reached) state = 'current';
+    return { label: step.label, state };
+  });
+};
