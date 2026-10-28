@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { listProducts, listCategories, SORT_OPTIONS } from '../api/catalog';
+import { listBrands, listProducts, listCategories, SORT_OPTIONS } from '../api/catalog';
 import { useResource } from '../hooks/useResource';
 import {
   filtersFromUrl,
@@ -25,9 +25,18 @@ export default function CatalogPage() {
   const { data: tree } = useResource(listCategories, []);
   const categories = flattenCategories(tree || []);
 
+  const { data: brands } = useResource(
+    () => (filters.brand ? listBrands() : null),
+    [filters.brand]
+  );
+  const brand = filters.brand && (brands || []).find((b) => b.slug === filters.brand);
+
   const current = categories.find((c) => c.slug === category);
   const title =
-    (filters.search && `Results for "${filters.search}"`) || current?.name || 'All products';
+    (filters.search && `Results for "${filters.search}"`) ||
+    (filters.brand && (brand?.name || filters.brand)) ||
+    current?.name ||
+    'All products';
 
   useEffect(() => {
     document.title = `${title} | Dickwella Fashion Corner`;
@@ -43,6 +52,7 @@ export default function CatalogPage() {
       <header className="catalog__header">
         <div>
           <h1>{title}</h1>
+          {brand?.tagline && <p className="catalog__tagline">{brand.tagline}</p>}
           {!products.loading && !products.error && (
             <p className="catalog__count" role="status">
               {total} {total === 1 ? 'product' : 'products'}
