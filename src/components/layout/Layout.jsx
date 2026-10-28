@@ -3,6 +3,7 @@ import { SiteHeader } from './SiteHeader';
 import { SiteFooter } from './SiteFooter';
 import { ToastViewport } from '../ui/ToastViewport';
 import ChatWidget from '../chat/ChatWidget';
+import { CartDrawer } from '../cart/CartDrawer';
 import { useAuth } from '../../state/AuthContext';
 import { getAccessToken } from '../../lib/session';
 
@@ -20,6 +21,7 @@ export function Layout({ children }) {
       </main>
       <SiteFooter />
       {children}
+      <CartDrawer />
       <ChatWidget customer={customer} accessToken={customer ? getAccessToken() : null} />
       <ToastViewport />
       <ScrollRestoration />
