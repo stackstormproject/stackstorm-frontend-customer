@@ -47,18 +47,19 @@ npm ci
 npm run dev                     # http://localhost:5173 (proxies /api and /socket.io to :5000)
 ```
 
-Without a Stripe key the backend uses a **test payment mode**: checkout shows a clearly
-labelled "Place test order" button and no money moves. Add a Stripe test key to both apps to
-use real card entry (card `4242 4242 4242 4242`, any future date, any CVC).
+"Continue to payment" sends the shopper to the hosted payment page (Stripe Checkout) and Stripe
+sends them back to `/checkout/complete`, which verifies the payment and opens the order
+confirmation. Without a Stripe key on the backend, a clearly labelled **test payment gateway**
+inside this app stands in for Stripe and no money moves. With a Stripe test key on the backend,
+pay with card `4242 4242 4242 4242`, any future date, any CVC.
 
 ## Environment variables
 
-| Variable                      | Default                 | Purpose                                                    |
-| ----------------------------- | ----------------------- | ---------------------------------------------------------- |
-| `VITE_API_BASE_URL`           | `/api/v1`               | API path; nginx and the dev server proxy it to the backend |
-| `VITE_STRIPE_PUBLISHABLE_KEY` | empty                   | `pk_test_...`. Empty = backend test payment mode           |
-| `VITE_SOCKET_URL`             | page origin             | Live-chat Socket.IO origin                                 |
-| `VITE_DEV_API_TARGET`         | `http://localhost:5000` | Dev proxy target (dev server only)                         |
+| Variable              | Default                 | Purpose                                                    |
+| --------------------- | ----------------------- | ---------------------------------------------------------- |
+| `VITE_API_BASE_URL`   | `/api/v1`               | API path; nginx and the dev server proxy it to the backend |
+| `VITE_SOCKET_URL`     | page origin             | Live-chat Socket.IO origin                                 |
+| `VITE_DEV_API_TARGET` | `http://localhost:5000` | Dev proxy target (dev server only)                         |
 
 Vite inlines these at **build** time. Never put secrets in them; `.env` is git-ignored.
 
@@ -86,7 +87,7 @@ Vite inlines these at **build** time. Never put secrets in them; `.env` is git-i
 - `src/state/*`: Auth, Cart (the server is the source of truth), Wishlist, Toasts
 - `src/api/*`: one module per backend area; contract tests in `src/tests/api`
 - Checkout never sends prices: the server prices the order, holds stock for 15 minutes
-  (ADR-004) and verifies the Stripe PaymentIntent before marking the order paid
+  (ADR-004), and verifies the Stripe Checkout session before marking the order paid
 
 ## Tests
 
@@ -98,10 +99,10 @@ Vite inlines these at **build** time. Never put secrets in them; `.env` is git-i
 ## Docker
 
 ```bash
-docker build --build-arg VITE_STRIPE_PUBLISHABLE_KEY=pk_test_... -t stackstorm-customer .
+docker build -t stackstorm-customer .
 docker run --rm stackstorm-customer nginx -t     # validate the nginx config
 ```
 
 nginx serves the bundle, proxies `/api` and `/socket.io` to the `backend` service, sends
-security headers (CSP allowing only Stripe as a third-party script) and never caches
+security headers (CSP with no third-party scripts) and never caches
 `index.html`.

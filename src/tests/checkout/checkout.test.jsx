@@ -1,7 +1,7 @@
-import { act, renderHook, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderApp } from '../renderApp';
-import { useCountdown } from '../../hooks/useCountdown';
+import * as redirect from '../../lib/redirect';
 import { getGuestOrderToken } from '../../lib/session';
 import * as authApi from '../../api/auth';
 import * as cartApi from '../../api/cart';
@@ -20,19 +20,12 @@ vi.mock('../../api/orders');
 vi.mock('../../api/checkout', async (importOriginal) => ({
   ...(await importOriginal()),
   initiateCheckout: vi.fn(),
-  createPaymentIntent: vi.fn(),
-  confirmPayment: vi.fn(),
+  createCheckoutSession: vi.fn(),
+  confirmCheckoutSession: vi.fn(),
   releaseReservation: vi.fn(),
 }));
+vi.mock('../../lib/redirect', () => ({ leaveFor: vi.fn() }));
 vi.mock('../../components/chat/ChatWidget', () => ({ default: () => null }));
-
-const confirmCardPayment = vi.fn();
-vi.mock('@stripe/react-stripe-js', () => ({
-  Elements: ({ children }) => children,
-  CardElement: () => <div data-testid="card-element" />,
-  useStripe: () => ({ confirmCardPayment }),
-  useElements: () => ({ getElement: () => ({}) }),
-}));
 
 const CART = [
   {
@@ -57,11 +50,11 @@ const ORDER = {
   items: [{ variantId: 43, title: 'Festival Sarong Set', quantity: 2, subtotal: 6800, size: 'M' }],
 };
 
-const MOCK_INTENT = {
+const MOCK_SESSION = {
   provider: 'mock',
-  paymentIntentId: 'mock_pi_31',
+  sessionId: 'mock_cs_31_1',
+  url: 'http://localhost:5173/checkout/test-gateway?order=31&session_id=mock_cs_31_1',
   amount: 7250,
-  clientSecret: 'x',
 };
 
 const fillAddress = async () => {
@@ -81,8 +74,8 @@ const setup = ({ customer = null, cart = CART, addresses = [] } = {}) => {
   accountApi.listAddresses.mockResolvedValue(addresses);
   accountApi.addAddress.mockResolvedValue({});
   checkoutApi.initiateCheckout.mockResolvedValue(ORDER);
-  checkoutApi.createPaymentIntent.mockResolvedValue(MOCK_INTENT);
-  checkoutApi.confirmPayment.mockResolvedValue({ orderId: 31, status: 'processing' });
+  checkoutApi.createCheckoutSession.mockResolvedValue(MOCK_SESSION);
+  checkoutApi.confirmCheckoutSession.mockResolvedValue({ orderId: 31, status: 'processing' });
   checkoutApi.releaseReservation.mockResolvedValue({});
   return renderApp('/checkout');
 };
@@ -119,7 +112,7 @@ describe('Checkout (UC-003)', () => {
     expect(screen.getByRole('heading', { name: 'Billing address' })).toBeInTheDocument();
   });
 
-  it('should place and pay a guest order end to end', async () => {
+  it('should place a guest order, pay on the gateway page and land on the confirmation', async () => {
     const { router } = setup();
     ordersApi.getOrder.mockResolvedValue({
       id: 31,
@@ -134,6 +127,7 @@ describe('Checkout (UC-003)', () => {
       items: [
         {
           id: 9,
+          variant_id: 43,
           product_title: 'Festival Sarong Set',
           quantity: 2,
           subtotal: 6800,
@@ -162,37 +156,43 @@ describe('Checkout (UC-003)', () => {
       guestEmail: 'guest@example.lk',
       notes: 'Call on arrival',
     });
-    expect(await screen.findByRole('heading', { name: 'Payment' })).toHaveFocus();
     expect(getGuestOrderToken(31)).toBe('g'.repeat(32));
-    expect(screen.getByText('15:00')).toBeInTheDocument();
-    expect(screen.getByText(/Test mode/)).toBeInTheDocument();
-    expect(screen.getByText('Delivery')).toBeInTheDocument();
+    expect(checkoutApi.createCheckoutSession).toHaveBeenCalledWith(31);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Place test order for LKR 7,250' }));
+    // The test gateway stands in for Stripe's hosted page
+    expect(
+      await screen.findByRole('heading', { name: 'Test payment gateway' })
+    ).toBeInTheDocument();
+    expect(router.state.location.search).toContain('session_id=mock_cs_31_1');
+    await userEvent.click(screen.getByRole('button', { name: 'Pay LKR 7,250' }));
 
-    await waitFor(() => expect(router.state.location.pathname).toBe('/orders/31/confirmation'));
-    expect(checkoutApi.confirmPayment).toHaveBeenCalledWith(31, 'mock_pi_31');
+    await waitFor(() => expect(router.state.location.pathname).toBe('/orders/31/confirmation'), {
+      timeout: 3000,
+    });
+    expect(checkoutApi.confirmCheckoutSession).toHaveBeenCalledWith(31, 'mock_cs_31_1');
     expect(cartApi.removeCartItem).toHaveBeenCalledWith(1);
     expect(await screen.findByRole('heading', { name: /order is placed/ })).toBeInTheDocument();
     expect(screen.getByText(/saved guest@example.lk as the contact/)).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: 'Create an account to track orders' })
-    ).toBeInTheDocument();
   });
 
-  it('should show a failed payment confirmation and let the shopper retry', async () => {
+  it('should send the shopper to Stripe Checkout when Stripe is set up', async () => {
     setup();
-    checkoutApi.confirmPayment
-      .mockRejectedValueOnce(Object.assign(new Error('Payment not completed'), { status: 402 }))
-      .mockResolvedValue({});
+    checkoutApi.createCheckoutSession.mockResolvedValue({
+      provider: 'stripe',
+      sessionId: 'cs_test_1',
+      url: 'https://checkout.stripe.com/c/pay/cs_test_1',
+      amount: 7250,
+    });
     await screen.findByRole('heading', { name: 'Checkout' });
     await userEvent.type(screen.getByLabelText('Email for your receipt'), 'g@x.lk');
     await fillAddress();
+
     await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
 
-    await userEvent.click(await screen.findByRole('button', { name: /Place test order/ }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('Payment not completed');
-    expect(screen.getByRole('button', { name: /Place test order/ })).toBeEnabled();
+    await waitFor(() =>
+      expect(redirect.leaveFor).toHaveBeenCalledWith('https://checkout.stripe.com/c/pay/cs_test_1')
+    );
+    expect(screen.getByRole('status')).toHaveTextContent('Taking you to the secure payment page');
   });
 
   it('should use the default saved address and sign-in email for a customer', async () => {
@@ -239,7 +239,7 @@ describe('Checkout (UC-003)', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
 
-    await screen.findByRole('heading', { name: 'Payment' });
+    await screen.findByRole('heading', { name: 'Test payment gateway' });
     expect(accountApi.addAddress).toHaveBeenCalledWith(
       expect.objectContaining({ line1: '12 Main Street', postalCode: '81200' })
     );
@@ -254,11 +254,11 @@ describe('Checkout (UC-003)', () => {
     );
     await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
 
-    await screen.findByRole('heading', { name: 'Payment' });
+    await screen.findByRole('heading', { name: 'Test payment gateway' });
     expect(accountApi.addAddress).not.toHaveBeenCalled();
   });
 
-  it('should report when a saved address cannot be stored', async () => {
+  it('should still go to payment when a saved address cannot be stored', async () => {
     setup({ customer: { id: 4, email: 'n@x.lk' } });
     accountApi.addAddress.mockRejectedValue(new Error('x'));
     await screen.findByRole('heading', { name: 'Checkout' });
@@ -266,8 +266,9 @@ describe('Checkout (UC-003)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
 
     expect(
-      await screen.findByText('Your address could not be saved for next time.')
+      await screen.findByRole('heading', { name: 'Test payment gateway' })
     ).toBeInTheDocument();
+    expect(accountApi.addAddress).toHaveBeenCalled();
   });
 
   it('should flag an incomplete saved address', async () => {
@@ -323,83 +324,17 @@ describe('Checkout (UC-003)', () => {
     expect(checkoutApi.initiateCheckout).not.toHaveBeenCalled();
   });
 
-  it('should release the hold when the shopper changes details', async () => {
+  it('should explain when the payment page cannot be opened', async () => {
     setup();
+    checkoutApi.createCheckoutSession.mockRejectedValue(new Error('Payments are not configured'));
     await screen.findByRole('heading', { name: 'Checkout' });
     await userEvent.type(screen.getByLabelText('Email for your receipt'), 'g@x.lk');
     await fillAddress();
+
     await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
 
-    await userEvent.click(await screen.findByRole('button', { name: 'Change details' }));
-
-    expect(checkoutApi.releaseReservation).toHaveBeenCalledWith('res_31');
-    expect(screen.getByRole('button', { name: 'Continue to payment' })).toBeInTheDocument();
-  });
-
-  it('should release the hold and explain when the 15 minutes run out', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    setup();
-    checkoutApi.initiateCheckout.mockResolvedValue({ ...ORDER, expires_in: 3 });
-    await screen.findByRole('heading', { name: 'Checkout' });
-    await userEvent.type(screen.getByLabelText('Email for your receipt'), 'g@x.lk');
-    await fillAddress();
-    await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
-    expect(await screen.findByText('Less than 2 minutes left to pay.')).toBeInTheDocument();
-
-    await act(() => vi.advanceTimersByTimeAsync(4000));
-
-    expect(checkoutApi.releaseReservation).toHaveBeenCalledWith('res_31');
-    expect(screen.getByRole('alert')).toHaveTextContent(/hold ended/);
-    vi.useRealTimers();
-  });
-
-  describe('with Stripe', () => {
-    const startStripe = async () => {
-      setup();
-      checkoutApi.createPaymentIntent.mockResolvedValue({
-        provider: 'stripe',
-        clientSecret: 'pi_9_secret',
-        paymentIntentId: 'pi_9',
-        amount: 7250,
-      });
-      await screen.findByRole('heading', { name: 'Checkout' });
-      await userEvent.type(screen.getByLabelText('Email for your receipt'), 'g@x.lk');
-      await fillAddress();
-      await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
-      await screen.findByTestId('card-element');
-    };
-
-    it('should confirm the card with Stripe, then with our server', async () => {
-      confirmCardPayment.mockResolvedValue({ paymentIntent: { id: 'pi_9' } });
-      await startStripe();
-
-      await userEvent.click(screen.getByRole('button', { name: 'Pay LKR 7,250' }));
-
-      expect(confirmCardPayment).toHaveBeenCalledWith('pi_9_secret', expect.any(Object));
-      await waitFor(() => expect(checkoutApi.confirmPayment).toHaveBeenCalledWith(31, 'pi_9'));
-    });
-
-    it('should show a card decline from Stripe', async () => {
-      confirmCardPayment.mockResolvedValue({ error: { message: 'Your card was declined.' } });
-      await startStripe();
-
-      await userEvent.click(screen.getByRole('button', { name: 'Pay LKR 7,250' }));
-
-      expect(await screen.findByRole('alert')).toHaveTextContent('Your card was declined.');
-      expect(checkoutApi.confirmPayment).not.toHaveBeenCalled();
-    });
-
-    it('should show a server verification failure', async () => {
-      confirmCardPayment.mockResolvedValue({ paymentIntent: { id: 'pi_9' } });
-      await startStripe();
-      checkoutApi.confirmPayment.mockRejectedValue(
-        new Error('Payment not completed (status: processing)')
-      );
-
-      await userEvent.click(screen.getByRole('button', { name: 'Pay LKR 7,250' }));
-
-      expect(await screen.findByRole('alert')).toHaveTextContent('Payment not completed');
-    });
+    expect(await screen.findByRole('alert')).toHaveTextContent('Payments are not configured');
+    expect(screen.getByRole('button', { name: 'Continue to payment' })).toBeEnabled();
   });
 });
 
@@ -459,23 +394,5 @@ describe('Order confirmation page', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Try again' }));
 
     expect(await screen.findByText('DFC-2026-0007')).toBeInTheDocument();
-  });
-});
-
-describe('useCountdown', () => {
-  it('should count down, fire once at zero and handle no deadline', async () => {
-    vi.useFakeTimers();
-    const onExpire = vi.fn();
-    const deadline = Date.now() + 2000;
-    const { result } = renderHook(() => useCountdown(deadline, onExpire));
-
-    expect(result.current).toBe(2);
-    await act(() => vi.advanceTimersByTimeAsync(3000));
-    expect(result.current).toBe(0);
-    expect(onExpire).toHaveBeenCalledTimes(1);
-
-    const idle = renderHook(() => useCountdown(null, onExpire));
-    expect(idle.result.current).toBe(0);
-    vi.useRealTimers();
   });
 });

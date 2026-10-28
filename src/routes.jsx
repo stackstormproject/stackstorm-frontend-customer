@@ -14,6 +14,8 @@ import NotFoundPage from './pages/NotFoundPage';
 // Checkout (Stripe) and the account area load on demand to keep the first page small (NFR002).
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const OrderConfirmationPage = lazy(() => import('./pages/OrderConfirmationPage'));
+const CheckoutCompletePage = lazy(() => import('./pages/CheckoutCompletePage'));
+const TestGatewayPage = lazy(() => import('./pages/TestGatewayPage'));
 const AccountLayout = lazy(() => import('./pages/account/AccountLayout'));
 const AccountOverviewPage = lazy(() => import('./pages/account/AccountOverviewPage'));
 const OrdersPage = lazy(() => import('./pages/account/OrdersPage'));
@@ -38,6 +40,7 @@ export const routes = [
       { path: 'products/:slug', element: <ProductPage /> },
       { path: 'cart', element: <CartPage /> },
       { path: 'checkout', element: page(<CheckoutPage />) },
+      { path: 'checkout/complete', element: page(<CheckoutCompletePage />) },
       { path: 'orders/:orderId/confirmation', element: page(<OrderConfirmationPage />) },
       { path: 'sign-in', element: <SignInPage /> },
       { path: 'register', element: <RegisterPage /> },
@@ -57,4 +60,6 @@ export const routes = [
       { path: '*', element: <NotFoundPage /> },
     ],
   },
+  // The test payment gateway stands alone, like the real hosted payment page (#182).
+  { path: 'checkout/test-gateway', element: page(<TestGatewayPage />) },
 ];

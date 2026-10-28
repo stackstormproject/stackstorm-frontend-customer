@@ -30,6 +30,9 @@ All notable changes to the customer storefront. Format:
 - Product gallery with the main photo and up to three more, arrows and a photo counter;
   "Order placed" page with next steps and a PDF invoice download, also on each paid order;
   return and exchange progress under the item it is for, and on the order list (#177)
+- "Continue to payment" opens the hosted payment page (Stripe Checkout, or a labelled test
+  gateway without a Stripe key) and returns to `/checkout/complete`, which verifies the
+  payment and opens the order confirmation (#182)
 
 ### Changed
 
@@ -41,8 +44,9 @@ All notable changes to the customer storefront. Format:
 
 - Hard-coded fallback products, fake "saved locally" successes and the client-only cart (#110)
 - Chat replies that invented order statuses and agents while offline (#111)
+- In-page card form (Stripe Elements), the hold timer and `VITE_STRIPE_PUBLISHABLE_KEY` (#182)
 
 ### Security
 
-- No tokens in web storage; open-redirect-safe `?next=`; CSP restricting scripts to the site
-  and Stripe; security headers kept on every nginx location (#110, #114, #120)
+- No tokens in web storage; open-redirect-safe `?next=`; CSP restricting scripts to the site;
+  security headers kept on every nginx location (#110, #114, #120, #182)

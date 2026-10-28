@@ -1,19 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   SHIPPING_METHODS,
   initiateCheckout,
-  createPaymentIntent,
-  confirmPayment,
-  releaseReservation,
+  createCheckoutSession,
+  paymentPageFor,
 } from '../api/checkout';
 import { listAddresses, addAddress } from '../api/account';
-import { removeCartItem } from '../api/cart';
+import { leaveFor } from '../lib/redirect';
 import { useAuth } from '../state/AuthContext';
 import { useCart, FREE_SHIPPING_THRESHOLD, STANDARD_SHIPPING_FEE } from '../state/CartContext';
 import { useToast } from '../state/ToastContext';
 import { useResource } from '../hooks/useResource';
-import { useCountdown } from '../hooks/useCountdown';
 import { rememberGuestOrder } from '../lib/session';
 import { validateAddress, validateEmail, hasErrors } from '../lib/validation';
 import { FormField } from '../components/ui/FormField';
@@ -26,9 +24,6 @@ import {
   formatAddressLines,
 } from '../components/checkout/AddressFields';
 import { OrderSummary } from '../components/checkout/OrderSummary';
-import { HoldTimer } from '../components/checkout/HoldTimer';
-import { StripeCardForm } from '../components/checkout/StripeCardForm';
-import { TestPaymentForm } from '../components/checkout/TestPaymentForm';
 
 const NEW_ADDRESS = 'new';
 
@@ -43,54 +38,6 @@ const estimateTotals = (subtotal, method) => {
     total_amount: subtotal + shipping,
   };
 };
-
-function PaymentStep({ checkout, customerName, onPaid, onExpired, onChangeDetails }) {
-  const seconds = useCountdown(checkout.expiresAt, onExpired);
-  const headingRef = useRef(null);
-  const { intent } = checkout;
-
-  // Moving to a new step: bring it into view and put keyboard focus on its heading.
-  useEffect(() => {
-    headingRef.current?.focus();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  return (
-    <section aria-labelledby="payment-heading" className="checkout__step">
-      <h2 id="payment-heading" ref={headingRef} tabIndex={-1}>
-        Payment
-      </h2>
-      <HoldTimer seconds={seconds} />
-      <div className="checkout__review">
-        <h3>Delivering to</h3>
-        <address>
-          {formatAddressLines(checkout.shippingAddress).map((lineText) => (
-            <span key={lineText}>{lineText}</span>
-          ))}
-        </address>
-        <button type="button" className="btn--link" onClick={onChangeDetails}>
-          Change details
-        </button>
-      </div>
-      {intent.provider === 'stripe' ? (
-        <StripeCardForm
-          clientSecret={intent.clientSecret}
-          amount={intent.amount}
-          billingName={customerName}
-          onPaid={onPaid}
-          disabled={seconds === 0}
-        />
-      ) : (
-        <TestPaymentForm
-          paymentIntentId={intent.paymentIntentId}
-          amount={intent.amount}
-          onPaid={onPaid}
-          disabled={seconds === 0}
-        />
-      )}
-    </section>
-  );
-}
 
 export default function CheckoutPage() {
   const { customer, isSignedIn, status } = useAuth();
@@ -107,8 +54,7 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [checkout, setCheckout] = useState(null); // set once the order and hold exist
-  const [expired, setExpired] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   const saved = useResource(
     () => (isSignedIn ? listAddresses() : Promise.resolve([])),
@@ -128,7 +74,7 @@ export default function CheckoutPage() {
     return <LoadingState label="Preparing checkout" />;
   }
 
-  if (!items.length && !checkout) {
+  if (!items.length && !redirecting) {
     return (
       <div className="container page">
         <EmptyState
@@ -189,17 +135,13 @@ export default function CheckoutPage() {
           toast.info('Your address could not be saved for next time.')
         );
       }
-      const intent = await createPaymentIntent(order.order_id);
-      setCheckout({
-        orderId: order.order_id,
-        reservationId: order.reservation_id,
-        expiresAt: Date.now() + Number(order.expires_in || 900) * 1000,
-        breakdown: order.breakdown,
-        items: order.items,
-        shippingAddress,
-        intent,
-      });
-      setExpired(false);
+      // #182: payment happens on the hosted payment page; it sends the shopper back to
+      // /checkout/complete, which verifies the payment and shows the confirmation.
+      const session = await createCheckoutSession(order.order_id);
+      const target = paymentPageFor(order.order_id, session);
+      setRedirecting(true);
+      if (target.route) navigate(target.route);
+      else leaveFor(target.href);
     } catch (error) {
       if (error.status === 409) {
         setFormError('Some items sold out while you were checking out. Your bag has been updated.');
@@ -207,67 +149,27 @@ export default function CheckoutPage() {
       } else {
         setFormError(error.message);
       }
-    } finally {
       setSubmitting(false);
     }
-  };
-
-  const releaseHold = () => {
-    if (checkout?.reservationId) releaseReservation(checkout.reservationId).catch(() => {});
-  };
-
-  const backToDetails = () => {
-    releaseHold();
-    setCheckout(null);
-  };
-
-  const onExpired = () => {
-    releaseHold();
-    setCheckout(null);
-    setExpired(true);
-  };
-
-  const onPaid = async (paymentIntentId) => {
-    const { orderId } = checkout;
-    await confirmPayment(orderId, paymentIntentId);
-    // The order now owns these items; clear them from the bag.
-    await Promise.allSettled(items.map((item) => removeCartItem(item.id)));
-    refresh().catch(() => {});
-    navigate(`/orders/${orderId}/confirmation`, { replace: true });
   };
 
   return (
     <div className="container page checkout">
       <h1>Checkout</h1>
       <ol className="steps" aria-label="Checkout progress">
-        <li
-          aria-current={checkout ? undefined : 'step'}
-          className={checkout ? 'is-done' : 'is-current'}
-        >
+        <li aria-current="step" className="is-current">
           Details
         </li>
-        <li aria-current={checkout ? 'step' : undefined} className={checkout ? 'is-current' : ''}>
-          Payment
-        </li>
+        <li>Payment</li>
+        <li>Confirmation</li>
       </ol>
 
       <div className="checkout__layout">
         <div>
-          {expired && (
-            <p className="form-error" role="alert">
-              The 15-minute hold ended, so your items went back on sale. Check your details and
-              continue to place the order again.
+          {redirecting ? (
+            <p className="checkout__redirect" role="status">
+              Taking you to the secure payment page…
             </p>
-          )}
-
-          {checkout ? (
-            <PaymentStep
-              checkout={checkout}
-              customerName={customer?.name}
-              onPaid={onPaid}
-              onExpired={onExpired}
-              onChangeDetails={backToDetails}
-            />
           ) : (
             <form onSubmit={startPayment} noValidate className="checkout__step">
               {formError && (
@@ -384,17 +286,13 @@ export default function CheckoutPage() {
                 {submitting ? 'Holding your items…' : 'Continue to payment'}
               </button>
               <p className="muted checkout__hint">
-                We hold your items for 15 minutes while you pay.
+                You pay on a secure payment page; we hold your items for 15 minutes.
               </p>
             </form>
           )}
         </div>
 
-        <OrderSummary
-          items={checkout ? checkout.items : items}
-          breakdown={checkout?.breakdown}
-          estimate={estimateTotals(subtotal, method)}
-        />
+        <OrderSummary items={items} estimate={estimateTotals(subtotal, method)} />
       </div>
     </div>
   );
