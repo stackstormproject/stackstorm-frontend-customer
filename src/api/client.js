@@ -52,6 +52,7 @@ export const setAccessToken = (token) => {
 };
 
 export const getAccessToken = () => {
+ build/109-real-quality-gates
   if (!inMemoryAccessToken) {
     try {
       inMemoryAccessToken =
@@ -60,7 +61,20 @@ export const getAccessToken = () => {
         localStorage.getItem('stackstorm_auth_token');
     } catch {
       inMemoryAccessToken = null;
+
+  try {
+    const storedToken =
+      localStorage.getItem('token') ||
+      localStorage.getItem('stackstorm_token') ||
+      localStorage.getItem('stackstorm_auth_token')
+    if (!storedToken) {
+      inMemoryAccessToken = null
+    } else if (!inMemoryAccessToken) {
+      inMemoryAccessToken = storedToken
+develop
     }
+  } catch {
+    // Retain in-memory token if localStorage is blocked/inaccessible
   }
   return inMemoryAccessToken;
 };
@@ -123,12 +137,26 @@ apiClient.interceptors.response.use(
       );
     }
 
+ build/109-real-quality-gates
     const { status, data } = error.response;
     const isAuthRefresh =
       originalRequest.url && originalRequest.url.includes('/auth/refresh-token');
 
     // Handle 401 Unauthorized token expiry with single-use rotation
     if (status === 401 && !originalRequest._retry && !isAuthRefresh) {
+=======
+    const { status, data } = error.response
+    const isAuthEndpoint =
+      originalRequest.url &&
+      (originalRequest.url.includes('/auth/refresh-token') ||
+        originalRequest.url.includes('/auth/login') ||
+        originalRequest.url.includes('/auth/register') ||
+        originalRequest.url.includes('/auth/admin/login') ||
+        originalRequest.url.includes('/auth/logout'))
+
+    // Handle 401 Unauthorized token expiry with single-use rotation (only for protected API endpoints, never auth endpoints)
+    if (status === 401 && !originalRequest._retry && !isAuthEndpoint) {
+ develop
       if (isRefreshing) {
         // Enqueue concurrent requests while single refresh promise resolves
         return new Promise((resolve, reject) => {

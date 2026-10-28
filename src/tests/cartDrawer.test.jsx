@@ -134,4 +134,27 @@ describe('STORM-FE-009: Slide-Over Cart Drawer, Live Quantity Adjusters & Guest 
     expect(result.current.discountAmount).toBe(900);
     expect(result.current.discountedSubtotal).toBe(8100);
   });
+
+  // Test 5: Proceed to Checkout closes the drawer and triggers onCheckout (AC5)
+  it('AC5: should automatically close drawer and trigger onCheckout callback when Proceed to Checkout is clicked', () => {
+    const handleClose = vi.fn();
+    const handleCheckout = vi.fn();
+
+    render(
+      <CartDrawer
+        isOpen={true}
+        onClose={handleClose}
+        onCheckout={handleCheckout}
+        items={[sampleCartItem]}
+      />
+    );
+
+    const checkoutBtn = screen.getByTestId('cart-checkout-btn');
+    expect(checkoutBtn).toBeInTheDocument();
+
+    fireEvent.click(checkoutBtn);
+
+    expect(handleClose).toHaveBeenCalledTimes(1);
+    expect(handleCheckout).toHaveBeenCalledTimes(1);
+  });
 });

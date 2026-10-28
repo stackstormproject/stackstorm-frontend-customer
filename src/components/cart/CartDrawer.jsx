@@ -208,10 +208,11 @@ export function CartDrawer({
               type="button"
               className="cart-drawer__checkout-btn"
               onClick={() => {
-                if (propOnCheckout) {
-                  propOnCheckout();
-                } else if (handleClose) {
+                if (typeof handleClose === 'function') {
                   handleClose();
+                }
+                if (typeof propOnCheckout === 'function') {
+                  propOnCheckout();
                 }
               }}
               data-testid="cart-checkout-btn"

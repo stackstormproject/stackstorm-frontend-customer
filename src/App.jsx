@@ -53,7 +53,7 @@ function StorefrontContent() {
     clearWishlist,
   } = useWishlist();
 
-  const { totalItems: cartCount, openCart, addItem: addCartItem } = useCart();
+  const { totalItems: cartCount, openCart, closeCart, addItem: addCartItem } = useCart();
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [activeReservation, setActiveReservation] = useState(() => {
     if (typeof window === 'undefined') return null;
@@ -952,7 +952,16 @@ function StorefrontContent() {
       {/* Slide-Over Shopping Cart Drawer (STORM-FE-009) */}
       <CartDrawer
         onCheckout={() => {
+          if (typeof closeCart === 'function') {
+            closeCart();
+          }
           setIsCheckoutView(true);
+          setIsProfileView(false);
+          setIsWishlistView(false);
+          setIsOrderHistoryView(false);
+          setIsBrandStoryView(false);
+          setSelectedProduct(null);
+          setCompletedOrder(null);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />

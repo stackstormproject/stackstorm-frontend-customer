@@ -21,16 +21,28 @@ import './CheckoutPage.css';
  * Master multi-step checkout coordinator supporting Sri Lankan address capture,
  * shipping calculation, live reservation countdown, and sticky financial summary.
  */
+build/109-real-quality-gates
 export function CheckoutPage({ onBackToCatalog, onOrderCompleted, initialReservation = null }) {
   const { items, subtotal, discount, total, clearCart } = useCart();
+
+export function CheckoutPage({
+  onBackToCatalog,
+  onOrderCompleted,
+  initialReservation = null,
+}) {
+  const { items = [], subtotal = 0, discount = 0, discountAmount = 0, total = 0, clearCart } = useCart();
+ develop
   const { toast } = useToast();
+
+  const effectiveDiscount = Number(discount || discountAmount || 0);
+  const safeSubtotal = Number(subtotal || 0);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [shippingAddress, setShippingAddress] = useState(null);
   const [shippingInfo, setShippingInfo] = useState({
     method: 'standard',
     methodTitle: 'Standard Island-Wide Courier',
-    cost: subtotal >= 10000 ? 0 : 450,
+    cost: safeSubtotal >= 10000 ? 0 : 450,
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -39,6 +51,7 @@ export function CheckoutPage({ onBackToCatalog, onOrderCompleted, initialReserva
   const [isExpiredModalOpen, setIsExpiredModalOpen] = useState(false);
 
   // Recalculate shipping cost if subtotal qualifies
+ build/109-real-quality-gates
   const actualShippingCost =
     shippingInfo.method === 'pickup'
       ? 0
@@ -46,7 +59,14 @@ export function CheckoutPage({ onBackToCatalog, onOrderCompleted, initialReserva
         ? 0
         : shippingInfo.cost;
 
-  const finalOrderTotal = Math.max(0, subtotal - discount + actualShippingCost);
+  const actualShippingCost = shippingInfo.method === 'pickup'
+    ? 0
+    : safeSubtotal >= 10000 && shippingInfo.method === 'standard'
+    ? 0
+    : (shippingInfo.cost || 0);
+ develop
+
+  const finalOrderTotal = Math.max(0, safeSubtotal - effectiveDiscount + actualShippingCost);
 
   const formatLkr = (amount) => {
     return `LKR ${Number(amount || 0).toLocaleString('en-LK', {
@@ -97,8 +117,8 @@ export function CheckoutPage({ onBackToCatalog, onOrderCompleted, initialReserva
         order_number: `DFC-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`,
         id: `dfc-order-${Date.now()}`,
         items: [...items],
-        subtotal,
-        discount,
+        subtotal: safeSubtotal,
+        discount: effectiveDiscount,
         shippingFee: actualShippingCost,
         total_amount: finalOrderTotal,
         shippingAddress: { ...shippingAddress },
@@ -265,7 +285,7 @@ export function CheckoutPage({ onBackToCatalog, onOrderCompleted, initialReserva
                     </div>
                   </div>
                   <div className="order-summary-item__price">
-                    {formatLkr(item.price * item.quantity)}
+                    {formatLkr(Number(item.price ?? item.unit_price ?? 0) * (item.quantity || 1))}
                   </div>
                 </div>
               ))}
@@ -276,15 +296,15 @@ export function CheckoutPage({ onBackToCatalog, onOrderCompleted, initialReserva
               <div className="order-summary-card__row">
                 <span className="order-summary-card__label">Subtotal</span>
                 <span className="order-summary-card__val" data-testid="order-summary-subtotal">
-                  {formatLkr(subtotal)}
+                  {formatLkr(safeSubtotal)}
                 </span>
               </div>
 
-              {discount > 0 && (
+              {effectiveDiscount > 0 && (
                 <div className="order-summary-card__row order-summary-card__row--discount">
                   <span className="order-summary-card__label">Promotion Discount</span>
                   <span className="order-summary-card__val" data-testid="order-summary-discount">
-                    -{formatLkr(discount)}
+                    -{formatLkr(effectiveDiscount)}
                   </span>
                 </div>
               )}
