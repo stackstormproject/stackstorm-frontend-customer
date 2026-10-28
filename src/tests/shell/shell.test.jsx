@@ -32,6 +32,7 @@ describe('App shell', () => {
     ]);
     wishlistApi.getWishlist.mockResolvedValue([]);
     catalogApi.listCategories.mockResolvedValue(CATEGORIES);
+    catalogApi.listProducts.mockResolvedValue({ products: [], pagination: { total: 0 } });
   });
 
   it('should render the home page with top-level categories only', async () => {
@@ -164,6 +165,16 @@ describe('useResource', () => {
     await act(async () => resolveFirst('a-data'));
 
     expect(result.current.data).toBe('b-data');
+  });
+
+  it('should report a loader that throws synchronously', async () => {
+    const { result } = renderHook(() =>
+      useResource(() => {
+        throw new Error('sync');
+      }, [])
+    );
+
+    await waitFor(() => expect(result.current.error?.message).toBe('sync'));
   });
 
   it('should expose errors, reload and local updates', async () => {
