@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { listMyOrders } from '../../api/orders';
+import { listMyReturns } from '../../api/returns';
 import { useResource } from '../../hooks/useResource';
 import { formatDate, formatOrderStatus } from '../../lib/format';
 import { Price } from '../../components/ui/Price';
@@ -11,6 +12,19 @@ import { LoadingState, ErrorState, EmptyState } from '../../components/ui/States
 export default function OrdersPage() {
   const [page, setPage] = useState(1);
   const orders = useResource(() => listMyOrders(page), [page]);
+  // Returns are shown on the order they belong to (#177); failing to load them hides only that.
+  const returns = useResource(() => listMyReturns().catch(() => null), []);
+  const returnsByOrder = (returns.data?.returns || []).reduce((map, r) => {
+    map.set(r.order_id, [...(map.get(r.order_id) || []), r]);
+    return map;
+  }, new Map());
+  const returnLabel = (orderId) => {
+    const list = returnsByOrder.get(orderId);
+    if (!list) return null;
+    const open = list.filter((r) => ['requested', 'approved'].includes(r.status)).length;
+    if (open) return `${open} ${open === 1 ? 'return' : 'returns'} in progress`;
+    return list.length === 1 ? 'Return closed' : 'Returns closed';
+  };
 
   if (orders.loading) return <LoadingState label="Loading your orders" />;
   if (orders.error) return <ErrorState error={orders.error} onRetry={orders.reload} />;
@@ -42,6 +56,9 @@ export default function OrdersPage() {
                 {order.items_count} {order.items_count === 1 ? 'item' : 'items'}
               </span>
               <Price amount={order.total_amount} />
+              {returnLabel(order.id) && (
+                <span className="order-row__return">{returnLabel(order.id)}</span>
+              )}
             </Link>
           </li>
         ))}
