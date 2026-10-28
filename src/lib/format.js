@@ -33,6 +33,9 @@ const ORDER_STATUS_LABELS = {
 
 export const formatOrderStatus = (status) => ORDER_STATUS_LABELS[status] || status || 'Unknown';
 
+/** How often the order pages fetch the status again, so admin changes show up (#183). */
+export const ORDER_REFRESH_MS = 30000;
+
 /** "mm:ss" for the reservation countdown. */
 export const formatCountdown = (totalSeconds) => {
   const seconds = Math.max(0, Math.floor(totalSeconds));
