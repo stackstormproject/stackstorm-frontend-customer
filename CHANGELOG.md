@@ -21,6 +21,9 @@ All notable changes to the customer storefront. Format:
 - axe-core accessibility tests; collapsible filters and two-column grid on phones (#118)
 - Playwright E2E suite and nightly staging workflow (#119)
 - README for a fresh machine, CSP and cache headers, reproducible Docker build (#120)
+- Storefront header with a delivery bar and shop mark, three animated home banners that
+  pause on hover, focus or reduced motion, collection banners, and a navy footer with the
+  shop's promises (#175)
 
 ### Changed
 
