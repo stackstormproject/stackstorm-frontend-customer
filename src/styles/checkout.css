@@ -264,3 +264,104 @@ address {
   gap: var(--space-3);
   margin-top: var(--space-6);
 }
+
+/* Order placed: banner with an animated tick, next steps (#177) */
+.confirmation__banner {
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-start;
+  padding: var(--space-8);
+  border-radius: var(--radius-lg);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.confirmation__banner h1 {
+  color: var(--color-text-inverse);
+}
+
+.confirmation__banner .confirmation__lede {
+  color: #cbd5e1;
+}
+
+.confirmation__banner .confirmation__lede strong {
+  color: var(--color-accent);
+}
+
+.confirmation__tick {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.confirmation__tick circle {
+  stroke-dasharray: 151;
+  animation: tick-draw 700ms ease-out both;
+}
+
+.confirmation__tick path {
+  stroke-dasharray: 40;
+  animation: tick-draw 400ms 500ms ease-out both;
+}
+
+@keyframes tick-draw {
+  from {
+    stroke-dashoffset: 151;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.confirmation__next {
+  display: grid;
+  gap: var(--space-4);
+  margin: var(--space-8) 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: next;
+}
+
+@media (min-width: 768px) {
+  .confirmation__next {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.confirmation__next li {
+  counter-increment: next;
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.confirmation__next li::before {
+  content: counter(next);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-light);
+  color: var(--color-primary);
+  font-weight: var(--font-bold);
+}
+
+.confirmation__next span {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 559px) {
+  .confirmation__banner {
+    flex-direction: column;
+    padding: var(--space-6);
+  }
+}

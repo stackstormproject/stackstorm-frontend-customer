@@ -2,15 +2,9 @@ import { Link } from 'react-router-dom';
 import { listMyReturns } from '../../api/returns';
 import { useResource } from '../../hooks/useResource';
 import { formatDate } from '../../lib/format';
+import { RETURN_STATUS_LABELS as RETURN_STATUS } from '../../lib/returns';
 import { Price } from '../../components/ui/Price';
 import { LoadingState, ErrorState, EmptyState } from '../../components/ui/States';
-
-const RETURN_STATUS = {
-  requested: 'Waiting for review',
-  approved: 'Approved: send the item back',
-  rejected: 'Not accepted',
-  completed: 'Completed',
-};
 
 export default function ReturnsPage() {
   const returns = useResource(listMyReturns, []);
@@ -39,6 +33,9 @@ export default function ReturnsPage() {
           <li key={item.id} className="return-row">
             <div>
               <strong>{item.product_title}</strong>
+              <Link to={`/account/orders/${item.order_id}`} className="return-row__order">
+                View order
+              </Link>
               <p className="muted">
                 {item.type === 'exchange' ? 'Exchange' : 'Refund'} · {formatDate(item.created_at)} ·{' '}
                 {item.reason}
