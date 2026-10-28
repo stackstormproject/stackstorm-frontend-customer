@@ -10,6 +10,7 @@
 
 const GUEST_CART_KEY = 'dfc.guestCartToken';
 const GUEST_ORDERS_KEY = 'dfc.guestOrders';
+const SESSION_HINT_KEY = 'dfc.hasSession';
 const GUEST_TOKEN_PATTERN = /^[A-Za-z0-9_-]{16,64}$/;
 
 let accessToken = null;
@@ -28,6 +29,27 @@ export const clearAccessToken = () => setAccessToken(null);
 export const onAccessTokenChange = (listener) => {
   listeners.add(listener);
   return () => listeners.delete(listener);
+};
+
+/**
+ * A non-secret hint that this browser has signed in before. Without it the app skips the
+ * session-restore request on load, so first-time visitors do not trigger a 401 every page.
+ */
+export const hasSessionHint = () => {
+  try {
+    return window.localStorage.getItem(SESSION_HINT_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+
+export const setSessionHint = (present) => {
+  try {
+    if (present) window.localStorage.setItem(SESSION_HINT_KEY, '1');
+    else window.localStorage.removeItem(SESSION_HINT_KEY);
+  } catch {
+    // Storage unavailable (private mode): no hint, so the shopper signs in again after reload.
+  }
 };
 
 const safeStorage = () => {
