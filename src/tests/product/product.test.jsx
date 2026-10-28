@@ -70,7 +70,9 @@ describe('Product page (FR003, FR004)', () => {
       '/shop/men-batik-shirts'
     );
     expect(screen.getByText('Hand wash cold')).toBeInTheDocument();
-    expect(document.title).toBe('Indigo Batik Shirt | Dickwella Fashion Corner');
+    await waitFor(() =>
+      expect(document.title).toBe('Indigo Batik Shirt | Dickwella Fashion Corner')
+    );
 
     await userEvent.click(screen.getByRole('button', { name: 'Show image 2 of 2' }));
     expect(screen.getByRole('img', { name: 'Indigo Batik Shirt' })).toHaveAttribute(

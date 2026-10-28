@@ -162,6 +162,20 @@ describe('Catalog page (FR001, FR002, FR003)', () => {
     expect(router.state.location.search).toBe('?sort=price_desc');
   });
 
+  it('should toggle the filter panel and show the active filter count', async () => {
+    catalogApi.listProducts.mockResolvedValue(page([product(1)]));
+    renderApp('/shop?size=M&price=under-3000');
+    const toggle = await screen.findByRole('button', { name: 'Filters (2)' });
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(toggle);
+    expect(screen.getByRole('button', { name: 'Hide filters (2)' })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    );
+    expect(screen.getByRole('complementary', { name: 'Filters' })).toHaveClass('is-open');
+  });
+
   it('should show search results with a title', async () => {
     catalogApi.listProducts.mockResolvedValue(page([product(1)]));
     renderApp('/shop?search=batik');

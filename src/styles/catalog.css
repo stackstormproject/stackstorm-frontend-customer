@@ -46,6 +46,23 @@
   }
 }
 
+/* Phones: filters collapse behind a button so products are visible first. */
+.filters-toggle {
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 899px) {
+  .filters:not(.is-open) {
+    display: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .filters-toggle {
+    display: none;
+  }
+}
+
 .filters__group {
   border: 0;
   padding: 0;
@@ -218,4 +235,16 @@
   gap: var(--space-4);
   margin-top: var(--space-10);
   font-size: var(--text-sm);
+}
+
+@media (max-width: 559px) {
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-3);
+  }
+
+  .product-card__meta {
+    flex-direction: column;
+    gap: 0;
+  }
 }

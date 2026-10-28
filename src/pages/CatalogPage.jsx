@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { listProducts, listCategories, SORT_OPTIONS } from '../api/catalog';
 import { useResource } from '../hooks/useResource';
@@ -19,6 +19,8 @@ export default function CatalogPage() {
   const filters = filtersFromUrl(category, params);
   const key = `${category || ''}?${params.toString()}`;
 
+  const [showFilters, setShowFilters] = useState(false);
+  const activeCount = activeFilterCount(params);
   const products = useResource(() => listProducts(filters), [key]);
   const { data: tree } = useResource(listCategories, []);
   const categories = flattenCategories(tree || []);
@@ -59,22 +61,38 @@ export default function CatalogPage() {
         </label>
       </header>
 
+      <button
+        type="button"
+        className="btn btn--ghost filters-toggle"
+        aria-expanded={showFilters}
+        aria-controls="catalog-filters"
+        onClick={() => setShowFilters((v) => !v)}
+      >
+        {showFilters ? 'Hide filters' : 'Filters'}
+        {activeCount > 0 && ` (${activeCount})`}
+      </button>
+
       <div className="catalog__body">
         <FilterPanel
+          id="catalog-filters"
+          isOpen={showFilters}
           category={category}
           categories={categories}
           params={params}
           onChange={setFilter}
           onClear={clearFilters}
         />
-        <section aria-label="Products" className="catalog__results">
+        <section aria-labelledby="results-heading" className="catalog__results">
+          <h2 id="results-heading" className="visually-hidden">
+            Products
+          </h2>
           {products.loading && <LoadingState label="Loading products" />}
           {products.error && <ErrorState error={products.error} onRetry={products.reload} />}
           {products.data && products.data.products.length === 0 && (
             <EmptyState
               title="No products match"
               action={
-                activeFilterCount(params) > 0 ? (
+                activeCount > 0 ? (
                   <button type="button" className="btn btn--secondary" onClick={clearFilters}>
                     Clear filters
                   </button>
