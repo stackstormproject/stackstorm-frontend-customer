@@ -95,6 +95,34 @@ describe('HeroCarousel', () => {
 
     expect(screen.queryByRole('button', { name: 'Next banner' })).not.toBeInTheDocument();
   });
+
+  // Refs #200: admin-managed banners replace the default slide in the matching slot.
+  it('should replace a slide with the admin banner in its slot, by image', () => {
+    const { container } = renderIn(
+      <HeroCarousel
+        banners={[
+          { slot: 2, title: 'Monsoon sale', subtitle: 'Up to 40% off', image_url: '/b2.jpg' },
+        ]}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /Show banner 2/ }));
+    expect(activeTitle()).toBe('Monsoon sale');
+    expect(screen.getByText('Up to 40% off')).toBeInTheDocument();
+    expect(container.querySelector('.hero-slide__art img')).toHaveAttribute('src', '/b2.jpg');
+  });
+
+  it('should keep the default slide for a slot with no banner, and the default link with no button fields', () => {
+    renderIn(<HeroCarousel banners={[{ slot: 1, title: 'No link here', image_url: '/b1.jpg' }]} />);
+
+    expect(activeTitle()).toBe('No link here');
+    expect(screen.getByRole('link', { name: "Shop men's batik" })).toHaveAttribute(
+      'href',
+      '/shop/men'
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Show banner 2/ }));
+    expect(activeTitle()).toBe(HERO_SLIDES[1].title);
+  });
 });
 
 describe('PromoBanners', () => {

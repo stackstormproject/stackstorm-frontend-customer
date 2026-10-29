@@ -1,4 +1,4 @@
-import { listBrands, listProducts } from '../api/catalog';
+import { listBanners, listBrands, listProducts } from '../api/catalog';
 import { useResource } from '../hooks/useResource';
 import { HeroCarousel } from '../components/home/HeroCarousel';
 import { PromoBanners } from '../components/home/PromoBanners';
@@ -19,10 +19,13 @@ export default function HomePage() {
   const popular = useResource(() => listProducts({ section: 'popular', limit: SECTION_SIZE }), []);
   const sale = useResource(() => listProducts({ section: 'sale', limit: SECTION_SIZE }), []);
   const brands = useResource(listBrands, []);
+  // Admin-managed hero banners, by slot (#200); a slot admin hasn't filled in yet keeps the
+  // default hardcoded slide, so a fetch failure or empty response never hides the hero.
+  const banners = useResource(listBanners, []);
 
   return (
     <>
-      <HeroCarousel />
+      <HeroCarousel banners={Array.isArray(banners.data) ? banners.data : []} />
       <PromoBanners />
       <ProductRail
         id="new-in"
