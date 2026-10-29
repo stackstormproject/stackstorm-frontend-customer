@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import HelpPage from './pages/HelpPage';
+import AboutPage from './pages/AboutPage';
 import { RequireAuth } from './components/layout/RequireAuth';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -61,6 +62,7 @@ export const routes = [
         ],
       },
       { path: 'help/:topic', element: <HelpPage /> },
+      { path: 'about', element: <AboutPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

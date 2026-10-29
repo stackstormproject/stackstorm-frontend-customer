@@ -41,6 +41,8 @@ All notable changes to the customer storefront. Format:
 - "Home" in the category bar on every page, "Back to home" on the order confirmation and
   "Go to the home page" on not-found pages; signing in, registering or continuing as a guest
   without a destination now lands on the home page (#187)
+- "About us" page with the shop's story, promises and address, linked from the header and
+  footer on every page (#192, FR-33)
 
 ### Changed
 

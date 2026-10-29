@@ -17,6 +17,7 @@ const SHOP_LINKS = [
 ];
 
 const HELP_LINKS = [
+  ['About us', '/about'],
   ['Delivery and collection', '/help/delivery'],
   ['Returns and exchanges', '/help/returns'],
   ['Track an order', '/account/orders'],
