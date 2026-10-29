@@ -89,6 +89,27 @@ describe('App shell', () => {
     expect(screen.getByText(/within 30 days of delivery/)).toBeInTheDocument();
   });
 
+  it('should render the About us page, reachable from the header and footer (#192, FR-33)', async () => {
+    renderApp('/');
+    const nav = await screen.findByRole('navigation', { name: 'Shop by category' });
+    expect(within(nav).getByRole('link', { name: 'About us' })).toHaveAttribute('href', '/about');
+    const footerHelp = screen.getByRole('navigation', { name: 'Help' });
+    expect(within(footerHelp).getByRole('link', { name: 'About us' })).toHaveAttribute(
+      'href',
+      '/about'
+    );
+
+    renderApp('/about');
+    expect(
+      screen.getByRole('heading', { name: 'About Dickwella Fashion Corner', level: 1 })
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/Main Street, Dickwella, Matara/).length).toBeGreaterThan(0);
+    expect(screen.getByRole('link', { name: 'Shop our collection' })).toHaveAttribute(
+      'href',
+      '/shop'
+    );
+  });
+
   it('should show not found for unknown help topics and unknown URLs', () => {
     renderApp('/help/nonsense');
     expect(screen.getByRole('heading', { name: 'This page does not exist' })).toBeInTheDocument();
