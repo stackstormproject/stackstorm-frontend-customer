@@ -53,6 +53,9 @@ All notable changes to the customer storefront. Format:
   each saved as it is changed), and a "Payment methods" page listing cards saved on the
   payment page with brand, last 4 digits and expiry, to set as default or remove (#193,
   FR-005, FR-010, FR-012, FR-34)
+- The test payment gateway now shows a labelled Bank Card form (holder's name, card number,
+  expiry, CVV) in front of PayHere's own gateway chrome, instead of a single "Pay" button
+  (#202)
 
 ### Changed
 
