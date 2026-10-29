@@ -1,11 +1,22 @@
 import { Link } from 'react-router-dom';
 import { SIZE_OPTIONS, PRICE_BANDS } from '../../lib/catalogQuery';
+import { ColourFilter } from './ColourFilter';
 
 /**
  * FR002 filters. Each control writes to the URL through `onChange(key, value)`.
  * Sub-categories of the current top-level category are listed as links.
  */
-export function FilterPanel({ id, isOpen, category, categories, params, onChange, onClear }) {
+export function FilterPanel({
+  id,
+  isOpen,
+  category,
+  categories,
+  params,
+  onChange,
+  onClear,
+  colours = [],
+  brands = [],
+}) {
   const current = (categories || []).find((c) => c.slug === category);
   const parent = current?.parentId ? categories.find((c) => c.id === current.parentId) : current;
   const children = parent ? categories.filter((c) => c.parentId === parent.id) : [];
@@ -57,6 +68,40 @@ export function FilterPanel({ id, isOpen, category, categories, params, onChange
           })}
         </div>
       </fieldset>
+
+      <ColourFilter
+        colours={colours}
+        selected={params.get('color')}
+        onChange={(value) => onChange('color', value)}
+      />
+
+      {brands.length > 0 && (
+        <fieldset className="filters__group">
+          <legend>Brand</legend>
+          {brands.map((b) => (
+            <label key={b.slug} className="radio">
+              <input
+                type="radio"
+                name="brand"
+                value={b.slug}
+                checked={params.get('brand') === b.slug}
+                onChange={() => onChange('brand', b.slug)}
+              />
+              {b.name}
+            </label>
+          ))}
+          <label className="radio">
+            <input
+              type="radio"
+              name="brand"
+              value=""
+              checked={!params.get('brand')}
+              onChange={() => onChange('brand', '')}
+            />
+            Any brand
+          </label>
+        </fieldset>
+      )}
 
       <fieldset className="filters__group">
         <legend>Price</legend>
