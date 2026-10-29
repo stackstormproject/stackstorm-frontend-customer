@@ -3,6 +3,7 @@ import { Layout } from './components/layout/Layout';
 import { LoadingState } from './components/ui/States';
 import HomePage from './pages/HomePage';
 import CatalogPage from './pages/CatalogPage';
+import SalePage from './pages/SalePage';
 import ProductPage from './pages/ProductPage';
 import SignInPage from './pages/SignInPage';
 import CartPage from './pages/CartPage';
@@ -41,6 +42,7 @@ export const routes = [
       { index: true, element: <HomePage /> },
       { path: 'shop', element: <CatalogPage /> },
       { path: 'shop/:category', element: <CatalogPage /> },
+      { path: 'sale', element: <SalePage /> },
       { path: 'products/:slug', element: <ProductPage /> },
       { path: 'cart', element: <CartPage /> },
       { path: 'checkout', element: page(<CheckoutPage />) },
