@@ -11,8 +11,7 @@ test('guest can buy a product and see the confirmation', async ({ page }) => {
   await fillAddress(page);
   await page.getByRole('button', { name: 'Continue to payment' }).click();
 
-  await expect(page.getByText('Your items are held for')).toBeVisible();
-  await expect(page.getByRole('complementary', { name: 'Order summary' })).toContainText('Total');
+  // #182: the shopper pays on the hosted payment page, then comes back to the confirmation.
   await pay(page);
 
   await expect(page.getByRole('heading', { name: /your order is placed/ })).toBeVisible();

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
-import { Heart, MapPin, Search, ShoppingBag, Truck, User } from 'lucide-react';
+import { Heart, House, MapPin, Search, ShoppingBag, Truck, User } from 'lucide-react';
 import { listCategories } from '../../api/catalog';
 import { useResource } from '../../hooks/useResource';
 import { useAuth } from '../../state/AuthContext';
@@ -97,6 +97,13 @@ export function SiteHeader() {
 
       <nav className="category-nav" aria-label="Shop by category">
         <ul className="container">
+          {/* #187: a way home from every page, not only the logo */}
+          <li>
+            <NavLink to="/" end className="category-nav__home">
+              <House size={16} aria-hidden="true" />
+              Home
+            </NavLink>
+          </li>
           <li>
             <NavLink to="/shop" end>
               All

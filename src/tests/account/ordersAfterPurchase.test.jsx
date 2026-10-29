@@ -209,6 +209,7 @@ describe('Order placed page', () => {
     expect(within(next).getByText('Payment received')).toBeInTheDocument();
     expect(within(next).getByText('On its way')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Download invoice (PDF)' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/');
   });
 
   it('should say a collection order waits for payment', async () => {

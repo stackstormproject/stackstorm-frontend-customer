@@ -112,6 +112,9 @@ export default function OrderConfirmationPage() {
             <Link to="/shop" className="btn btn--ghost">
               Continue shopping
             </Link>
+            <Link to="/" className="btn btn--ghost">
+              Back to home
+            </Link>
           </div>
         </section>
       </div>

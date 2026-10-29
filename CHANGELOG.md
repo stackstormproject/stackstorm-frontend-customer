@@ -38,6 +38,9 @@ All notable changes to the customer storefront. Format:
 - New sign in and register design with an illustrated background and a bordered form card;
   "Forgot password?" with `/forgot-password` and `/reset-password` pages; "Continue as guest"
   (#186)
+- "Home" in the category bar on every page, "Back to home" on the order confirmation and
+  "Go to the home page" on not-found pages; signing in, registering or continuing as a guest
+  without a destination now lands on the home page (#187)
 
 ### Changed
 
