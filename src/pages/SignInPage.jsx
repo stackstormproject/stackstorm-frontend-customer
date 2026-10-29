@@ -14,10 +14,9 @@ export default function SignInPage() {
   const toast = useToast();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const requested = params.get('next');
-  const next = safeNext(requested);
-  // A guest goes on to where they were heading (e.g. checkout), otherwise to the shop.
-  const guestTo = requested ? next : '/';
+  // Signed in or as a guest, the shopper goes on to where they were heading (e.g. checkout),
+  // otherwise to the home page (#187).
+  const next = safeNext(params.get('next'));
   const [values, setValues] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState(null);
@@ -85,7 +84,7 @@ export default function SignInPage() {
         </Link>
       </p>
       <p className="auth-card__guest">
-        <Link to={guestTo}>
+        <Link to={next}>
           Continue as guest <ArrowRight size={14} aria-hidden="true" />
         </Link>
       </p>

@@ -235,6 +235,12 @@
     box-shadow var(--transition-fast);
 }
 
+.category-nav a.category-nav__home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .category-nav a:hover,
 .category-nav a.active {
   color: var(--color-text-inverse);

@@ -7,9 +7,14 @@ export default function NotFoundPage() {
       <EmptyState
         title="This page does not exist"
         action={
-          <Link to="/shop" className="btn btn--primary">
-            Browse the shop
-          </Link>
+          <>
+            <Link to="/" className="btn btn--primary">
+              Go to the home page
+            </Link>
+            <Link to="/shop" className="btn btn--ghost">
+              Browse the shop
+            </Link>
+          </>
         }
       >
         The link may be old, or the product may no longer be sold.

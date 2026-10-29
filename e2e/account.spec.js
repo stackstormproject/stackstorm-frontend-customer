@@ -7,7 +7,8 @@ const PASSWORD = 'Shopper123';
 // and keep the session across a reload.
 test('new customer registers, buys, tracks the order and stays signed in', async ({ page }) => {
   const email = uniqueEmail('customer');
-  await page.goto('/register');
+  // Without ?next the shopper lands on the home page (#187).
+  await page.goto('/register?next=%2Faccount');
   await page.getByLabel('Full name').fill('E2E Shopper');
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password', { exact: true }).fill(PASSWORD);
@@ -37,7 +38,8 @@ test('new customer registers, buys, tracks the order and stays signed in', async
 // Critical flow 3: a guest's bag follows them into their account.
 test('guest bag is merged into the account after signing in', async ({ page }) => {
   const email = uniqueEmail('merge');
-  await page.goto('/register');
+  // Without ?next the shopper lands on the home page (#187).
+  await page.goto('/register?next=%2Faccount');
   await page.getByLabel('Full name').fill('Merge Shopper');
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password', { exact: true }).fill(PASSWORD);
