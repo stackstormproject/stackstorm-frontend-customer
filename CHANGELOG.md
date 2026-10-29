@@ -53,9 +53,17 @@ All notable changes to the customer storefront. Format:
   each saved as it is changed), and a "Payment methods" page listing cards saved on the
   payment page with brand, last 4 digits and expiry, to set as default or remove (#193,
   FR-005, FR-010, FR-012, FR-34)
+ feature/202-bank-card-gateway
 - The test payment gateway now shows a labelled Bank Card form (holder's name, card number,
   expiry, CVV) in front of PayHere's own gateway chrome, instead of a single "Pay" button
   (#202)
+
+- A "Sale" section on the home page and a dedicated `/sale` page (reusing the catalogue's
+  filters, grid and pagination), with a sale badge and struck-through pricing on product
+  cards and the product detail page (#199)
+- The home page hero now shows admin-managed banners by slot, falling back to the default
+  slide for any slot admin hasn't filled in (#200)
+ develop
 
 ### Changed
 
