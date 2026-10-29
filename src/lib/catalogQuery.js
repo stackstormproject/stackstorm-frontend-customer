@@ -1,4 +1,4 @@
-// The catalog state lives in the URL (/shop/:category?search=&size=&price=&sort=&page=),
+// The catalog state lives in the URL (/shop/:category?search=&size=&color=&brand=&price=&sort=&page=),
 // so results survive refresh and can be shared. These helpers convert both ways.
 
 export const SIZE_OPTIONS = ['S', 'M', 'L', 'XL', 'Free Size', 'One Size'];
@@ -34,6 +34,7 @@ export const filtersFromUrl = (category, searchParams) => {
     category: category || undefined,
     search: searchParams.get('search') || undefined,
     size: searchParams.get('size') || undefined,
+    color: searchParams.get('color') || undefined,
     brand: searchParams.get('brand') || undefined,
     minPrice: band?.min,
     maxPrice: band?.max,
@@ -56,4 +57,4 @@ export const withParam = (searchParams, key, value) => {
 };
 
 export const activeFilterCount = (searchParams) =>
-  ['size', 'price', 'search', 'brand'].filter((key) => searchParams.get(key)).length;
+  ['size', 'color', 'price', 'search', 'brand'].filter((key) => searchParams.get(key)).length;
