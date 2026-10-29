@@ -69,10 +69,24 @@ export function BuyBox({ product }) {
     }
   };
 
+  const basePrice = selected ? variantPrice(product, selected) : product.price;
+  // Sprint 13 (#194): the sale price is computed from the base product price; apply the same
+  // percentage to the variant's own price (base + size/colour surcharge) so it stays correct.
+  const salePrice = product.is_on_sale
+    ? Number((basePrice * (1 - product.discount_percentage / 100)).toFixed(2))
+    : null;
+
   return (
     <div className="buy-box">
       <p className="buy-box__price">
-        <Price amount={selected ? variantPrice(product, selected) : product.price} />
+        {salePrice !== null ? (
+          <span className="product-card__price-row">
+            <Price amount={salePrice} className="price--sale" />
+            <Price amount={basePrice} className="price--was" />
+          </span>
+        ) : (
+          <Price amount={basePrice} />
+        )}
       </p>
 
       {colors.length > 1 && (

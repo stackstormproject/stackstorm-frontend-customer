@@ -19,7 +19,7 @@ const compact = (params) =>
  * GET /products - server-side filtering, sorting and pagination (FR001, FR002).
  * @param {{category?: string, search?: string, size?: string, color?: string,
  *   minPrice?: number, maxPrice?: number, sort?: string, page?: number,
- *   section?: 'new_arrivals'|'popular', brand?: string, limit?: number}} filters
+ *   section?: 'new_arrivals'|'popular'|'sale', brand?: string, limit?: number}} filters
  */
 export const listProducts = (filters = {}) =>
   http.get('/products', {
