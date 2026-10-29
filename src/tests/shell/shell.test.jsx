@@ -33,6 +33,7 @@ describe('App shell', () => {
     wishlistApi.getWishlist.mockResolvedValue([]);
     catalogApi.listCategories.mockResolvedValue(CATEGORIES);
     catalogApi.listProducts.mockResolvedValue({ products: [], pagination: { total: 0 } });
+    catalogApi.suggestProducts.mockResolvedValue({ products: [], categories: [], brands: [] });
   });
 
   it('should render the home page with top-level categories only', async () => {
@@ -60,10 +61,7 @@ describe('App shell', () => {
   it('should send a search to the shop URL', async () => {
     const { router } = renderApp('/');
 
-    await userEvent.type(
-      screen.getByRole('searchbox', { name: 'Search products' }),
-      'batik{enter}'
-    );
+    await userEvent.type(screen.getByRole('combobox', { name: 'Search products' }), 'batik{enter}');
 
     expect(router.state.location.pathname).toBe('/shop');
     expect(router.state.location.search).toBe('?search=batik');

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { listBrands, listProducts, listCategories, SORT_OPTIONS } from '../api/catalog';
+import { getFacets, listBrands, listProducts, listCategories, SORT_OPTIONS } from '../api/catalog';
 import { useResource } from '../hooks/useResource';
 import {
   filtersFromUrl,
@@ -25,10 +25,9 @@ export default function CatalogPage() {
   const { data: tree } = useResource(listCategories, []);
   const categories = flattenCategories(tree || []);
 
-  const { data: brands } = useResource(
-    () => (filters.brand ? listBrands() : null),
-    [filters.brand]
-  );
+  // #191: brands and in-stock colours for the filters; a failure only hides that filter.
+  const { data: brands } = useResource(() => listBrands().catch(() => []), []);
+  const { data: facets } = useResource(() => getFacets().catch(() => null), []);
   const brand = filters.brand && (brands || []).find((b) => b.slug === filters.brand);
 
   const current = categories.find((c) => c.slug === category);
@@ -91,6 +90,8 @@ export default function CatalogPage() {
           params={params}
           onChange={setFilter}
           onClear={clearFilters}
+          colours={facets?.colors}
+          brands={brands || []}
         />
         <section aria-labelledby="results-heading" className="catalog__results">
           <h2 id="results-heading" className="visually-hidden">
@@ -113,7 +114,7 @@ export default function CatalogPage() {
                 )
               }
             >
-              Try another size or price, or search for something else.
+              Try another size, colour or price, or search for something else.
             </EmptyState>
           )}
           {products.data && products.data.products.length > 0 && (
