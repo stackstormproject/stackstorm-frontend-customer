@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
-import { Heart, House, MapPin, Search, ShoppingBag, Truck, User } from 'lucide-react';
+import { Link, NavLink } from 'react-router-dom';
+import { Heart, House, MapPin, ShoppingBag, Truck, User } from 'lucide-react';
 import { listCategories } from '../../api/catalog';
 import { useResource } from '../../hooks/useResource';
 import { useAuth } from '../../state/AuthContext';
 import { useCart } from '../../state/CartContext';
 import { useWishlist } from '../../state/WishlistContext';
 import { BrandMark } from './BrandMark';
+import { SearchBox } from './SearchBox';
 
 /** Shop promises and the shop's address, above the sticky header. */
 export function UtilityBar() {
@@ -27,20 +27,11 @@ export function UtilityBar() {
 }
 
 export function SiteHeader() {
-  const navigate = useNavigate();
-  const [params] = useSearchParams();
-  const [query, setQuery] = useState(params.get('search') || '');
   const { isSignedIn, customer } = useAuth();
   const { itemCount, openCart } = useCart();
   const { products: saved } = useWishlist();
   const { data: categories } = useResource(listCategories, []);
   const topLevel = (categories || []).filter((c) => !c.parentId);
-
-  const submitSearch = (event) => {
-    event.preventDefault();
-    const term = query.trim();
-    navigate(term ? `/shop?search=${encodeURIComponent(term)}` : '/shop');
-  };
 
   return (
     <header className="site-header">
@@ -53,21 +44,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <form className="search" role="search" onSubmit={submitSearch}>
-          <label htmlFor="site-search" className="visually-hidden">
-            Search products
-          </label>
-          <input
-            id="site-search"
-            type="search"
-            placeholder="Search batik, sarees, linen…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <button type="submit" className="search__button" aria-label="Search">
-            <Search size={18} aria-hidden="true" />
-          </button>
-        </form>
+        <SearchBox />
 
         <nav className="header-actions" aria-label="Your account">
           <Link to={isSignedIn ? '/account' : '/sign-in'} className="header-action">
