@@ -114,6 +114,10 @@ export function SiteHeader() {
               <NavLink to={`/shop/${category.slug}`}>{category.name}</NavLink>
             </li>
           ))}
+          {/* #192: About us, reachable from every page */}
+          <li>
+            <NavLink to="/about">About us</NavLink>
+          </li>
         </ul>
       </nav>
     </header>

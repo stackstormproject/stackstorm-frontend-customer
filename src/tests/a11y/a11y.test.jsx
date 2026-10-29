@@ -73,6 +73,7 @@ describe('Accessibility (axe-core)', () => {
     ['reset password', `/reset-password?token=${'a'.repeat(64)}`, 'Choose a new password'],
     ['checkout', '/checkout', 'Checkout'],
     ['help', '/help/returns', 'Returns and exchanges'],
+    ['about', '/about', 'About Dickwella Fashion Corner'],
   ])('should have no violations on the %s page', async (_name, url, heading) => {
     const { container } = renderApp(url);
     await screen.findByRole('heading', { level: 1, name: heading });
