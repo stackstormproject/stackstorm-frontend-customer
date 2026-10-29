@@ -386,3 +386,92 @@
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
+
+/* #189: profile picture and shopping preferences */
+.avatar-editor {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.avatar-editor__image,
+.avatar-editor__placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatar-editor__placeholder {
+  background: var(--color-surface-alt, #f3ecdc);
+  border: 1px dashed var(--color-border);
+}
+
+.avatar-editor__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.preferences {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 28rem;
+}
+
+.preferences fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* #190: saved payment methods */
+.payment-method-list {
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+}
+
+.payment-method-card {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.payment-method-card__detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-method-card__brand {
+  font-weight: var(--font-semibold);
+}
+
+.payment-method-card__expiry {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.payment-method-card__default {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: #067647;
+}
+
+.payment-method-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  margin-top: var(--space-2);
+}

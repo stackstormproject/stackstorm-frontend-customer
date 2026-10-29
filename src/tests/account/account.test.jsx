@@ -151,6 +151,103 @@ describe('Account overview', () => {
     expect(await screen.findByRole('heading', { name: 'Silver member' })).toBeInTheDocument();
   });
 
+  it('should upload and remove a profile picture (#189, FR-34)', async () => {
+    accountApi.uploadAvatar.mockResolvedValue({ avatar_url: '/api/v1/media/avatars/4.jpg' });
+    accountApi.deleteAvatar.mockResolvedValue({ avatar_url: null });
+    accountApi.getPreferences.mockResolvedValue({
+      order_updates_email: true,
+      sale_alerts: true,
+      back_in_stock_alerts: true,
+      newsletter: false,
+      push_notifications: false,
+      preferred_payment: 'card',
+      preferred_size: null,
+    });
+    renderApp('/account');
+    await screen.findByLabelText('Full name');
+
+    const file = new File(['x'], 'me.jpg', { type: 'image/jpeg' });
+    await userEvent.upload(screen.getByLabelText('Upload a profile picture'), file);
+
+    expect(accountApi.uploadAvatar).toHaveBeenCalledWith(file);
+    expect(await screen.findByText('Profile picture updated')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Change photo' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Remove' }));
+    expect(accountApi.deleteAvatar).toHaveBeenCalled();
+    expect(await screen.findByText('Profile picture removed')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Add a photo' })).toBeInTheDocument();
+  });
+
+  it('should reject a photo of the wrong type or over 5 MB without calling the server', async () => {
+    accountApi.getPreferences.mockResolvedValue({
+      order_updates_email: true,
+      sale_alerts: true,
+      back_in_stock_alerts: true,
+      newsletter: false,
+      push_notifications: false,
+      preferred_payment: 'card',
+      preferred_size: null,
+    });
+    renderApp('/account');
+    await screen.findByLabelText('Full name');
+    const input = screen.getByLabelText('Upload a profile picture');
+
+    await userEvent.upload(input, new File(['x'], 'me.gif', { type: 'image/gif' }), {
+      applyAccept: false,
+    });
+    expect(await screen.findByText('Choose a JPEG, PNG or WebP photo.')).toBeInTheDocument();
+    expect(accountApi.uploadAvatar).not.toHaveBeenCalled();
+
+    const big = new File([new Uint8Array(6 * 1024 * 1024)], 'me.jpg', { type: 'image/jpeg' });
+    await userEvent.upload(input, big);
+    expect(await screen.findByText('That photo is larger than 5 MB.')).toBeInTheDocument();
+    expect(accountApi.uploadAvatar).not.toHaveBeenCalled();
+  });
+
+  it('should load shopping preferences and save each change as it is made (#189, FR-010)', async () => {
+    accountApi.getPreferences.mockResolvedValue({
+      order_updates_email: true,
+      sale_alerts: true,
+      back_in_stock_alerts: false,
+      newsletter: false,
+      push_notifications: false,
+      preferred_payment: 'card',
+      preferred_size: null,
+    });
+    accountApi.updatePreferences.mockImplementation(async (changes) => ({
+      order_updates_email: true,
+      sale_alerts: true,
+      back_in_stock_alerts: true,
+      newsletter: false,
+      push_notifications: false,
+      preferred_payment: 'cod',
+      preferred_size: null,
+      ...changes,
+    }));
+    renderApp('/account');
+
+    const backInStock = await screen.findByRole('checkbox', {
+      name: 'Tell me when a wishlist item is back in stock',
+    });
+    expect(backInStock).not.toBeChecked();
+    await userEvent.click(backInStock);
+    expect(accountApi.updatePreferences).toHaveBeenCalledWith({ back_in_stock_alerts: true });
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Preferred payment method' }),
+      'cod'
+    );
+    expect(accountApi.updatePreferences).toHaveBeenCalledWith({ preferred_payment: 'cod' });
+  });
+
+  it('should show a retry when preferences fail to load', async () => {
+    accountApi.getPreferences.mockRejectedValue(new Error('down'));
+    renderApp('/account');
+
+    expect(await screen.findByText('Could not load your preferences')).toBeInTheDocument();
+  });
+
   it('should sign out and go home', async () => {
     const { router } = renderApp('/account');
 
@@ -540,6 +637,78 @@ describe('Address book (FR011)', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Try again' }));
 
     expect(await screen.findByText('You have no saved addresses yet.')).toBeInTheDocument();
+  });
+});
+
+describe('Payment methods (#190, FR-012)', () => {
+  const CARDS = [
+    {
+      id: 1,
+      provider: 'stripe',
+      brand: 'visa',
+      last4: '4242',
+      exp_month: 12,
+      exp_year: 2029,
+      is_default: true,
+      is_test: false,
+    },
+    {
+      id: 2,
+      provider: 'test',
+      brand: 'mastercard',
+      last4: '0005',
+      exp_month: 1,
+      exp_year: 2028,
+      is_default: false,
+      is_test: true,
+    },
+  ];
+
+  beforeEach(() => {
+    accountApi.listPaymentMethods.mockResolvedValue(CARDS);
+    accountApi.setDefaultPaymentMethod.mockResolvedValue({});
+    accountApi.deletePaymentMethod.mockResolvedValue({});
+  });
+
+  it('should list saved cards with brand, last 4 digits and expiry', async () => {
+    renderApp('/account/payment-methods');
+
+    expect(await screen.findByText('Visa ending 4242')).toBeInTheDocument();
+    expect(screen.getByText('Expires 12/2029')).toBeInTheDocument();
+    expect(screen.getByText(/Expires 01\/2028.*Test card/)).toBeInTheDocument();
+    expect(screen.getByText('Default card')).toBeInTheDocument();
+  });
+
+  it('should make a card the default', async () => {
+    renderApp('/account/payment-methods');
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Make default' }));
+
+    expect(accountApi.setDefaultPaymentMethod).toHaveBeenCalledWith(2);
+    expect(await screen.findByText('Default card updated')).toBeInTheDocument();
+  });
+
+  it('should ask before removing a card and allow keeping it', async () => {
+    renderApp('/account/payment-methods');
+    const removes = await screen.findAllByRole('button', { name: 'Remove' });
+
+    await userEvent.click(removes[0]);
+    await userEvent.click(screen.getByRole('button', { name: 'Keep it' }));
+    expect(accountApi.deletePaymentMethod).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Remove' })[0]);
+    await userEvent.click(screen.getByRole('button', { name: 'Yes, remove' }));
+    expect(accountApi.deletePaymentMethod).toHaveBeenCalledWith(1);
+    expect(await screen.findByText('Card removed')).toBeInTheDocument();
+  });
+
+  it('should say when there are no saved cards and retry after an error', async () => {
+    accountApi.listPaymentMethods.mockRejectedValueOnce(new Error('down')).mockResolvedValue([]);
+    renderApp('/account/payment-methods');
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Try again' }));
+
+    expect(await screen.findByText('You have no saved cards yet.')).toBeInTheDocument();
   });
 });
 

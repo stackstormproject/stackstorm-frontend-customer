@@ -25,6 +25,7 @@ const OrderDetailPage = lazy(() => import('./pages/account/OrderDetailPage'));
 const ReturnsPage = lazy(() => import('./pages/account/ReturnsPage'));
 const AddressesPage = lazy(() => import('./pages/account/AddressesPage'));
 const WishlistPage = lazy(() => import('./pages/account/WishlistPage'));
+const PaymentMethodsPage = lazy(() => import('./pages/account/PaymentMethodsPage'));
 
 const page = (element) => <Suspense fallback={<LoadingState />}>{element}</Suspense>;
 
@@ -58,6 +59,7 @@ export const routes = [
           { path: 'returns', element: page(<ReturnsPage />) },
           { path: 'addresses', element: page(<AddressesPage />) },
           { path: 'wishlist', element: page(<WishlistPage />) },
+          { path: 'payment-methods', element: page(<PaymentMethodsPage />) },
         ],
       },
       { path: 'help/:topic', element: <HelpPage /> },

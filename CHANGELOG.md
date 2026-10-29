@@ -41,6 +41,12 @@ All notable changes to the customer storefront. Format:
 - "Home" in the category bar on every page, "Back to home" on the order confirmation and
   "Go to the home page" on not-found pages; signing in, registering or continuing as a guest
   without a destination now lands on the home page (#187)
+- Account: a profile picture (JPEG/PNG/WebP up to 5 MB, with a client-side check before
+  upload), shopping preferences (order update emails, wishlist sale and back-in-stock
+  alerts, newsletter, browser notifications, preferred payment method and usual size,
+  each saved as it is changed), and a "Payment methods" page listing cards saved on the
+  payment page with brand, last 4 digits and expiry, to set as default or remove (#193,
+  FR-005, FR-010, FR-012, FR-34)
 
 ### Changed
 
