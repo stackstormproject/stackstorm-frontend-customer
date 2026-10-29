@@ -34,12 +34,24 @@ export function ProductCard({ product }) {
               onError={(event) => event.currentTarget.remove()}
             />
           )}
-          {product.is_new_arrival && <span className="product-card__badge">New</span>}
+          {product.is_on_sale && (
+            <span className="product-card__badge product-card__badge--sale">Sale</span>
+          )}
+          {!product.is_on_sale && product.is_new_arrival && (
+            <span className="product-card__badge">New</span>
+          )}
         </div>
         <h3 className="product-card__name">{product.name}</h3>
       </Link>
       <div className="product-card__meta">
-        <Price amount={product.price} />
+        {product.is_on_sale ? (
+          <span className="product-card__price-row">
+            <Price amount={product.sale_price} className="price--sale" />
+            <Price amount={product.price} className="price--was" />
+          </span>
+        ) : (
+          <Price amount={product.price} />
+        )}
         <StockBadge available={available} />
       </div>
       {sizes.length > 0 && <p className="product-card__sizes">{sizes.join(', ')}</p>}
