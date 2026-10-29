@@ -38,6 +38,16 @@ export const listProducts = (filters = {}) =>
     }),
   });
 
+/**
+ * GET /products/suggest - products, categories and brands matching the typed text (#191,
+ * FR-001). Fewer than 2 characters returns empty lists from the server.
+ */
+export const suggestProducts = (q, { signal } = {}) =>
+  http.get('/products/suggest', { params: { q }, signal });
+
+/** GET /products/facets - in-stock colours and sizes for the shop's filters (#191, FR-002). */
+export const getFacets = () => http.get('/products/facets');
+
 /** GET /brands - featured brands with products on sale, for "Our brands" (#176). */
 export const listBrands = () => http.get('/brands');
 
