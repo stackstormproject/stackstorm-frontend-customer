@@ -1,4 +1,4 @@
-import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { act, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderApp } from '../renderApp';
 import { routes } from '../../routes';
@@ -42,6 +42,8 @@ describe('App shell', () => {
     const nav = await screen.findByRole('navigation', { name: 'Shop by category' });
     await waitFor(() => expect(nav).toHaveTextContent('Men'));
     expect(nav).not.toHaveTextContent('Batik Shirts');
+    // #187: a Home link on every page.
+    expect(within(nav).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     // #183: no "New in" link and no stripe between the header and the banner.
     expect(nav).not.toHaveTextContent('New in');
     expect(nav.closest('header').querySelector('.warp-stripe')).toBeNull();
@@ -92,6 +94,7 @@ describe('App shell', () => {
   it('should show not found for unknown help topics and unknown URLs', () => {
     renderApp('/help/nonsense');
     expect(screen.getByRole('heading', { name: 'This page does not exist' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Go to the home page' })).toHaveAttribute('href', '/');
   });
 
   it('should show not found for an unknown URL', () => {
