@@ -7,6 +7,7 @@ const LINKS = [
   { to: '/account/orders', label: 'Your orders' },
   { to: '/account/returns', label: 'Returns' },
   { to: '/account/addresses', label: 'Addresses' },
+  { to: '/account/payment-methods', label: 'Payment methods' },
   { to: '/account/wishlist', label: 'Wishlist' },
 ];
 
