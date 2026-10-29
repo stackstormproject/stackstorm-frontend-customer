@@ -17,6 +17,7 @@ const loadNewArrivals = async () => {
 export default function HomePage() {
   const newArrivals = useResource(loadNewArrivals, []);
   const popular = useResource(() => listProducts({ section: 'popular', limit: SECTION_SIZE }), []);
+  const sale = useResource(() => listProducts({ section: 'sale', limit: SECTION_SIZE }), []);
   const brands = useResource(listBrands, []);
   // Admin-managed hero banners, by slot (#200); a slot admin hasn't filled in yet keeps the
   // default hardcoded slide, so a fetch failure or empty response never hides the hero.
@@ -41,6 +42,14 @@ export default function HomePage() {
         link={{ to: '/shop', label: 'Browse the shop' }}
         resource={popular}
         products={popular.data?.products || []}
+      />
+      <ProductRail
+        id="sale"
+        title="Sale"
+        intro="Discounted pieces while they last."
+        link={{ to: '/sale', label: 'Browse sale' }}
+        resource={sale}
+        products={sale.data?.products || []}
       />
       <BrandShelf brands={Array.isArray(brands.data) ? brands.data : []} />
     </>
