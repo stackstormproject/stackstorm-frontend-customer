@@ -19,7 +19,7 @@ const compact = (params) =>
  * GET /products - server-side filtering, sorting and pagination (FR001, FR002).
  * @param {{category?: string, search?: string, size?: string, color?: string,
  *   minPrice?: number, maxPrice?: number, sort?: string, page?: number,
- *   section?: 'new_arrivals'|'popular', brand?: string, limit?: number}} filters
+ *   section?: 'new_arrivals'|'popular'|'sale', brand?: string, limit?: number}} filters
  */
 export const listProducts = (filters = {}) =>
   http.get('/products', {
@@ -50,6 +50,9 @@ export const getFacets = () => http.get('/products/facets');
 
 /** GET /brands - featured brands with products on sale, for "Our brands" (#176). */
 export const listBrands = () => http.get('/brands');
+
+/** GET /banners - the active, filled hero banner slots, in slot order (#200). */
+export const listBanners = () => http.get('/banners');
 
 /** GET /products/:slug - full product with variants, images and review summary (FR003, FR004). */
 export const getProduct = (slug) => http.get(`/products/${encodeURIComponent(slug)}`);
