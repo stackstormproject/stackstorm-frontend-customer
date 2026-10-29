@@ -171,10 +171,29 @@ describe('Sign in and register pages (FR035)', () => {
   it('should link between sign in and register keeping the destination', () => {
     renderApp('/sign-in?next=%2Fcheckout');
 
-    expect(screen.getByRole('link', { name: 'Create an account' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Create one free' })).toHaveAttribute(
       'href',
       '/register?next=%2Fcheckout'
     );
+    // #186: a guest carries on to checkout without an account.
+    expect(screen.getByRole('link', { name: 'Continue as guest' })).toHaveAttribute(
+      'href',
+      '/checkout'
+    );
+  });
+
+  it('should send a guest to the shop and offer a password reset (#186)', async () => {
+    const { router } = renderApp('/sign-in');
+
+    expect(screen.getByRole('link', { name: 'Forgot password?' })).toHaveAttribute(
+      'href',
+      '/forgot-password'
+    );
+    expect(screen.getByRole('complementary', { name: 'About accounts' })).toHaveTextContent(
+      'Earn loyalty points'
+    );
+    await userEvent.click(screen.getByRole('link', { name: 'Continue as guest' }));
+    expect(router.state.location.pathname).toBe('/');
   });
 
   it('should keep the destination when linking back to sign in', () => {
@@ -184,5 +203,139 @@ describe('Sign in and register pages (FR035)', () => {
       'href',
       '/sign-in?next=%2Fcheckout'
     );
+  });
+});
+
+describe('Password reset (#186)', () => {
+  const TOKEN = 'ab'.repeat(32);
+  beforeEach(() => {
+    authApi.restoreSession.mockResolvedValue(null);
+    cartApi.getCart.mockResolvedValue([]);
+    wishlistApi.getWishlist.mockResolvedValue([]);
+    catalogApi.listCategories.mockResolvedValue([]);
+  });
+
+  it('should check the email, then say a link is on its way', async () => {
+    authApi.requestPasswordReset.mockResolvedValue({ message: 'ok' });
+    renderApp('/forgot-password');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Send reset link' }));
+    expect(screen.getByLabelText('Email')).toHaveAccessibleDescription(
+      'Enter a valid email address.'
+    );
+    expect(authApi.requestPasswordReset).not.toHaveBeenCalled();
+
+    await userEvent.type(screen.getByLabelText('Email'), ' nimal@example.lk ');
+    await userEvent.click(screen.getByRole('button', { name: 'Send reset link' }));
+
+    expect(authApi.requestPasswordReset).toHaveBeenCalledWith('nimal@example.lk');
+    const status = await screen.findByRole('status');
+    expect(status).toHaveTextContent('If an account uses nimal@example.lk');
+    expect(within(status).queryByRole('link', { name: 'Open the reset link' })).toBeNull();
+    expect(within(status).getByRole('link', { name: 'Back to sign in' })).toHaveAttribute(
+      'href',
+      '/sign-in'
+    );
+  });
+
+  it('should show the development link inside the shop when no email is sent', async () => {
+    authApi.requestPasswordReset.mockResolvedValue({
+      dev_reset_url: `http://localhost:5173/reset-password?token=${TOKEN}`,
+    });
+    renderApp('/forgot-password');
+
+    await userEvent.type(screen.getByLabelText('Email'), 'nimal@example.lk');
+    await userEvent.click(screen.getByRole('button', { name: 'Send reset link' }));
+
+    expect(await screen.findByRole('link', { name: 'Open the reset link' })).toHaveAttribute(
+      'href',
+      `/reset-password?token=${TOKEN}`
+    );
+  });
+
+  it('should ignore a development link it cannot read', async () => {
+    authApi.requestPasswordReset.mockResolvedValue({ dev_reset_url: 'not a url' });
+    renderApp('/forgot-password');
+
+    await userEvent.type(screen.getByLabelText('Email'), 'nimal@example.lk');
+    await userEvent.click(screen.getByRole('button', { name: 'Send reset link' }));
+
+    expect(await screen.findByRole('status')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Open the reset link' })).toBeNull();
+  });
+
+  it('should explain a refused request', async () => {
+    authApi.requestPasswordReset.mockRejectedValue(apiError('X', 429));
+    renderApp('/forgot-password');
+
+    await userEvent.type(screen.getByLabelText('Email'), 'nimal@example.lk');
+    await userEvent.click(screen.getByRole('button', { name: 'Send reset link' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/Too many attempts/);
+    expect(screen.getByRole('button', { name: 'Send reset link' })).toBeEnabled();
+  });
+
+  it('should check the new password, save it and go to sign in', async () => {
+    authApi.resetPassword.mockResolvedValue({});
+    const { router } = renderApp(`/reset-password?token=${TOKEN}`);
+
+    await userEvent.type(screen.getByLabelText('New password'), 'short');
+    await userEvent.type(screen.getByLabelText('Confirm new password'), 'other');
+    await userEvent.click(screen.getByRole('button', { name: 'Change password' }));
+    expect(screen.getByLabelText('New password')).toHaveAccessibleDescription(
+      expect.stringContaining('Password needs')
+    );
+    expect(screen.getByLabelText('Confirm new password')).toHaveAccessibleDescription(
+      'The two passwords do not match.'
+    );
+    expect(authApi.resetPassword).not.toHaveBeenCalled();
+
+    await userEvent.clear(screen.getByLabelText('New password'));
+    await userEvent.type(screen.getByLabelText('New password'), 'BrandNew123');
+    await userEvent.clear(screen.getByLabelText('Confirm new password'));
+    await userEvent.type(screen.getByLabelText('Confirm new password'), 'BrandNew123');
+    await userEvent.click(screen.getByRole('button', { name: 'Change password' }));
+
+    expect(authApi.resetPassword).toHaveBeenCalledWith({ token: TOKEN, password: 'BrandNew123' });
+    expect(
+      await screen.findByText('Your password is changed. Sign in with the new one.')
+    ).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe('/sign-in');
+  });
+
+  it('should offer a new link when the token is missing or expired', async () => {
+    renderApp('/reset-password');
+    expect(screen.getByRole('heading', { name: 'This link has expired' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Send a new link' })).toHaveAttribute(
+      'href',
+      '/forgot-password'
+    );
+  });
+
+  it('should switch to the expired message when the server refuses the token', async () => {
+    authApi.resetPassword.mockRejectedValue(apiError('INVALID_RESET_TOKEN', 400));
+    renderApp(`/reset-password?token=${TOKEN}`);
+
+    await userEvent.type(screen.getByLabelText('New password'), 'BrandNew123');
+    await userEvent.type(screen.getByLabelText('Confirm new password'), 'BrandNew123');
+    await userEvent.click(screen.getByRole('button', { name: 'Change password' }));
+
+    expect(
+      await screen.findByRole('heading', { name: 'This link has expired' })
+    ).toBeInTheDocument();
+  });
+
+  it('should show other server errors on the form', async () => {
+    authApi.resetPassword.mockRejectedValue(
+      apiError('VALIDATION_ERROR', 400, [{ field: 'password', message: 'Too weak' }])
+    );
+    renderApp(`/reset-password?token=${TOKEN}`);
+
+    await userEvent.type(screen.getByLabelText('New password'), 'BrandNew123');
+    await userEvent.type(screen.getByLabelText('Confirm new password'), 'BrandNew123');
+    await userEvent.click(screen.getByRole('button', { name: 'Change password' }));
+
+    expect(await screen.findByText('Too weak')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Change password' })).toBeEnabled();
   });
 });

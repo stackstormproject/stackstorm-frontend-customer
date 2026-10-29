@@ -142,6 +142,16 @@ describe('API contract', () => {
       await auth.logout();
       expect(hasSessionHint()).toBe(false);
     });
+
+    it('should ask for and use a password reset link (#185)', async () => {
+      api.onPost('/auth/forgot-password').reply(202, { message: 'sent' });
+      api.onPost('/auth/reset-password').reply(200, { message: 'changed' });
+
+      await expect(auth.requestPasswordReset('a@b.lk')).resolves.toEqual({ message: 'sent' });
+      expect(JSON.parse(lastRequest('post').data)).toEqual({ email: 'a@b.lk' });
+      await auth.resetPassword({ token: 't', password: 'P4ssword' });
+      expect(JSON.parse(lastRequest('post').data)).toEqual({ token: 't', password: 'P4ssword' });
+    });
   });
 
   describe('cart', () => {

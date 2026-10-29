@@ -346,28 +346,3 @@ textarea.field__control {
     transition-duration: 0.01ms !important;
   }
 }
-
-/* Sign in / register */
-.auth-page {
-  max-width: 440px;
-}
-
-.auth-form {
-  margin-top: var(--space-6);
-}
-
-.auth-page__switch {
-  margin-top: var(--space-6);
-  color: var(--color-text-muted);
-}
-
-.password-field {
-  position: relative;
-}
-
-.password-field__toggle {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: var(--text-sm);
-}
