@@ -6,6 +6,7 @@ import { FormField } from '../components/ui/FormField';
 import { PasswordField } from '../components/auth/PasswordField';
 import { validateRegistration, hasErrors } from '../lib/validation';
 import { describeAuthError, safeNext } from '../lib/authErrors';
+import { AuthLayout } from '../components/auth/AuthLayout';
 
 const PASSWORD_HINT =
   'At least 8 characters with an uppercase letter, a lowercase letter and a number.';
@@ -50,8 +51,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="container page auth-page">
-      <h1>Create an account</h1>
+    <AuthLayout title="Join Dickwella!" accent="Handloom and batik, delivered islandwide.">
+      <h1 className="auth-card__title">Create your account</h1>
+      <p className="auth-card__lead">It takes a minute and starts you at Silver loyalty tier.</p>
       <form onSubmit={submit} noValidate className="auth-form">
         {formError && (
           <p className="form-error" role="alert">
@@ -90,14 +92,15 @@ export default function RegisterPage() {
           onChange={update('phone')}
           error={errors.phone}
         />
-        <button type="submit" className="btn btn--primary btn--block" disabled={busy}>
+        <button type="submit" className="btn btn--accent btn--block" disabled={busy}>
           {busy ? 'Creating account…' : 'Create account'}
         </button>
       </form>
-      <p className="auth-page__switch">
+      <div className="auth-card__divider" />
+      <p className="auth-card__switch">
         Already have an account?{' '}
         <Link to={`/sign-in?next=${encodeURIComponent(next)}`}>Sign in</Link>
       </p>
-    </div>
+    </AuthLayout>
   );
 }

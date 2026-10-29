@@ -35,6 +35,9 @@ All notable changes to the customer storefront. Format:
   payment and opens the order confirmation (#182)
 - Order list and order pages fetch the status again every 30 seconds and when the shopper
   returns to the tab, so a status set in the admin console shows without a reload (#183)
+- New sign in and register design with an illustrated background and a bordered form card;
+  "Forgot password?" with `/forgot-password` and `/reset-password` pages; "Continue as guest"
+  (#186)
 
 ### Changed
 

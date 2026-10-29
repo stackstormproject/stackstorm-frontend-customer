@@ -7,6 +7,8 @@ import ProductPage from './pages/ProductPage';
 import SignInPage from './pages/SignInPage';
 import CartPage from './pages/CartPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import HelpPage from './pages/HelpPage';
 import { RequireAuth } from './components/layout/RequireAuth';
 import NotFoundPage from './pages/NotFoundPage';
@@ -44,6 +46,8 @@ export const routes = [
       { path: 'orders/:orderId/confirmation', element: page(<OrderConfirmationPage />) },
       { path: 'sign-in', element: <SignInPage /> },
       { path: 'register', element: <RegisterPage /> },
+      { path: 'forgot-password', element: <ForgotPasswordPage /> },
+      { path: 'reset-password', element: <ResetPasswordPage /> },
       {
         path: 'account',
         element: <RequireAuth>{page(<AccountLayout />)}</RequireAuth>,

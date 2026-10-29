@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { useAuth } from '../state/AuthContext';
 import { useToast } from '../state/ToastContext';
 import { FormField } from '../components/ui/FormField';
 import { PasswordField } from '../components/auth/PasswordField';
+import { AuthLayout } from '../components/auth/AuthLayout';
 import { validateLogin, hasErrors } from '../lib/validation';
 import { describeAuthError, safeNext } from '../lib/authErrors';
 
@@ -12,7 +14,10 @@ export default function SignInPage() {
   const toast = useToast();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const next = safeNext(params.get('next'));
+  const requested = params.get('next');
+  const next = safeNext(requested);
+  // A guest goes on to where they were heading (e.g. checkout), otherwise to the shop.
+  const guestTo = requested ? next : '/';
   const [values, setValues] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState(null);
@@ -42,9 +47,9 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="container page auth-page">
-      <h1>Sign in</h1>
-      <p>Track orders, save addresses and keep a wishlist.</p>
+    <AuthLayout title="Welcome back!" accent="Shop handloom, faster and easier.">
+      <h1 className="auth-card__title">Welcome back</h1>
+      <p className="auth-card__lead">Sign in to your account</p>
       <form onSubmit={submit} noValidate className="auth-form">
         {formError && (
           <p className="form-error" role="alert">
@@ -55,6 +60,7 @@ export default function SignInPage() {
           label="Email"
           type="email"
           autoComplete="email"
+          placeholder="you@example.com"
           value={values.email}
           onChange={update('email')}
           error={errors.email}
@@ -65,14 +71,24 @@ export default function SignInPage() {
           value={values.password}
           onChange={update('password')}
           error={errors.password}
+          action={<Link to="/forgot-password">Forgot password?</Link>}
         />
-        <button type="submit" className="btn btn--primary btn--block" disabled={busy}>
+        <button type="submit" className="btn btn--accent btn--block" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
-      <p className="auth-page__switch">
-        New here? <Link to={`/register?next=${encodeURIComponent(next)}`}>Create an account</Link>
+      <div className="auth-card__divider" />
+      <p className="auth-card__switch">
+        Don&apos;t have an account?{' '}
+        <Link to={`/register?next=${encodeURIComponent(next)}`}>
+          Create one free <ArrowRight size={14} aria-hidden="true" />
+        </Link>
       </p>
-    </div>
+      <p className="auth-card__guest">
+        <Link to={guestTo}>
+          Continue as guest <ArrowRight size={14} aria-hidden="true" />
+        </Link>
+      </p>
+    </AuthLayout>
   );
 }
