@@ -56,6 +56,8 @@ All notable changes to the customer storefront. Format:
 - A "Sale" section on the home page and a dedicated `/sale` page (reusing the catalogue's
   filters, grid and pagination), with a sale badge and struck-through pricing on product
   cards and the product detail page (#199)
+- The home page hero now shows admin-managed banners by slot, falling back to the default
+  slide for any slot admin hasn't filled in (#200)
 
 ### Changed
 

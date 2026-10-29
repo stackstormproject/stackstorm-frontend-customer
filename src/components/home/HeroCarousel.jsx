@@ -34,10 +34,36 @@ const reducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
+ * Admin-managed banners (#200) replace the matching default slide by slot (1st,
+ * 2nd, 3rd), image-for-art; a slot admin hasn't filled in yet keeps its default slide, so the
+ * carousel is never short a banner. `banners` is the array GET /banners returns (already
+ * filtered to active, filled slots, in slot order).
+ */
+const mergeSlides = (defaults, banners) => {
+  if (!banners?.length) return defaults;
+  const bySlot = new Map(banners.map((b) => [b.slot, b]));
+  return defaults.map((slide, i) => {
+    const banner = bySlot.get(i + 1);
+    if (!banner) return slide;
+    return {
+      id: slide.id,
+      title: banner.title,
+      text: banner.subtitle || '',
+      action:
+        banner.button_text && banner.button_link
+          ? { label: banner.button_text, to: banner.button_link }
+          : slide.action,
+      image: banner.image_url,
+    };
+  });
+};
+
+/**
  * Three banners that advance every 7 seconds. Rotation stops while the pointer or keyboard
  * focus is inside, when the shopper presses pause, and never starts with reduced motion.
  */
-export function HeroCarousel({ slides = HERO_SLIDES }) {
+export function HeroCarousel({ slides: defaultSlides = HERO_SLIDES, banners = [] }) {
+  const slides = mergeSlides(defaultSlides, banners);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(reducedMotion);
   const [holding, setHolding] = useState(false);
@@ -65,7 +91,7 @@ export function HeroCarousel({ slides = HERO_SLIDES }) {
     >
       <h1 className="visually-hidden">Handloom and batik from Dickwella</h1>
       <div className="hero-carousel__track">
-        {slides.map(({ id, title, text, action, Art }, i) => {
+        {slides.map(({ id, title, text, action, Art, image }, i) => {
           const active = i === index;
           return (
             <div
@@ -91,7 +117,7 @@ export function HeroCarousel({ slides = HERO_SLIDES }) {
                   </div>
                 </div>
                 <div className="hero-slide__art">
-                  <Art />
+                  {image ? <img src={image} alt="" loading={active ? 'eager' : 'lazy'} /> : <Art />}
                 </div>
               </div>
             </div>
