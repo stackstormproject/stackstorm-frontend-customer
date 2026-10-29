@@ -67,8 +67,10 @@ describe('Accessibility (axe-core)', () => {
     ['home', '/', 'Handloom and batik from Dickwella'],
     ['catalog', '/shop', 'All products'],
     ['product', '/products/indigo-batik-shirt', 'Indigo Batik Shirt'],
-    ['sign in', '/sign-in', 'Sign in'],
-    ['register', '/register', 'Create an account'],
+    ['sign in', '/sign-in', 'Welcome back'],
+    ['register', '/register', 'Create your account'],
+    ['forgot password', '/forgot-password', 'Reset your password'],
+    ['reset password', `/reset-password?token=${'a'.repeat(64)}`, 'Choose a new password'],
     ['checkout', '/checkout', 'Checkout'],
     ['help', '/help/returns', 'Returns and exchanges'],
   ])('should have no violations on the %s page', async (_name, url, heading) => {

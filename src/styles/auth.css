@@ -1,0 +1,368 @@
+/*
+ * Sign in, register and password reset (#186): a warm cotton background with faint gold
+ * diamonds, the shop's illustrated greeting on the left, the form in a bordered card in the
+ * middle and why an account helps on the right.
+ */
+.auth-shell {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-10, 2.5rem) 0 var(--space-12, 3rem);
+  background: radial-gradient(circle at 12% 18%, rgba(212, 175, 55, 0.18), transparent 38%),
+    radial-gradient(circle at 92% 85%, rgba(212, 175, 55, 0.16), transparent 32%),
+    linear-gradient(180deg, #fbf6ea 0%, #f6efdd 100%);
+}
+
+.auth-shell::before {
+  /* faint gold diamond lattice */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(45deg, rgba(212, 175, 55, 0.07) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(212, 175, 55, 0.07) 25%, transparent 25%);
+  background-size: 36px 36px;
+  pointer-events: none;
+}
+
+.auth-shell__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 420px) minmax(0, 0.9fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+/* Greeting and picture */
+.auth-hero__title {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-heading);
+  font-size: clamp(1.9rem, 2.7vw, 2.6rem);
+  font-weight: var(--font-extrabold);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.auth-hero__title span {
+  display: block;
+  color: #8a6a0e; /* darker gold: 4.5:1 on the cotton background */
+}
+
+.auth-art {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+}
+
+.auth-art__diamonds path {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: auth-twinkle 4.5s ease-in-out infinite;
+}
+
+.auth-art__float {
+  animation: auth-float 6s ease-in-out infinite;
+}
+
+.auth-art__sway {
+  transform-origin: 310px 102px;
+  animation: auth-sway 7s ease-in-out infinite;
+}
+
+@keyframes auth-twinkle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateY(-8px) rotate(18deg);
+    opacity: 0.55;
+  }
+}
+
+@keyframes auth-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes auth-sway {
+  0%,
+  100% {
+    transform: rotate(-1.2deg);
+  }
+  50% {
+    transform: rotate(1.2deg);
+  }
+}
+
+/* The form card */
+.auth-card {
+  padding: var(--space-8);
+  background: var(--color-surface);
+  border: 1px solid #e6dcc3;
+  border-top: 4px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  box-shadow: 0 18px 40px rgba(10, 25, 47, 0.1);
+}
+
+.auth-card__title {
+  margin: 0;
+  font-size: var(--text-3xl);
+}
+
+.auth-card__lead {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+}
+
+.auth-form {
+  margin-top: var(--space-6);
+}
+
+.auth-form .field__label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.auth-form .field__control {
+  background: #f7f4ec;
+  border-color: #e3dccb;
+}
+
+.auth-form .field__control:focus {
+  background: var(--color-surface);
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent-subtle);
+}
+
+.btn--accent {
+  background: var(--color-accent);
+  color: var(--color-primary);
+}
+
+.btn--accent:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.auth-card__divider {
+  height: 1px;
+  margin: var(--space-6) 0 var(--space-4);
+  background: var(--color-border);
+}
+
+.auth-card__switch,
+.auth-card__guest {
+  margin: 0;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.auth-card__switch a,
+.auth-card__guest a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.auth-card__switch a:hover,
+.auth-card__guest a:hover {
+  text-decoration: underline;
+}
+
+.auth-card__guest {
+  margin-top: var(--space-3);
+}
+
+.auth-card__guest a {
+  color: #7a5d0b;
+}
+
+.auth-sent {
+  text-align: center;
+}
+
+.auth-sent svg {
+  color: var(--color-accent-hover);
+  margin-bottom: var(--space-2);
+}
+
+.auth-sent .btn {
+  margin-top: var(--space-6);
+}
+
+.auth-sent .auth-card__switch {
+  margin-top: var(--space-6);
+}
+
+.auth-callout {
+  margin: var(--space-4) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px dashed var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-subtle);
+  font-size: var(--text-sm);
+}
+
+/* Password box: eye inside, "Forgot password?" on the label row */
+.password-field {
+  position: relative;
+}
+
+.password-field .field__control {
+  width: 100%;
+  padding-right: 48px;
+}
+
+.password-field__action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: var(--text-sm);
+}
+
+.password-field__action a {
+  color: var(--color-primary);
+  font-weight: var(--font-medium);
+}
+
+.password-field__toggle {
+  position: absolute;
+  top: 24px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.password-field__toggle:hover {
+  color: var(--color-primary);
+}
+
+/* Why create an account */
+.auth-aside {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.auth-panel {
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid #e6dcc3;
+  border-radius: var(--radius-md);
+}
+
+.auth-panel__title {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.auth-benefits,
+.auth-help {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.auth-benefits li,
+.auth-help li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.auth-benefits svg,
+.auth-help svg {
+  flex: none;
+  color: var(--color-accent-hover);
+}
+
+.auth-benefits span {
+  display: grid;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.auth-benefits strong {
+  color: var(--color-text-main);
+}
+
+.auth-help {
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.auth-help a {
+  color: var(--color-primary);
+}
+
+@media (max-width: 1100px) {
+  .auth-shell__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  }
+
+  .auth-aside {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .auth-shell {
+    padding: var(--space-6) 0;
+  }
+
+  .auth-shell__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .auth-hero {
+    text-align: center;
+  }
+
+  .auth-art {
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  .auth-card {
+    padding: var(--space-6);
+  }
+
+  .auth-aside {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-art__diamonds path,
+  .auth-art__float,
+  .auth-art__sway {
+    animation: none;
+  }
+}

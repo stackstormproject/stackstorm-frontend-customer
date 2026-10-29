@@ -38,3 +38,13 @@ export const logout = async () => {
     setSessionHint(false);
   }
 };
+
+/**
+ * POST /auth/forgot-password (#185). Always succeeds for a valid email. Outside production,
+ * without a mail server, the backend also returns the link as `dev_reset_url`.
+ */
+export const requestPasswordReset = (email) => http.post('/auth/forgot-password', { email });
+
+/** POST /auth/reset-password (#185): new password from the emailed link's token. */
+export const resetPassword = ({ token, password }) =>
+  http.post('/auth/reset-password', { token, password });
