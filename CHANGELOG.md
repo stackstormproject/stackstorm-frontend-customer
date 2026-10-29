@@ -53,6 +53,9 @@ All notable changes to the customer storefront. Format:
   each saved as it is changed), and a "Payment methods" page listing cards saved on the
   payment page with brand, last 4 digits and expiry, to set as default or remove (#193,
   FR-005, FR-010, FR-012, FR-34)
+- A "Sale" section on the home page and a dedicated `/sale` page (reusing the catalogue's
+  filters, grid and pagination), with a sale badge and struck-through pricing on product
+  cards and the product detail page (#199)
 
 ### Changed
 
