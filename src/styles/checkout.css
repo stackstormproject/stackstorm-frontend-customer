@@ -462,3 +462,20 @@ address {
   color: var(--color-text-muted);
   text-align: center;
 }
+
+/* Bank Card payment form (#202): card holder, number, expiry and CVV */
+.gateway__form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.gateway__form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.gateway__note--payhere {
+  font-weight: var(--font-semibold);
+  color: var(--color-text-main);
+}
