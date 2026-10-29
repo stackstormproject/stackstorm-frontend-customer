@@ -5,6 +5,35 @@ export const getProfile = () => http.get('/users/me');
 
 export const updateProfile = ({ name, phone }) => http.patch('/users/me', { name, phone });
 
+/**
+ * POST /users/me/avatar (multipart field "avatar"), JPEG/PNG/WebP up to 5 MB -> { avatar_url }
+ * (#189, FR-010/FR-34).
+ */
+export const uploadAvatar = (file) => {
+  const form = new FormData();
+  form.append('avatar', file);
+  return http.post('/users/me/avatar', form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
+/** DELETE /users/me/avatar -> { avatar_url: null } (#189) */
+export const deleteAvatar = () => http.delete('/users/me/avatar');
+
+/** GET /users/me/preferences (#189, FR-010) */
+export const getPreferences = () => http.get('/users/me/preferences');
+
+/** PATCH /users/me/preferences with only the changed keys (#189, FR-010) */
+export const updatePreferences = (changes) => http.patch('/users/me/preferences', changes);
+
+/** GET /users/me/payment-methods (#190, FR-012) */
+export const listPaymentMethods = () => http.get('/users/me/payment-methods');
+
+export const setDefaultPaymentMethod = (id) =>
+  http.patch(`/users/me/payment-methods/${id}/default`);
+
+export const deletePaymentMethod = (id) => http.delete(`/users/me/payment-methods/${id}`);
+
 export const listAddresses = () => http.get('/users/addresses');
 
 /** The address book uses the same fields as the checkout form (see lib/address.js). */
