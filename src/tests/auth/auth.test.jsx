@@ -48,9 +48,11 @@ describe('describeAuthError', () => {
 
   it('should only allow same-site return paths', () => {
     expect(safeNext('/checkout')).toBe('/checkout');
-    expect(safeNext('//evil.example')).toBe('/account');
-    expect(safeNext('https://evil.example')).toBe('/account');
-    expect(safeNext(null)).toBe('/account');
+    expect(safeNext('/account/orders')).toBe('/account/orders');
+    // #187: no destination (or an unsafe one) means the home page.
+    expect(safeNext('//evil.example')).toBe('/');
+    expect(safeNext('https://evil.example')).toBe('/');
+    expect(safeNext(null)).toBe('/');
   });
 });
 
@@ -91,6 +93,18 @@ describe('Sign in and register pages (FR035)', () => {
     expect(cartApi.mergeGuestCart).toHaveBeenCalled();
   });
 
+  it('should go to the home page after signing in without a destination (#187)', async () => {
+    authApi.login.mockResolvedValue({ id: 4, name: 'Nimal Perera' });
+    const { router } = renderApp('/sign-in');
+
+    await userEvent.type(screen.getByLabelText('Email'), 'nimal@example.lk');
+    await userEvent.type(screen.getByLabelText('Password'), 'Shopper123');
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+
+    expect(await screen.findByText('Welcome back, Nimal')).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe('/');
+  });
+
   it('should show a lockout message from the server', async () => {
     authApi.login.mockRejectedValue(apiError('ACCOUNT_LOCKED', 423));
     renderApp('/sign-in');
@@ -117,7 +131,7 @@ describe('Sign in and register pages (FR035)', () => {
     const { router } = renderApp('/sign-in');
 
     await screen.findByRole('link', { name: 'Account' });
-    expect(router.state.location.pathname).toBe('/account');
+    expect(router.state.location.pathname).toBe('/');
   });
 
   it('should list every unmet password rule on register', async () => {

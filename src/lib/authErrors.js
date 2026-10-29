@@ -33,6 +33,9 @@ export const describeAuthError = (error) => {
   }
 };
 
-/** Only same-site paths are allowed as a post-sign-in destination (no open redirect). */
+/**
+ * Where to go after signing in or registering. Only same-site paths are allowed (no open
+ * redirect); without one the shopper lands on the home page (#187).
+ */
 export const safeNext = (next) =>
-  typeof next === 'string' && next.startsWith('/') && !next.startsWith('//') ? next : '/account';
+  typeof next === 'string' && next.startsWith('/') && !next.startsWith('//') ? next : '/';
