@@ -23,6 +23,7 @@ vi.mock('../../api/checkout', async (importOriginal) => ({
   createCheckoutSession: vi.fn(),
   confirmCheckoutSession: vi.fn(),
   releaseReservation: vi.fn(),
+  validatePromoCode: vi.fn(),
 }));
 vi.mock('../../lib/redirect', () => ({ leaveFor: vi.fn() }));
 vi.mock('../../components/chat/ChatWidget', () => ({ default: () => null }));
@@ -64,7 +65,7 @@ const fillAddress = async () => {
   await userEvent.selectOptions(screen.getByLabelText('District'), 'Matara');
 };
 
-const setup = ({ customer = null, cart = CART, addresses = [] } = {}) => {
+const setup = ({ customer = null, cart = CART, addresses = [], loyalty = null } = {}) => {
   authApi.restoreSession.mockResolvedValue(customer);
   cartApi.getCart.mockResolvedValue(cart);
   cartApi.mergeGuestCart.mockResolvedValue({});
@@ -73,6 +74,7 @@ const setup = ({ customer = null, cart = CART, addresses = [] } = {}) => {
   catalogApi.listCategories.mockResolvedValue([]);
   accountApi.listAddresses.mockResolvedValue(addresses);
   accountApi.addAddress.mockResolvedValue({});
+  accountApi.getLoyalty.mockResolvedValue(loyalty);
   checkoutApi.initiateCheckout.mockResolvedValue(ORDER);
   checkoutApi.createCheckoutSession.mockResolvedValue(MOCK_SESSION);
   checkoutApi.confirmCheckoutSession.mockResolvedValue({ orderId: 31, status: 'processing' });
@@ -155,6 +157,8 @@ describe('Checkout (UC-003)', () => {
       shippingMethod: 'standard',
       guestEmail: 'guest@example.lk',
       notes: 'Call on arrival',
+      promoCode: undefined,
+      redeemPoints: 0,
     });
     expect(getGuestOrderToken(31)).toBe('g'.repeat(32));
     expect(checkoutApi.createCheckoutSession).toHaveBeenCalledWith(31);
@@ -242,6 +246,67 @@ describe('Checkout (UC-003)', () => {
     await screen.findByRole('heading', { name: 'Test payment gateway' });
     expect(accountApi.addAddress).toHaveBeenCalledWith(
       expect.objectContaining({ line1: '12 Main Street', postalCode: '81200' })
+    );
+  });
+
+  it('should apply a promo code and send it with the order (#201)', async () => {
+    setup();
+    await screen.findByRole('heading', { name: 'Checkout' });
+    checkoutApi.validatePromoCode.mockResolvedValue({
+      promoCodeId: 9,
+      code: 'WELCOME10',
+      discountAmount: 680,
+    });
+
+    await userEvent.type(screen.getByLabelText('Promo code (optional)'), 'welcome10');
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
+
+    expect(checkoutApi.validatePromoCode).toHaveBeenCalledWith('WELCOME10', 6800);
+    expect(await screen.findByText(/WELCOME10/)).toBeInTheDocument();
+
+    await userEvent.type(screen.getByLabelText('Email for your receipt'), 'guest@example.lk');
+    await fillAddress();
+    await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
+
+    expect(checkoutApi.initiateCheckout).toHaveBeenCalledWith(
+      expect.objectContaining({ promoCode: 'WELCOME10' })
+    );
+  });
+
+  it('should show an invalid promo code error and not block checkout', async () => {
+    setup();
+    await screen.findByRole('heading', { name: 'Checkout' });
+    checkoutApi.validatePromoCode.mockRejectedValue(
+      Object.assign(new Error('This promo code is not valid'), { status: 400 })
+    );
+
+    await userEvent.type(screen.getByLabelText('Promo code (optional)'), 'BADCODE');
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
+
+    expect(await screen.findByText('This promo code is not valid')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Remove' })).not.toBeInTheDocument();
+  });
+
+  it('should let a signed-in customer redeem loyalty points as a checkout discount', async () => {
+    setup({
+      customer: { id: 4, email: 'n@x.lk' },
+      loyalty: { current_points: 500, tier: 'silver' },
+    });
+    await screen.findByRole('heading', { name: 'Checkout' });
+    await fillAddress();
+
+    await userEvent.click(
+      screen.getByRole('checkbox', { name: /Redeem loyalty points — you have 500 points/ })
+    );
+    const pointsInput = screen.getByLabelText('Points to redeem');
+    expect(pointsInput).toHaveValue(500);
+
+    await userEvent.clear(pointsInput);
+    await userEvent.type(pointsInput, '200');
+    await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
+
+    expect(checkoutApi.initiateCheckout).toHaveBeenCalledWith(
+      expect.objectContaining({ redeemPoints: 200 })
     );
   });
 
