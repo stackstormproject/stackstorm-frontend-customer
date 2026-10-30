@@ -58,9 +58,15 @@ All notable changes to the customer storefront. Format:
   cards and the product detail page (#199)
 - The home page hero now shows admin-managed banners by slot, falling back to the default
   slide for any slot admin hasn't filled in (#200)
+ feature/202-bank-card-gateway
 - The test payment gateway now shows a labelled Bank Card form (holder's name, card number,
   expiry, CVV) in front of PayHere's own gateway chrome, instead of a single "Pay" button
   (#202)
+
+- Checkout: a promo code can be applied and removed before paying, and a signed-in shopper
+  can redeem their loyalty points for a discount, both re-priced and re-validated by the
+  server at checkout (#201)
+ develop
 
 ### Changed
 

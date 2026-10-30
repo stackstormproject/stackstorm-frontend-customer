@@ -8,16 +8,36 @@ export const SHIPPING_METHODS = [
 
 /**
  * POST /checkout/initiate - creates a payment_pending order and a 15-minute stock hold.
- * Prices are computed by the server; the client sends only variant ids and quantities.
+ * Prices are computed by the server; the client sends only variant ids and quantities, plus
+ * any promo code / loyalty points the shopper chose (#201) - the server re-prices and
+ * re-validates both rather than trusting the discount shown on the form.
  */
-export const initiateCheckout = ({ items, shippingAddress, shippingMethod, guestEmail, notes }) =>
+export const initiateCheckout = ({
+  items,
+  shippingAddress,
+  shippingMethod,
+  guestEmail,
+  notes,
+  promoCode,
+  redeemPoints,
+}) =>
   http.post('/checkout/initiate', {
     items: items.map((item) => ({ variant_id: item.variant_id, quantity: item.quantity })),
     shipping_address: shippingAddress,
     shipping_method: shippingMethod,
     guest_email: guestEmail || undefined,
     notes: notes || undefined,
+    promo_code: promoCode || undefined,
+    redeem_points: redeemPoints > 0 ? redeemPoints : undefined,
   });
+
+/**
+ * POST /checkout/promo/validate -> { promoCodeId, code, discountAmount } (#201). Checks a
+ * promo code against the bag subtotal before the shopper commits to checkout; the server
+ * prices it again at /checkout/initiate regardless.
+ */
+export const validatePromoCode = (code, subtotal) =>
+  http.post('/checkout/promo/validate', { code, subtotal });
 
 /** POST /checkout/release/:id - gives held stock back when the shopper abandons payment. */
 export const releaseReservation = (reservationId) =>
