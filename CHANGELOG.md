@@ -58,6 +58,9 @@ All notable changes to the customer storefront. Format:
   cards and the product detail page (#199)
 - The home page hero now shows admin-managed banners by slot, falling back to the default
   slide for any slot admin hasn't filled in (#200)
+- Checkout: a promo code can be applied and removed before paying, and a signed-in shopper
+  can redeem their loyalty points for a discount, both re-priced and re-validated by the
+  server at checkout (#201)
 
 ### Changed
 
