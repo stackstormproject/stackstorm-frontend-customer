@@ -155,4 +155,33 @@ describe('Test payment gateway', () => {
 
     expect(await screen.findByRole('button', { name: /^Pay/ })).toBeDisabled();
   });
+
+  // Refs #202: the Bank Card form - name, number, expiry, CVV - grouped and validated
+  // before the Pay button is enabled, with PayHere's own gateway chrome underneath.
+  it('should group the card number into 4s and format the expiry as it is typed', async () => {
+    renderApp('/checkout/test-gateway?order=31&session_id=mock_cs_31_1&amount=3400');
+    await screen.findByText('PayHere is a Central Bank approved Secure Payment Gateway Service');
+
+    const numberField = screen.getByLabelText('Card Number');
+    await userEvent.clear(numberField);
+    await userEvent.type(numberField, '4111111111111111');
+    expect(numberField).toHaveValue('4111 1111 1111 1111');
+
+    const expiryField = screen.getByLabelText('Expiry (MM/YY)');
+    await userEvent.clear(expiryField);
+    await userEvent.type(expiryField, '1229');
+    expect(expiryField).toHaveValue('12/29');
+  });
+
+  it('should disable Pay until the card details are valid', async () => {
+    renderApp('/checkout/test-gateway?order=31&session_id=mock_cs_31_1&amount=3400');
+    const payButton = await screen.findByRole('button', { name: /^Pay/ });
+    expect(payButton).toBeEnabled();
+
+    await userEvent.clear(screen.getByLabelText('CVV'));
+    expect(payButton).toBeDisabled();
+
+    await userEvent.type(screen.getByLabelText('CVV'), '123');
+    expect(payButton).toBeEnabled();
+  });
 });
