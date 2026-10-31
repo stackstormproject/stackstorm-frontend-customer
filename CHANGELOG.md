@@ -78,6 +78,9 @@ All notable changes to the customer storefront. Format:
 - In-page card form (Stripe Elements), the hold timer and `VITE_STRIPE_PUBLISHABLE_KEY` (#182)
 - "New in" link in the category bar and footer, and the stripe between the header and the
   banner (#183)
+- Loyalty-point redemption at checkout; the server no longer accepts it, so the "Redeem
+  loyalty points" checkbox and points-to-redeem field were removed from the checkout form.
+  The account page's points/tier summary is unaffected (#11)
 
 ### Security
 
