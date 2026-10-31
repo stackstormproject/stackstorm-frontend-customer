@@ -71,6 +71,12 @@ All notable changes to the customer storefront. Format:
   a success message without checking anything (#109)
 - The access token is no longer stored in localStorage (#110)
 
+### Fixed
+
+- The nav bar now shows the signed-in shopper's profile picture (previously name only);
+  fixed with a matching backend change so the picture survives a sign-out/sign-in, not just
+  a page reload (#2, #3)
+
 ### Removed
 
 - Hard-coded fallback products, fake "saved locally" successes and the client-only cart (#110)
