@@ -79,6 +79,11 @@ All notable changes to the customer storefront. Format:
 - "New in" link in the category bar and footer, and the stripe between the header and the
   banner (#183)
 
+### Fixed
+
+- The shop's real logo now replaces the placeholder brand mark in the header, footer and
+  About page (#1)
+
 ### Security
 
 - No tokens in web storage; open-redirect-safe `?next=`; CSP restricting scripts to the site;
