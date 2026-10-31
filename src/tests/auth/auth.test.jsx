@@ -134,6 +134,20 @@ describe('Sign in and register pages (FR035)', () => {
     expect(router.state.location.pathname).toBe('/');
   });
 
+  // #2/#3: the nav-bar account link shows the profile picture once it's on the session
+  // customer, including right after a fresh sign-in (not only after an upload).
+  it('should show the profile picture in the nav bar for a signed-in customer', async () => {
+    authApi.restoreSession.mockResolvedValue({
+      id: 4,
+      name: 'Nimal',
+      avatar_url: 'https://cdn.example/avatars/4.png',
+    });
+    renderApp('/');
+
+    const link = await screen.findByRole('link', { name: 'Nimal' });
+    expect(link.querySelector('img')).toHaveAttribute('src', 'https://cdn.example/avatars/4.png');
+  });
+
   it('should list every unmet password rule on register', async () => {
     renderApp('/register');
 
