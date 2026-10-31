@@ -78,6 +78,7 @@ All notable changes to the customer storefront. Format:
 - In-page card form (Stripe Elements), the hold timer and `VITE_STRIPE_PUBLISHABLE_KEY` (#182)
 - "New in" link in the category bar and footer, and the stripe between the header and the
   banner (#183)
+- "Prices in Sri Lankan rupees" note from the footer copyright line (#9)
 
 ### Security
 
