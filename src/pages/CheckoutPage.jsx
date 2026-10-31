@@ -7,7 +7,7 @@ import {
   paymentPageFor,
   validatePromoCode,
 } from '../api/checkout';
-import { listAddresses, addAddress, getLoyalty } from '../api/account';
+import { listAddresses, addAddress } from '../api/account';
 import { leaveFor } from '../lib/redirect';
 import { useAuth } from '../state/AuthContext';
 import { useCart, FREE_SHIPPING_THRESHOLD, STANDARD_SHIPPING_FEE } from '../state/CartContext';
@@ -28,16 +28,13 @@ import {
 import { OrderSummary } from '../components/checkout/OrderSummary';
 
 const NEW_ADDRESS = 'new';
-// Same point value as loyalty.service's POINT_VALUE_LKR; redeemed points are worth this many
-// LKR each as a checkout discount.
-const POINT_VALUE_LKR = 1;
 
 /** Same delivery rule as checkout.service, used only until the server returns real totals. */
 const estimateTotals = (subtotal, method, discountAmount = 0) => {
   const shipping =
     method === 'pickup' || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_FEE;
-  // The server caps the combined promo + loyalty discount at the goods subtotal (#201); mirror
-  // that here so the preview never shows a negative total.
+  // The server caps the promo discount at the goods subtotal; mirror that here so the
+  // preview never shows a negative total.
   const discount = Math.min(discountAmount, subtotal);
   return {
     subtotal,
@@ -64,24 +61,17 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
-  // #201: a promo code and/or loyalty points can be applied as a checkout discount.
+  // #201: a promo code can be applied as a checkout discount.
   const [promoInput, setPromoInput] = useState('');
   const [appliedPromo, setAppliedPromo] = useState(null); // { code, discountAmount } | null
   const [promoError, setPromoError] = useState(null);
   const [checkingPromo, setCheckingPromo] = useState(false);
-  const [redeemChecked, setRedeemChecked] = useState(false);
-  const [redeemPoints, setRedeemPoints] = useState(0);
 
   const saved = useResource(
     () => (isSignedIn ? listAddresses() : Promise.resolve([])),
     [isSignedIn]
   );
   const savedAddresses = useMemo(() => saved.data || [], [saved.data]);
-  const loyalty = useResource(
-    () => (isSignedIn ? getLoyalty() : Promise.resolve(null)),
-    [isSignedIn]
-  );
-  const availablePoints = loyalty.data?.current_points || 0;
 
   // Until the shopper picks, use their default saved address (derived, so there is no flicker).
   const preferred = savedAddresses.find((a) => a.is_default) || savedAddresses[0];
@@ -128,11 +118,7 @@ export default function CheckoutPage() {
     return found;
   };
 
-  // A point redeemed after the promo is applied can't push the discount past the subtotal;
-  // the server enforces the same cap at /checkout/initiate, this just keeps the form honest.
   const promoDiscount = appliedPromo?.discountAmount || 0;
-  const maxRedeemable = Math.max(0, Math.min(availablePoints, subtotal - promoDiscount));
-  const loyaltyDiscount = Math.min(redeemPoints, maxRedeemable) * POINT_VALUE_LKR;
 
   const applyPromo = async () => {
     const code = promoInput.trim();
@@ -178,7 +164,6 @@ export default function CheckoutPage() {
         guestEmail: isSignedIn ? undefined : email.trim(),
         notes: notes.trim(),
         promoCode: appliedPromo?.code,
-        redeemPoints: Math.min(redeemPoints, maxRedeemable),
       });
       if (order.guest_order_token) rememberGuestOrder(order.order_id, order.guest_order_token);
       if (isSignedIn && addressChoice === NEW_ADDRESS && saveAddress) {
@@ -356,42 +341,6 @@ export default function CheckoutPage() {
                     </button>
                   </div>
                 )}
-
-                {isSignedIn && availablePoints > 0 && (
-                  <label className="checkout__loyalty">
-                    <input
-                      type="checkbox"
-                      checked={redeemChecked}
-                      onChange={(e) => {
-                        setRedeemChecked(e.target.checked);
-                        setRedeemPoints(e.target.checked ? maxRedeemable : 0);
-                      }}
-                    />
-                    Redeem loyalty points — you have {availablePoints} point
-                    {availablePoints === 1 ? '' : 's'} (worth{' '}
-                    <Price amount={availablePoints * POINT_VALUE_LKR} />)
-                  </label>
-                )}
-                {isSignedIn && redeemChecked && (
-                  <div className="checkout__loyalty-amount">
-                    <label htmlFor="redeem-points">Points to redeem</label>
-                    <input
-                      id="redeem-points"
-                      type="number"
-                      min={0}
-                      max={maxRedeemable}
-                      value={redeemPoints}
-                      onChange={(e) =>
-                        setRedeemPoints(
-                          Math.max(0, Math.min(maxRedeemable, Number(e.target.value) || 0))
-                        )
-                      }
-                    />
-                    <span className="muted">
-                      = <Price amount={loyaltyDiscount} /> off
-                    </span>
-                  </div>
-                )}
               </fieldset>
 
               <FormField
@@ -412,10 +361,7 @@ export default function CheckoutPage() {
           )}
         </div>
 
-        <OrderSummary
-          items={items}
-          estimate={estimateTotals(subtotal, method, promoDiscount + loyaltyDiscount)}
-        />
+        <OrderSummary items={items} estimate={estimateTotals(subtotal, method, promoDiscount)} />
       </div>
     </div>
   );
