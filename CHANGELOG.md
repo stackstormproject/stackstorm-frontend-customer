@@ -71,6 +71,12 @@ All notable changes to the customer storefront. Format:
   a success message without checking anything (#109)
 - The access token is no longer stored in localStorage (#110)
 
+### Fixed
+
+- The nav bar now shows the signed-in shopper's profile picture (previously name only);
+  fixed with a matching backend change so the picture survives a sign-out/sign-in, not just
+  a page reload (#2, #3)
+
 ### Removed
 
 - Hard-coded fallback products, fake "saved locally" successes and the client-only cart (#110)
@@ -78,7 +84,13 @@ All notable changes to the customer storefront. Format:
 - In-page card form (Stripe Elements), the hold timer and `VITE_STRIPE_PUBLISHABLE_KEY` (#182)
 - "New in" link in the category bar and footer, and the stripe between the header and the
   banner (#183)
+ fix/9-remove-currency-footer-note
 - "Prices in Sri Lankan rupees" note from the footer copyright line (#9)
+
+- Loyalty-point redemption at checkout; the server no longer accepts it, so the "Redeem
+  loyalty points" checkbox and points-to-redeem field were removed from the checkout form.
+  The account page's points/tier summary is unaffected (#11)
+ develop
 
 ### Security
 
