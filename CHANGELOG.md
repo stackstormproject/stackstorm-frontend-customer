@@ -88,6 +88,11 @@ All notable changes to the customer storefront. Format:
   loyalty points" checkbox and points-to-redeem field were removed from the checkout form.
   The account page's points/tier summary is unaffected (#11)
 
+### Fixed
+
+- The shop's real logo now replaces the placeholder brand mark in the header, footer and
+  About page (#1)
+
 ### Security
 
 - No tokens in web storage; open-redirect-safe `?next=`; CSP restricting scripts to the site;
