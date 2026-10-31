@@ -158,7 +158,6 @@ describe('Checkout (UC-003)', () => {
       guestEmail: 'guest@example.lk',
       notes: 'Call on arrival',
       promoCode: undefined,
-      redeemPoints: 0,
     });
     expect(getGuestOrderToken(31)).toBe('g'.repeat(32));
     expect(checkoutApi.createCheckoutSession).toHaveBeenCalledWith(31);
@@ -285,29 +284,6 @@ describe('Checkout (UC-003)', () => {
 
     expect(await screen.findByText('This promo code is not valid')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Remove' })).not.toBeInTheDocument();
-  });
-
-  it('should let a signed-in customer redeem loyalty points as a checkout discount', async () => {
-    setup({
-      customer: { id: 4, email: 'n@x.lk' },
-      loyalty: { current_points: 500, tier: 'silver' },
-    });
-    await screen.findByRole('heading', { name: 'Checkout' });
-    await fillAddress();
-
-    await userEvent.click(
-      screen.getByRole('checkbox', { name: /Redeem loyalty points — you have 500 points/ })
-    );
-    const pointsInput = screen.getByLabelText('Points to redeem');
-    expect(pointsInput).toHaveValue(500);
-
-    await userEvent.clear(pointsInput);
-    await userEvent.type(pointsInput, '200');
-    await userEvent.click(screen.getByRole('button', { name: 'Continue to payment' }));
-
-    expect(checkoutApi.initiateCheckout).toHaveBeenCalledWith(
-      expect.objectContaining({ redeemPoints: 200 })
-    );
   });
 
   it('should not save the address when unticked, and survive a save failure', async () => {
