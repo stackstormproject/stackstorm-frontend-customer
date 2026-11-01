@@ -416,15 +416,13 @@
   overflow: hidden;
 }
 
-/* A quieter, editorial overline treatment instead of the bold navy section headings used
-   elsewhere on the page — sets the trust/brand strip apart as its own register (#8). */
+/* A flowing script treatment instead of the bold navy section headings used elsewhere on
+   the page - sets the trust/brand strip apart as its own register (#8). */
 .brand-shelf h2 {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  font-weight: var(--font-semibold);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
+  font-family: var(--font-script);
+  font-size: clamp(2.25rem, 1.8rem + 1.5vw, 3rem);
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
   margin-bottom: var(--space-8);
   text-align: center;
 }
