@@ -95,9 +95,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="container site-footer__legal">
-          <p>
-            © {new Date().getFullYear()} Dickwella Fashion Corner. Prices in Sri Lankan rupees.
-          </p>
+          <p>© {new Date().getFullYear()} Dickwella Fashion Corner.</p>
           <p className="site-footer__pay">We accept Visa and Mastercard</p>
         </div>
       </div>
