@@ -448,20 +448,38 @@ address {
 
 .gateway {
   min-height: 100vh;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: var(--space-6) var(--space-4);
-  background: #eef1f6;
+  background: radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.08), transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(10, 25, 47, 0.06), transparent 40%),
+    var(--color-surface-subtle);
 }
 
 .gateway__panel {
-  width: min(420px, 100%);
+  width: min(440px, 100%);
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-5);
   padding: var(--space-8);
+  overflow: hidden;
+  border-top: 4px solid var(--color-accent);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   box-shadow: var(--shadow-xl);
+  box-sizing: border-box;
+}
+
+/* Grid items default to min-width: auto, which lets unwrapped text (the long PayHere/Stripe
+   notes especially) force this track wider than the panel itself. Without this, everything
+   below the heading quietly overflows the card instead of wrapping to fit it. */
+.gateway__panel > * {
+  min-width: 0;
+}
+
+.gateway__head {
+  display: grid;
+  gap: var(--space-2);
 }
 
 .gateway__badge {
@@ -477,12 +495,83 @@ address {
 
 .gateway h1 {
   margin: 0;
+  font-family: var(--font-heading);
   font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-main);
 }
 
 .gateway__merchant {
   margin: 0;
   color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* A live, quietly-updating bank card - the one bold element on an otherwise plain page. */
+.gateway__card {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-5);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-md);
+  box-sizing: border-box;
+}
+
+.gateway__card > * {
+  min-width: 0;
+}
+
+.gateway__chip {
+  display: block;
+  width: 34px;
+  height: 24px;
+  border-radius: 5px;
+  background: linear-gradient(155deg, var(--color-accent-light), var(--color-accent));
+}
+
+.gateway__card-number {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-medium);
+  letter-spacing: 0.06em;
+  color: var(--color-text-inverse);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gateway__card-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.gateway__card-bottom div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.gateway__card-bottom div:last-child {
+  text-align: right;
+}
+
+.gateway__card-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-inverse-muted);
+}
+
+.gateway__card-value {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .gateway__amount {
@@ -491,29 +580,7 @@ address {
   font-size: var(--text-4xl);
   font-weight: var(--font-bold);
   color: var(--color-primary);
-}
-
-.gateway__card {
-  display: grid;
-  gap: var(--space-2);
-  margin: 0 0 var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-}
-
-.gateway__card div {
-  display: flex;
-  justify-content: space-between;
-}
-
-.gateway__card dt {
-  color: var(--color-text-muted);
-}
-
-.gateway__card dd {
-  margin: 0;
-  font-weight: var(--font-semibold);
+  text-align: center;
 }
 
 .gateway__note {
@@ -523,10 +590,19 @@ address {
   text-align: center;
 }
 
+.gateway__note--payhere {
+  font-weight: var(--font-semibold);
+  color: var(--color-text-main);
+}
+
 /* Bank Card payment form (#202): card holder, number, expiry and CVV */
 .gateway__form {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
+}
+
+.gateway__form > * {
+  min-width: 0;
 }
 
 .gateway__form-row {
@@ -535,7 +611,32 @@ address {
   gap: var(--space-3);
 }
 
-.gateway__note--payhere {
-  font-weight: var(--font-semibold);
-  color: var(--color-text-main);
+.gateway__form-row > * {
+  min-width: 0;
+}
+
+.gateway .field__control:focus {
+  border-color: var(--color-primary);
+  outline: 2px solid rgba(10, 25, 47, 0.14);
+}
+
+/* Field icon (card / calendar / lock) sitting inside the input, left of the typed text. */
+.gateway__input-icon {
+  position: relative;
+  display: block;
+}
+
+.gateway__input-icon svg {
+  color: var(--color-text-subtle);
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.gateway__input-icon .field__control {
+  width: 100%;
+  padding-left: calc(var(--space-3) * 2 + 16px);
+  box-sizing: border-box;
 }
