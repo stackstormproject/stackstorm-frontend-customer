@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Lock } from 'lucide-react';
+import { CalendarDays, CreditCard, Lock } from 'lucide-react';
 import { formatPrice } from '../lib/format';
 
 // #202: styled after the "Bank Card" mockup - a labelled card form (holder's name, card
@@ -19,6 +19,13 @@ const formatCardNumber = (value) =>
 const formatExpiry = (value) => {
   const digits = value.replace(/\D/g, '').slice(0, 4);
   return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+};
+
+// A quiet preview of the card being typed, four digits revealed, the rest masked - so the
+// form reads as a bank card rather than a plain row of inputs.
+const maskedNumber = (value) => {
+  const digits = value.replace(/\D/g, '').padEnd(16, '•').slice(0, 16);
+  return digits.replace(/(.{4})/g, '$1 ').trim();
 };
 
 /**
@@ -58,11 +65,28 @@ export default function TestGatewayPage() {
   return (
     <main className="gateway">
       <div className="gateway__panel">
-        <p className="gateway__badge">Test mode: no real payment is taken</p>
-        <h1>Test payment gateway</h1>
-        <p className="gateway__merchant">Paying Dickwella Fashion Corner</p>
+        <header className="gateway__head">
+          <p className="gateway__badge">Test mode: no real payment is taken</p>
+          <h1>Test payment gateway</h1>
+          <p className="gateway__merchant">Paying Dickwella Fashion Corner · Order #{orderId}</p>
+        </header>
+
+        <div className="gateway__card" aria-hidden="true">
+          <span className="gateway__chip" />
+          <p className="gateway__card-number">{maskedNumber(cardNumber)}</p>
+          <div className="gateway__card-bottom">
+            <div>
+              <span className="gateway__card-label">Card holder</span>
+              <span className="gateway__card-value">{cardName || 'Your name'}</span>
+            </div>
+            <div>
+              <span className="gateway__card-label">Expires</span>
+              <span className="gateway__card-value">{expiry || 'MM/YY'}</span>
+            </div>
+          </div>
+        </div>
+
         <p className="gateway__amount">{Number.isFinite(amount) ? formatPrice(amount) : ''}</p>
-        <p className="muted">Order #{orderId}</p>
 
         <form
           className="gateway__form"
@@ -84,43 +108,52 @@ export default function TestGatewayPage() {
           </label>
           <label className="field" htmlFor="card-number">
             <span className="field__label">Card Number</span>
-            <input
-              id="card-number"
-              className="field__control"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-              inputMode="numeric"
-              autoComplete="cc-number"
-              placeholder="0000 0000 0000 0000"
-              disabled={paying}
-            />
+            <span className="gateway__input-icon">
+              <CreditCard size={16} aria-hidden="true" />
+              <input
+                id="card-number"
+                className="field__control"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+                inputMode="numeric"
+                autoComplete="cc-number"
+                placeholder="0000 0000 0000 0000"
+                disabled={paying}
+              />
+            </span>
           </label>
           <div className="gateway__form-row">
             <label className="field" htmlFor="card-expiry">
               <span className="field__label">Expiry (MM/YY)</span>
-              <input
-                id="card-expiry"
-                className="field__control"
-                value={expiry}
-                onChange={(e) => setExpiry(formatExpiry(e.target.value))}
-                inputMode="numeric"
-                autoComplete="cc-exp"
-                placeholder="MM/YY"
-                disabled={paying}
-              />
+              <span className="gateway__input-icon">
+                <CalendarDays size={16} aria-hidden="true" />
+                <input
+                  id="card-expiry"
+                  className="field__control"
+                  value={expiry}
+                  onChange={(e) => setExpiry(formatExpiry(e.target.value))}
+                  inputMode="numeric"
+                  autoComplete="cc-exp"
+                  placeholder="MM/YY"
+                  disabled={paying}
+                />
+              </span>
             </label>
             <label className="field" htmlFor="card-cvv">
               <span className="field__label">CVV</span>
-              <input
-                id="card-cvv"
-                className="field__control"
-                value={cvv}
-                onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                inputMode="numeric"
-                autoComplete="cc-csc"
-                placeholder="123"
-                disabled={paying}
-              />
+              <span className="gateway__input-icon">
+                <Lock size={16} aria-hidden="true" />
+                <input
+                  id="card-cvv"
+                  className="field__control"
+                  value={cvv}
+                  onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  inputMode="numeric"
+                  autoComplete="cc-csc"
+                  placeholder="123"
+                  disabled={paying}
+                />
+              </span>
             </label>
           </div>
 
