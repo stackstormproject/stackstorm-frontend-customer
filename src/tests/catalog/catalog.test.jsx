@@ -283,13 +283,8 @@ describe('Home page (#176)', () => {
     expect(catalogApi.listProducts).toHaveBeenCalledWith({ section: 'new_arrivals', limit: 8 });
     expect(catalogApi.listProducts).toHaveBeenCalledWith({ section: 'popular', limit: 8 });
 
-    const brands = await screen.findByRole('region', { name: 'Our brands' });
-    expect(within(brands).getByRole('link', { name: /Dickwella Atelier/ })).toHaveAttribute(
-      'href',
-      '/shop?brand=dickwella-atelier'
-    );
-    expect(within(brands).getByText('7 products')).toBeInTheDocument();
-    expect(within(brands).getByText('1 product')).toBeInTheDocument();
+    const brands = await screen.findByRole('region', { name: 'Brands we carry' });
+    expect(within(brands).getAllByAltText('Nike')[0]).toBeInTheDocument();
   });
 
   it('should fall back to the newest products and hide an empty popular section', async () => {
@@ -303,7 +298,8 @@ describe('Home page (#176)', () => {
     await waitFor(() => expect(within(fresh).getAllByRole('article')).toHaveLength(2));
     expect(catalogApi.listProducts).toHaveBeenCalledWith({ sort: 'newest', limit: 8 });
     expect(screen.queryByRole('region', { name: 'Popular now' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('region', { name: 'Our brands' })).not.toBeInTheDocument();
+    // The brand strip is a fixed logo belt, not staff-managed, so it always shows.
+    expect(screen.getByRole('region', { name: 'Brands we carry' })).toBeInTheDocument();
   });
 
   it('should scroll a long section with its arrows', async () => {
