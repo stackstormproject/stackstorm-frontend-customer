@@ -70,6 +70,10 @@ All notable changes to the customer storefront. Format:
 - `lint`, `format:check` and `test:coverage` now run the real tools; they previously printed
   a success message without checking anything (#109)
 - The access token is no longer stored in localStorage (#110)
+- Sign in, register and password reset: a full-height photo with the shop's greeting now
+  fills the left side and the form sits in a plain panel on the right, replacing the
+  three-column layout with an illustrated greeting and a separate benefits list; the gold
+  accent is replaced with navy to match the rest of the storefront
 
 ### Fixed
 
