@@ -217,9 +217,6 @@ describe('Sign in and register pages (FR035)', () => {
       'href',
       '/forgot-password'
     );
-    expect(screen.getByRole('complementary', { name: 'About accounts' })).toHaveTextContent(
-      'Earn loyalty points'
-    );
     await userEvent.click(screen.getByRole('link', { name: 'Continue as guest' }));
     expect(router.state.location.pathname).toBe('/');
   });

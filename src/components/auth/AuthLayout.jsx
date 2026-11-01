@@ -1,66 +1,30 @@
-import { Link } from 'react-router-dom';
-import { Gift, Heart, MapPin, Package, RotateCcw, Truck } from 'lucide-react';
-import { AuthArt } from './AuthArt';
-
-const BENEFITS = [
-  [Package, 'Track your orders', 'Live delivery updates'],
-  [Gift, 'Earn loyalty points', 'Points on every purchase'],
-  [Heart, 'Save to wishlist', 'Never lose track of an item'],
-  [RotateCcw, 'Easy returns', 'Ask for a return in one click'],
-  [MapPin, 'Saved addresses', 'Faster checkout every time'],
-];
+import { BrandMark } from '../layout/BrandMark';
+import authBanner from '../../assets/auth-banner.jpg';
 
 /**
- * Shared frame for sign in, register and password reset (#186): a greeting over the shop's
- * illustrated background, the form in a bordered card, and why an account helps.
+ * Shared frame for sign in, register and password reset (#186): the photo on the left with
+ * the shop's greeting over it, the form framed in a card on the right.
  */
 export function AuthLayout({ title, accent, children }) {
   return (
     <div className="auth-shell">
-      <div className="container auth-shell__grid">
-        <div className="auth-hero">
-          <p className="auth-hero__title">
-            {title}
-            <span>{accent}</span>
-          </p>
-          <AuthArt />
+      <div className="auth-banner">
+        <img className="auth-banner__image" src={authBanner} alt="" aria-hidden="true" />
+        <div className="auth-banner__scrim" aria-hidden="true" />
+        <div className="auth-banner__text">
+          <p className="auth-banner__eyebrow">Dickwella Fashion Corner</p>
+          <p className="auth-banner__title">{title}</p>
+          <p className="auth-banner__accent">{accent}</p>
         </div>
+      </div>
 
-        <section className="auth-card">{children}</section>
-
-        <aside className="auth-aside" aria-label="About accounts">
-          <div className="auth-panel">
-            <h2 className="auth-panel__title">Why create an account?</h2>
-            <ul className="auth-benefits">
-              {BENEFITS.map(([Icon, label, detail]) => (
-                <li key={label}>
-                  <Icon size={20} aria-hidden="true" />
-                  <span>
-                    <strong>{label}</strong>
-                    {detail}
-                  </span>
-                </li>
-              ))}
-            </ul>
+      <div className="auth-form-side">
+        <section className="auth-card">
+          <div className="auth-card__badge">
+            <BrandMark size={28} />
           </div>
-          <div className="auth-panel">
-            <h2 className="auth-panel__title">Need help?</h2>
-            <ul className="auth-help">
-              <li>
-                <Truck size={16} aria-hidden="true" />
-                <Link to="/help/delivery">Delivery and collection</Link>
-              </li>
-              <li>
-                <RotateCcw size={16} aria-hidden="true" />
-                <Link to="/help/returns">Returns and exchanges</Link>
-              </li>
-              <li>
-                <MapPin size={16} aria-hidden="true" />
-                <span>Main Street, Dickwella, open daily 9 am to 8 pm</span>
-              </li>
-            </ul>
-          </div>
-        </aside>
+          {children}
+        </section>
       </div>
     </div>
   );
