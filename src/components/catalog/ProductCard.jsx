@@ -35,7 +35,9 @@ export function ProductCard({ product }) {
             />
           )}
           {product.is_on_sale && (
-            <span className="product-card__badge product-card__badge--sale">Sale</span>
+            <span className="product-card__badge product-card__badge--sale">
+              -{Math.round(product.discount_percentage)}%
+            </span>
           )}
           {!product.is_on_sale && product.is_new_arrival && (
             <span className="product-card__badge">New</span>
