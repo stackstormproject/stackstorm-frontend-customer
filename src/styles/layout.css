@@ -57,6 +57,7 @@
 
 .brand-mark {
   flex: none;
+  object-fit: contain;
 }
 
 .brand__text {
@@ -434,10 +435,6 @@
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
   color: var(--color-text-inverse);
-}
-
-.site-footer__brand .brand-mark rect {
-  fill: var(--color-primary-lighter);
 }
 
 .site-footer__about p:not(.site-footer__brand) {
