@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Hand, RotateCcw, ShieldCheck, Truck } from 'lucide-react';
 import { BrandMark } from '../components/layout/BrandMark';
-import shopPlaceholder from '../assets/about/shop-placeholder.svg';
+import shopPhoto from '../assets/about/shop-front.jpg';
 
 // #192 (FR-33): a short, honest "About us" page for the shop.
 const VALUES = [
@@ -49,12 +49,9 @@ export default function AboutPage() {
           </p>
         </header>
 
-        {/* #192: a photo of the shop itself, next to the intro on wide screens and above it
-            on narrow ones. Ships with a placeholder pattern in the shop's own colours - drop
-            a real photo of the Dickwella storefront at src/assets/about/shop-front.jpg and
-            swap the import above to replace it. */}
+        {/* #192: a photo next to the intro on wide screens, above it on narrow ones. */}
         <figure className="about-page__photo">
-          <img src={shopPlaceholder} alt="" />
+          <img src={shopPhoto} alt="A family browsing together in the Dickwella shop" />
         </figure>
       </div>
 
