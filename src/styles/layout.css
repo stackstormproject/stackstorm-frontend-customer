@@ -238,6 +238,17 @@
   flex-shrink: 0;
 }
 
+/* Bigger profile photo and a bolder, slightly larger name next to it in the nav. */
+.header-action--account .header-action__avatar {
+  width: 34px;
+  height: 34px;
+}
+
+.header-action__name {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+}
+
 .header-action--bag {
   background: var(--color-primary);
   color: var(--color-text-inverse);

@@ -52,6 +52,7 @@
   /* Typography Families */
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-script: 'Dancing Script', cursive;
 
   /* Typography Scale */
   --text-xs: 0.75rem; /* 12px */
