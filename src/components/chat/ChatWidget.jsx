@@ -61,6 +61,8 @@ export default function ChatWidget({ customer = null, accessToken = null }) {
   const [connectionStatus, setConnectionStatus] = useState('standby'); // 'connected' | 'connecting' | 'standby'
 
   const typingTimeoutRef = useRef(null);
+  const sessionIdRef = useRef(sessionId);
+  sessionIdRef.current = sessionId;
 
   // Initialize socket on open
   useEffect(() => {
@@ -71,15 +73,8 @@ export default function ChatWidget({ customer = null, accessToken = null }) {
 
     socketService.connect(accessToken);
 
-    const handleConnect = () => {
-      setConnectionStatus('connected');
-      let currentSessionId = null;
-      try {
-        currentSessionId = sessionStorage.getItem('dfc_chat_session_id');
-      } catch {
-        // ignore
-      }
-
+    /** Joins a (possibly brand-new) session and remembers it for next time. */
+    const startSession = (existingSessionId) => {
       const rawUser = customer;
 
       const customerMeta = rawUser
@@ -106,13 +101,40 @@ export default function ChatWidget({ customer = null, accessToken = null }) {
             }
           }
         },
-        currentSessionId,
+        existingSessionId,
         customerMeta
       );
     };
 
+    const handleConnect = () => {
+      setConnectionStatus('connected');
+      let currentSessionId = null;
+      try {
+        currentSessionId = sessionStorage.getItem('dfc_chat_session_id');
+      } catch {
+        // ignore
+      }
+      startSession(currentSessionId);
+    };
+
     const handleDisconnect = () => {
       setConnectionStatus('standby');
+    };
+
+    // Once an agent (or the system) marks a session resolved, that conversation is done:
+    // forget it and quietly line up a fresh session so the next message or quick action
+    // (e.g. Return Policy) still gets a real answer instead of vanishing into a closed chat.
+    const handleSessionResolved = (data) => {
+      const resolvedId = data && data.sessionId != null ? String(data.sessionId) : null;
+      if (!resolvedId || String(sessionIdRef.current) !== resolvedId) return;
+
+      setSessionId(null);
+      try {
+        sessionStorage.removeItem('dfc_chat_session_id');
+      } catch {
+        // ignore
+      }
+      startSession(null);
     };
 
     const handleMessage = (data) => {
@@ -184,6 +206,7 @@ export default function ChatWidget({ customer = null, accessToken = null }) {
     const unsubDisconnect = socketService.on('disconnect', handleDisconnect);
     const unsubMsg = socketService.on('chat:message', handleMessage);
     const unsubTyping = socketService.on('chat:typing', handleTyping);
+    const unsubResolved = socketService.on('chat:session_resolved', handleSessionResolved);
 
     if (socketService.isConnected) {
       handleConnect();
@@ -194,6 +217,7 @@ export default function ChatWidget({ customer = null, accessToken = null }) {
       unsubDisconnect();
       unsubMsg();
       unsubTyping();
+      unsubResolved();
     };
   }, [isOpen, accessToken, customer]);
 
