@@ -133,6 +133,28 @@ describe('ChatWidget (FR032/FR033)', () => {
     });
   });
 
+  it('should drop a resolved session and quietly start a new one for the next message', async () => {
+    await openChat();
+    act(() => socket.fire('connect'));
+
+    expect(sessionStorage.getItem('dfc_chat_session_id')).toBe('sess-1');
+
+    socket.emit.mockImplementation((event, payload, ack) => {
+      if (event === 'chat:join' && ack) ack({ sessionId: 'sess-2' });
+    });
+    act(() => socket.fire('chat:session_resolved', { sessionId: 'sess-1' }));
+
+    expect(sessionStorage.getItem('dfc_chat_session_id')).toBe('sess-2');
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Message' }), 'Still there?{enter}');
+
+    expect(socket.emit).toHaveBeenCalledWith(
+      'chat:message',
+      { sessionId: 'sess-2', message: 'Still there?' },
+      expect.any(Function)
+    );
+  });
+
   it('should close from the header', async () => {
     await openChat();
 
