@@ -69,6 +69,7 @@ class SocketService {
       'chat:user_joined',
       'chat:user_left',
       'chat:error',
+      'chat:session_resolved',
     ];
 
     chatEvents.forEach((eventName) => {
@@ -153,6 +154,7 @@ class SocketService {
       'chat:user_joined',
       'chat:user_left',
       'chat:error',
+      'chat:session_resolved',
     ].includes(event);
 
     if (!isForwarded && this.socket) {
