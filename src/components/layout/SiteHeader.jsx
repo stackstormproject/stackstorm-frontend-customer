@@ -47,13 +47,18 @@ export function SiteHeader() {
         <SearchBox />
 
         <nav className="header-actions" aria-label="Your account">
-          <Link to={isSignedIn ? '/account' : '/sign-in'} className="header-action">
+          <Link
+            to={isSignedIn ? '/account' : '/sign-in'}
+            className="header-action header-action--account"
+          >
             {isSignedIn && customer?.avatar_url ? (
               <img src={customer.avatar_url} alt="" className="header-action__avatar" />
             ) : (
               <User size={20} aria-hidden="true" />
             )}
-            <span>{isSignedIn ? customer?.name?.split(' ')[0] || 'Account' : 'Sign in'}</span>
+            <span className="header-action__name">
+              {isSignedIn ? customer?.name?.split(' ')[0] || 'Account' : 'Sign in'}
+            </span>
           </Link>
           <Link
             to="/account/wishlist"

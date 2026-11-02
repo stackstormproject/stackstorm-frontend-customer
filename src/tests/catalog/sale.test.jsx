@@ -78,7 +78,7 @@ describe('Sale page (/sale)', () => {
     renderApp('/sale');
 
     const card = (await screen.findAllByRole('article'))[0];
-    expect(within(card).getByText('Sale')).toBeInTheDocument();
+    expect(within(card).getByText('-20%')).toBeInTheDocument();
     expect(within(card).getByText('LKR 3,600')).toBeInTheDocument();
     expect(within(card).getByText('LKR 4,500')).toBeInTheDocument();
   });

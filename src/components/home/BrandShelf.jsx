@@ -1,4 +1,3 @@
-import diorLogo from '../../assets/brands/dior.webp';
 import reebokLogo from '../../assets/brands/reebok.webp';
 import filaLogo from '../../assets/brands/fila.webp';
 import zaraLogo from '../../assets/brands/zara.webp';
@@ -6,11 +5,9 @@ import pumaLogo from '../../assets/brands/puma.webp';
 import asicsLogo from '../../assets/brands/asics.webp';
 import nikeLogo from '../../assets/brands/nike.webp';
 import levisLogo from '../../assets/brands/levis.webp';
-import tomsLogo from '../../assets/brands/toms.webp';
 import uggLogo from '../../assets/brands/ugg.webp';
 
 const BRANDS = [
-  { name: 'Dior', logo: diorLogo },
   { name: 'Reebok', logo: reebokLogo },
   { name: 'Fila', logo: filaLogo },
   { name: 'Zara', logo: zaraLogo },
@@ -18,7 +15,6 @@ const BRANDS = [
   { name: 'Asics', logo: asicsLogo },
   { name: 'Nike', logo: nikeLogo },
   { name: "Levi's", logo: levisLogo },
-  { name: 'TOMS', logo: tomsLogo },
   { name: 'UGG', logo: uggLogo },
 ];
 
