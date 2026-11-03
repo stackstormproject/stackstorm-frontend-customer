@@ -19,9 +19,9 @@ demo staff accounts below to check role-gated storefront behaviour (staff accoun
 the [admin console](https://github.com/stackstormproject/stackstorm-frontend-admin), not the
 storefront):
 
-| Account | Role | Password |
-| --- | --- | --- |
-| `admin@stackstorm.lk` | super_admin | `NewPassword123` |
+| Account                 | Role          | Password         |
+| ----------------------- | ------------- | ---------------- |
+| `admin@stackstorm.lk`   | super_admin   | `NewPassword123` |
 | `support@stackstorm.lk` | support_agent | `NewPassword123` |
 
 ## What it does
