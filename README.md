@@ -43,7 +43,7 @@ storefront):
 
 ## Run it on a fresh machine
 
-\```bash
+```bash
 # 1. Backend (in another terminal) - see the backend README for details
 git clone https://github.com/stackstormproject/infra.git && cd infra && docker compose up -d && cd ..
 git clone https://github.com/stackstormproject/backend.git && cd backend
@@ -56,7 +56,7 @@ cd stackstorm-frontend-customer
 cp .env.example .env            # defaults work locally
 npm ci
 npm run dev                     # http://localhost:5173 (proxies /api and /socket.io to :5000)
-\```
+```
 
 Without a Stripe key the backend uses a **test payment mode**: checkout shows a clearly
 labelled "Place test order" button and no money moves. Add a Stripe test key to both apps to
@@ -108,10 +108,10 @@ Vite inlines these at **build** time. Never put secrets in them; `.env` is git-i
 
 ## Docker
 
-\```bash
+```bash
 docker build --build-arg VITE_STRIPE_PUBLISHABLE_KEY=pk_test_... -t stackstorm-customer .
 docker run --rm stackstorm-customer nginx -t     # validate the nginx config
-\```
+```
 
 nginx serves the bundle, proxies `/api` and `/socket.io` to the `backend` service, sends
 security headers (CSP allowing only Stripe as a third-party script) and never caches
