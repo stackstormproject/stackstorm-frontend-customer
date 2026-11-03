@@ -19,6 +19,15 @@ export default defineConfig({
     setupFiles: './src/tests/setup.js',
     include: ['src/**/*.test.{js,jsx}'],
     restoreMocks: true,
+    // Run each test file in its own child process (fork) so that module-level
+    // singletons (e.g. socketService) are fully isolated between files.
+    // This prevents EACCES connection errors caused by socket.io-client
+    // attempting real connections when its mock leaks between parallel workers.
+    pool: 'forks',
+    // Increase from the default 5 s so that integration-style tests (checkout
+    // gateway flow, order detail load) do not flake when the full suite runs in
+    // parallel on a loaded CI runner.
+    testTimeout: 15000,
     coverage: {
       provider: 'v8',
       reporter: ['text-summary', 'html', 'lcov', 'json-summary'],
