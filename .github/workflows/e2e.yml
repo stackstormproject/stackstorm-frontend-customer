@@ -1,0 +1,32 @@
+name: E2E (staging)
+
+# Runs the Playwright critical-flow suite against the deployed staging storefront.
+# Triggered by hand (e.g. after a staging deploy) and nightly, so it never blocks a PR on
+# staging availability. Set the repository variable STAGING_URL first.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 20 * * *' # 02:00 Sri Lanka time
+
+jobs:
+  e2e:
+    name: Playwright critical flows
+    runs-on: ubuntu-latest
+    if: vars.STAGING_URL != ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          CI: 'true'
+          E2E_BASE_URL: ${{ vars.STAGING_URL }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/

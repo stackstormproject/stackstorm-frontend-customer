@@ -1,0 +1,642 @@
+.muted {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.steps {
+  display: flex;
+  gap: var(--space-6);
+  list-style: none;
+  margin: 0 0 var(--space-8);
+  padding: 0;
+  counter-reset: step;
+  font-size: var(--text-sm);
+}
+
+.steps li {
+  counter-increment: step;
+  color: var(--color-text-muted);
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.steps li::before {
+  content: counter(step) '. ';
+}
+
+.steps li.is-current {
+  color: var(--color-primary);
+  font-weight: var(--font-semibold);
+  border-bottom-color: var(--color-accent);
+}
+
+.steps li.is-done {
+  color: var(--color-text-main);
+}
+
+.checkout__layout,
+.confirmation__grid {
+  display: grid;
+  gap: var(--space-10);
+}
+
+@media (min-width: 960px) {
+  .checkout__layout {
+    grid-template-columns: minmax(0, 1fr) 380px;
+    align-items: start;
+  }
+
+  .confirmation__grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+}
+
+.checkout__step {
+  max-width: 620px;
+}
+
+.checkout__step section,
+.checkout__group {
+  margin-bottom: var(--space-8);
+}
+
+.checkout__group {
+  border: 0;
+  padding: 0;
+}
+
+.checkout__group legend {
+  padding: 0;
+  margin-bottom: var(--space-3);
+}
+
+.checkout__group legend h2 {
+  margin: 0;
+}
+
+.choice {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.choice:has(input:checked) {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+.choice input {
+  margin-top: 4px;
+  accent-color: var(--color-primary);
+}
+
+.choice > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.checkout__hint {
+  margin-top: var(--space-3);
+}
+
+/* Promo code + loyalty point redemption (#201) */
+.checkout__promo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.checkout__promo .field {
+  flex: 1;
+}
+
+.checkout__promo-applied {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-subtle);
+}
+
+.link-button {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.checkout__loyalty {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.checkout__loyalty input {
+  margin-top: 2px;
+  accent-color: var(--color-primary);
+}
+
+.checkout__loyalty-amount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding-left: calc(16px + var(--space-2));
+  font-size: var(--text-sm);
+}
+
+.checkout__loyalty-amount input {
+  width: 90px;
+  min-height: 36px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+}
+
+.checkout__review {
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.checkout__review h3 {
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-2);
+}
+
+address {
+  font-style: normal;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-2);
+}
+
+.hold-timer {
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-accent-subtle);
+}
+
+.hold-timer strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.hold-timer--warning {
+  border-left-color: #b54708;
+  background: var(--color-warning-bg);
+}
+
+.card-element {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin: var(--space-1) 0 var(--space-4);
+}
+
+.payment-form__note {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.test-banner {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-info-bg);
+  border: 1px dashed var(--color-info);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+}
+
+.order-summary {
+  padding: var(--space-6);
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-sm);
+}
+
+@media (min-width: 960px) {
+  .order-summary {
+    position: sticky;
+    top: 140px;
+  }
+}
+
+.order-summary__lines {
+  list-style: none;
+  margin: 0 0 var(--space-4);
+  padding: 0;
+}
+
+.order-summary__lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  font-size: var(--text-sm);
+}
+
+.order-summary__lines li > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-summary__lines .price {
+  font-weight: var(--font-medium);
+}
+
+.order-summary__totals {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-2);
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.order-summary__totals dd {
+  margin: 0;
+  text-align: right;
+}
+
+.order-summary__total {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  padding-top: var(--space-2);
+}
+
+.order-items {
+  list-style: none;
+  margin: 0 0 var(--space-4);
+  padding: 0;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.order-item__media {
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  background: var(--color-surface-muted);
+}
+
+.order-item__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-item__body p {
+  margin: var(--space-1) 0;
+}
+
+.confirmation__lede {
+  font-size: var(--text-lg);
+  max-width: 64ch;
+}
+
+.confirmation__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+/* Order placed: banner with an animated tick, next steps (#177) */
+.confirmation__banner {
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-start;
+  padding: var(--space-8);
+  border-radius: var(--radius-lg);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.confirmation__banner h1 {
+  color: var(--color-text-inverse);
+}
+
+.confirmation__banner .confirmation__lede {
+  color: #cbd5e1;
+}
+
+.confirmation__banner .confirmation__lede strong {
+  color: var(--color-accent);
+}
+
+.confirmation__tick {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.confirmation__tick circle {
+  stroke-dasharray: 151;
+  animation: tick-draw 700ms ease-out both;
+}
+
+.confirmation__tick path {
+  stroke-dasharray: 40;
+  animation: tick-draw 400ms 500ms ease-out both;
+}
+
+@keyframes tick-draw {
+  from {
+    stroke-dashoffset: 151;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.confirmation__next {
+  display: grid;
+  gap: var(--space-4);
+  margin: var(--space-8) 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: next;
+}
+
+@media (min-width: 768px) {
+  .confirmation__next {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.confirmation__next li {
+  counter-increment: next;
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.confirmation__next li::before {
+  content: counter(next);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-light);
+  color: var(--color-primary);
+  font-weight: var(--font-bold);
+}
+
+.confirmation__next span {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 559px) {
+  .confirmation__banner {
+    flex-direction: column;
+    padding: var(--space-6);
+  }
+}
+
+/* Hosted payment page, its return page and the test gateway (#182) */
+.checkout__redirect {
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-subtle);
+  font-weight: var(--font-semibold);
+}
+
+.payment-result {
+  max-width: 640px;
+}
+
+.payment-result .btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.gateway {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  background: radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.08), transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(10, 25, 47, 0.06), transparent 40%),
+    var(--color-surface-subtle);
+}
+
+.gateway__panel {
+  width: min(440px, 100%);
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-8);
+  overflow: hidden;
+  border-top: 4px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xl);
+  box-sizing: border-box;
+}
+
+/* Grid items default to min-width: auto, which lets unwrapped text (the long PayHere/Stripe
+   notes especially) force this track wider than the panel itself. Without this, everything
+   below the heading quietly overflows the card instead of wrapping to fit it. */
+.gateway__panel > * {
+  min-width: 0;
+}
+
+.gateway__head {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.gateway__badge {
+  justify-self: start;
+  margin: 0;
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-warning-bg);
+  color: #92400e;
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+}
+
+.gateway h1 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-main);
+}
+
+.gateway__merchant {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* A live, quietly-updating bank card - the one bold element on an otherwise plain page. */
+.gateway__card {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-5);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-md);
+  box-sizing: border-box;
+}
+
+.gateway__card > * {
+  min-width: 0;
+}
+
+.gateway__chip {
+  display: block;
+  width: 34px;
+  height: 24px;
+  border-radius: 5px;
+  background: linear-gradient(155deg, var(--color-accent-light), var(--color-accent));
+}
+
+.gateway__card-number {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-medium);
+  letter-spacing: 0.06em;
+  color: var(--color-text-inverse);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gateway__card-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.gateway__card-bottom div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.gateway__card-bottom div:last-child {
+  text-align: right;
+}
+
+.gateway__card-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-inverse-muted);
+}
+
+.gateway__card-value {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gateway__amount {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
+  text-align: center;
+}
+
+.gateway__note {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.gateway__note--payhere {
+  font-weight: var(--font-semibold);
+  color: var(--color-text-main);
+}
+
+/* Bank Card payment form (#202): card holder, number, expiry and CVV */
+.gateway__form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.gateway__form > * {
+  min-width: 0;
+}
+
+.gateway__form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.gateway__form-row > * {
+  min-width: 0;
+}
+
+.gateway .field__control:focus {
+  border-color: var(--color-primary);
+  outline: 2px solid rgba(10, 25, 47, 0.14);
+}
+
+/* Field icon (card / calendar / lock) sitting inside the input, left of the typed text. */
+.gateway__input-icon {
+  position: relative;
+  display: block;
+}
+
+.gateway__input-icon svg {
+  color: var(--color-text-subtle);
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.gateway__input-icon .field__control {
+  width: 100%;
+  padding-left: calc(var(--space-3) * 2 + 16px);
+  box-sizing: border-box;
+}
