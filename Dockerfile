@@ -1,3 +1,4 @@
+
 # Customer storefront: build the static bundle, serve it with nginx.
 # Vite inlines VITE_* variables at build time, so pass them as build args:
 #   docker build --build-arg VITE_SOCKET_URL=https://... -t stackstorm-customer .
